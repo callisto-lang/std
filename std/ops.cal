@@ -1,0 +1,7 @@
+inline ++ begin
+	1 +
+end
+
+inline -- begin
+	1 -
+end
