@@ -79,6 +79,16 @@ func c! begin
 	end
 end
 
+func dup begin
+	__rm86_pop_ax
+	__rm86_push_ax
+	__rm86_push_ax
+end
+
+func drop begin asm
+	"sub si, 2"
+end end
+
 func + begin
 	__rm86_pop_bx
 	__rm86_pop_ax
@@ -123,6 +133,7 @@ func / begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
+		"xor dx, dx"
 		"div bx"
 	end
 	__rm86_push_ax
@@ -132,6 +143,7 @@ func s/ begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
+		"xor dx, dx"
 		"idiv bx"
 	end
 	__rm86_push_ax
@@ -141,6 +153,7 @@ func % begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
+		"xor dx, dx"
 		"div bx"
 	end
 	__rm86_push_dx
@@ -150,6 +163,7 @@ func s% begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
+		"xor dx, dx"
 		"idiv bx"
 	end
 	__rm86_push_dx

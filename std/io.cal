@@ -1,0 +1,16 @@
+func printdec_loop begin
+	if dup then
+		dup 10 / printdec_loop
+		10 % 48 + printch
+	else
+		drop
+	end
+end
+
+func printdec begin
+	if dup then
+		printdec_loop
+	else
+		drop 48 printch
+	end
+end
