@@ -1,5 +1,3 @@
-include "io.cal"
-
 func a< begin
 	let addr var
 	var !
