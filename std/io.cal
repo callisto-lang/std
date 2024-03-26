@@ -1,3 +1,5 @@
+requires IO
+
 func printdec_loop begin
 	if dup then
 		dup 10 / printdec_loop
