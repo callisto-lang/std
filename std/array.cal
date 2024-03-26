@@ -1,3 +1,5 @@
+include "io.cal"
+
 func a< begin
 	let addr var
 	var !
@@ -12,7 +14,8 @@ func a@ begin
 	arr !
 	offset !
 
-	arr @ Array.elements + offset @ + @
+	arr @ Array.memberSize + @ offset @ * offset !
+	arr @ Array.elements + @ offset @ + @
 end
 
 func a! begin
@@ -22,5 +25,6 @@ func a! begin
 	arr !
 	offset !
 
-	arr @ Array.elements 2 * + offset @ + !
+	arr @ Array.memberSize + @ offset @ * offset !
+	arr @ Array.elements + @ offset @ + !
 end
