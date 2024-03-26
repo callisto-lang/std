@@ -7,20 +7,20 @@ func a< begin
 end
 
 func a@ begin
-	let addr  array
+	let addr  arr
 	let usize offset
-	array !
+	arr !
 	offset !
 
-	array @ usize.sizeof 2 * + offset @ + @
+	arr @ usize.sizeof 2 * + offset @ + @
 end
 
 func a! begin
-	let addr  array
+	let addr  arr
 	let usize offset
 
-	array !
+	arr !
 	offset !
 
-	array @ usize.sizeof 2 * + offset @ + !
+	arr @ usize.sizeof 2 * + offset @ + !
 end
