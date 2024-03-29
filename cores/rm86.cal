@@ -151,6 +151,13 @@ func drop begin asm
 	"sub si, 2"
 end end
 
+func swap begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	__rm86_push_bx
+	__rm86_pop_ax
+end
+
 func + begin
 	__rm86_pop_bx
 	__rm86_pop_ax
