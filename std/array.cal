@@ -26,3 +26,8 @@ func a! begin
 	arr @ Array.memberSize + @ offset @ * offset !
 	arr @ Array.elements + @ offset @ + !
 end
+
+func allength begin
+	let Array arr a<
+	arr @
+end

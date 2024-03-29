@@ -48,6 +48,66 @@ func = begin
 	end
 end
 
+func > begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"cmp ax, bx"
+		"jg .push_1"
+		"mov word [si], 0"
+		"add si, 2"
+		"ret"
+		".push_1:"
+		"mov word [si], 0xFFFF"
+		"add si, 2"
+	end
+end
+
+func >= begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"cmp ax, bx"
+		"jge .push_1"
+		"mov word [si], 0"
+		"add si, 2"
+		"ret"
+		".push_1:"
+		"mov word [si], 0xFFFF"
+		"add si, 2"
+	end
+end
+
+func < begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"cmp ax, bx"
+		"jl .push_1"
+		"mov word [si], 0"
+		"add si, 2"
+		"ret"
+		".push_1:"
+		"mov word [si], 0xFFFF"
+		"add si, 2"
+	end
+end
+
+func <= begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"cmp ax, bx"
+		"jle .push_1"
+		"mov word [si], 0"
+		"add si, 2"
+		"ret"
+		".push_1:"
+		"mov word [si], 0xFFFF"
+		"add si, 2"
+	end
+end
+
 func @ begin
 	__rm86_pop_bx
 	asm

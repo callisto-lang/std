@@ -1,5 +1,7 @@
 requires IO
 
+include "array.cal"
+
 func printdec_loop begin
 	if dup then
 		dup 10 / printdec_loop
@@ -15,4 +17,24 @@ func printdec begin
 	else
 		drop 48 printch
 	end
+end
+
+func printstr begin
+	let addr  arr
+	let usize length
+	let usize i
+
+	arr !
+	arr @ @ length !
+
+	while i @ length @ < do
+		i @ arr @ a@ printch
+		i @ 1 + i !
+	end
+end
+
+func printlstr begin
+	let Array arr
+	arr a<
+	arr printstr
 end
