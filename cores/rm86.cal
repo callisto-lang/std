@@ -20,6 +20,11 @@ inline __rm86_push_ax begin asm
 	"add si, 2"
 end end
 
+inline __rm86_push_bx begin asm
+	"mov [si], bx"
+	"add si, 2"
+end end
+
 inline __rm86_push_dx begin asm
 	"mov [si], dx"
 	"add si, 2"
