@@ -287,7 +287,7 @@ func << begin
 	__rm86_pop_cx
 	__rm86_pop_ax
 	asm
-		"shl ax, cx"
+		"shl ax, cl"
 	end
 	__rm86_push_ax
 end
@@ -296,7 +296,7 @@ func >> begin
 	__rm86_pop_cx
 	__rm86_pop_ax
 	asm
-		"shr ax, cx"
+		"shr ax, cl"
 	end
 	__rm86_push_ax
 end
