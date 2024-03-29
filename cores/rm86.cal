@@ -230,3 +230,38 @@ func s% begin
 	end
 	__rm86_push_dx
 end
+
+func and begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"and ax, bx"
+	end
+	__rm86_push_ax
+end
+
+func or begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"or ax, bx"
+	end
+	__rm86_push_ax
+end
+
+func xor begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"xor ax, bx"
+	end
+	__rm86_push_ax
+end
+
+func not begin
+	__rm86_pop_ax
+	asm
+		"not ax"
+	end
+	__rm86_push_ax
+end
