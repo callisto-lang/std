@@ -15,6 +15,11 @@ inline __rm86_pop_di begin asm
 	"mov di, [si]"
 end end
 
+inline __rm86_pop_cx begin asm
+	"sub si, 2"
+	"mov cx, [si]"
+end end
+
 inline __rm86_push_ax begin asm
 	"mov [si], ax"
 	"add si, 2"
@@ -279,19 +284,19 @@ func not begin
 end
 
 func << begin
-	__rm86_pop_bx
+	__rm86_pop_cx
 	__rm86_pop_ax
 	asm
-		"shl ax, bx"
+		"shl ax, cx"
 	end
 	__rm86_push_ax
 end
 
 func >> begin
-	__rm86_pop_bx
+	__rm86_pop_cx
 	__rm86_pop_ax
 	asm
-		"shr ax, bx"
+		"shr ax, cx"
 	end
 	__rm86_push_ax
 end
