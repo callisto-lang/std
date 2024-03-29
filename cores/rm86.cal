@@ -265,3 +265,21 @@ func not begin
 	end
 	__rm86_push_ax
 end
+
+func << begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"shl ax, bx"
+	end
+	__rm86_push_ax
+end
+
+func >> begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"shr ax, bx"
+	end
+	__rm86_push_ax
+end
