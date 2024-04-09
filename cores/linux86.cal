@@ -1,4 +1,5 @@
 feature IO
+feature Exit
 
 inline __linux86_pop_rdi begin asm
 	"sub r15, 8"
@@ -15,12 +16,36 @@ inline __linux86_pop_rbx begin asm
 	"mov rbx, [r15]"
 end end
 
+inline __linux86_pop_rcx begin asm
+	"sub r15, 8"
+	"mov rbx, [r15]"
+end end
+
 inline __linux86_push_rax begin asm
 	"mov [r15], rax"
 	"add r15, 8"
 end end
 
-func exit begin
+inline __linux86_push_rbx begin asm
+	"mov [r15], rbx"
+	"add r15, 8"
+end end
+
+inline __linux86_push_rdx begin asm
+	"mov [r15], rdx"
+	"add r15, 8"
+end end
+
+implements IO func printch begin asm
+	"sub r15, 8"
+	"mov rsi, r15"
+	"mov rax, 1"
+	"mov rdi, 1"
+	"mov rdx, 1"
+	"syscall"
+end end
+
+implements IO func exit begin
 	__linux86_pop_rdi
 	asm
 		"mov rax, 60"
@@ -119,11 +144,169 @@ func ! begin
 	end
 end
 
-func printch begin asm
+func c@ begin
+	__linux86_pop_rbx
+	asm
+		"mov rax, 0"
+		"mov al, [rbx]"
+	end
+	__linux86_push_rax
+end
+
+func c! begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"mov [rbx], al"
+	end
+end
+
+func dup begin
+	__linux86_pop_rax
+	__linux86_push_rax
+	__linux86_push_rax
+end
+
+func drop begin asm
 	"sub r15, 8"
-	"mov rsi, r15"
-	"mov rax, 1"
-	"mov rdi, 1"
-	"mov rdx, 1"
-	"syscall"
 end end
+
+func swap begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	__linux86_push_rbx
+	__linux86_pop_rax
+end
+
+func + begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"add rax, rbx"
+	end
+	__linux86_push_rax
+end
+
+func s+ begin + end
+
+func - begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"sub rax, rbx"
+	end
+	__linux86_push_rax
+end
+
+func s- begin + end
+
+func * begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"mul rbx"
+	end
+	__linux86_push_rax
+end
+
+func s* begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"imul rbx"
+	end
+	__linux86_push_rax
+end
+
+func / begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"xor rdx, rdx"
+		"div rbx"
+	end
+	__linux86_push_rax
+end
+
+func s/ begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"xor rdx, rdx"
+		"idiv rbx"
+	end
+	__linux86_push_rax
+end
+
+func % begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"xor rdx, rdx"
+		"div rbx"
+	end
+	__linux86_push_rdx
+end
+
+func s% begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"xor rdx, rdx"
+		"idiv rbx"
+	end
+	__linux86_push_rdx
+end
+
+func and begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"and rax, rbx"
+	end
+	__linux86_push_rax
+end
+
+func or begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"or rax, rbx"
+	end
+	__linux86_push_rax
+end
+
+func xor begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"xor rax, rbx"
+	end
+	__linux86_push_rax
+end
+
+func not begin
+	__linux86_pop_rax
+	asm
+		"not ax"
+	end
+	__linux86_push_rax
+end
+
+func << begin
+	__linux86_pop_rcx
+	__linux86_pop_rax
+	asm
+		"shl rax, cl"
+	end
+	__linux86_push_rax
+end
+
+func >> begin
+	__linux86_pop_rcx
+	__linux86_pop_rax
+	asm
+		"shr rax, cl"
+	end
+	__linux86_push_rax
+end
