@@ -1,0 +1,129 @@
+feature IO
+
+inline __linux86_pop_rdi begin asm
+	"sub r15, 8"
+	"mov rdi, [r15]"
+end end
+
+inline __linux86_pop_rax begin asm
+	"sub r15, 8"
+	"mov rax, [r15]"
+end end
+
+inline __linux86_pop_rbx begin asm
+	"sub r15, 8"
+	"mov rbx, [r15]"
+end end
+
+inline __linux86_push_rax begin asm
+	"mov [r15], rax"
+	"add r15, 8"
+end end
+
+func exit begin
+	__linux86_pop_rdi
+	asm
+		"mov rax, 60"
+		"syscall"
+	end
+end
+
+func = begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"cmp rax, rbx"
+		"je .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func > begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"cmp rax, rbx"
+		"jg .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func >= begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"cmp rax, rbx"
+		"jge .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func < begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"cmp rax, rbx"
+		"jl .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func <= begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"cmp rax, rbx"
+		"jle .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func @ begin
+	__rm86_pop_rbx
+	asm
+		"mov rax, [rbx]"
+	end
+	__rm86_push_rax
+end
+
+func ! begin
+	__rm86_pop_rbx
+	__rm86_pop_rax
+	asm
+		"mov [rbx], rax"
+	end
+end
+
+func printch begin asm
+	"sub r15, 8"
+	"mov rsi, r15"
+	"mov rax, 1"
+	"mov rdi, 1"
+	"mov rdx, 1"
+	"syscall"
+end end

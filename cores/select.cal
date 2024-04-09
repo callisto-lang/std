@@ -1,3 +1,9 @@
+# Real mode x86 core
 version RM86
 	include "rm86.cal"
+end
+
+# YETI-16 Mk2 core
+version Y16
+	include "y16.cal"
 end
