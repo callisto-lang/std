@@ -104,16 +104,16 @@ func <= begin
 end
 
 func @ begin
-	__rm86_pop_rbx
+	__linux86_pop_rbx
 	asm
 		"mov rax, [rbx]"
 	end
-	__rm86_push_rax
+	__linux86_push_rax
 end
 
 func ! begin
-	__rm86_pop_rbx
-	__rm86_pop_rax
+	__linux86_pop_rbx
+	__linux86_pop_rax
 	asm
 		"mov [rbx], rax"
 	end
