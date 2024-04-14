@@ -288,7 +288,7 @@ end
 func not begin
 	__linux86_pop_rax
 	asm
-		"not ax"
+		"not rax"
 	end
 	__linux86_push_rax
 end

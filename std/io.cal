@@ -38,3 +38,7 @@ func printlstr begin
 	arr a<
 	arr printstr
 end
+
+func new_line begin
+	'\r' '\n' printch printch
+end
