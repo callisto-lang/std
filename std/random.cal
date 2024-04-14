@@ -1,0 +1,15 @@
+let cell std_rand_next
+const RAND_MAX 32767
+
+func rand begin
+	if std_rand_next @ 0 = then
+		1 std_rand_next !
+	end
+
+	next @ 20077 * 12345 + next !
+	next @ 65535 / 32768 %
+end
+
+func srand begin
+	std_rand_next !
+end
