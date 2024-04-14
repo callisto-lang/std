@@ -6,8 +6,8 @@ func rand begin
 		1 std_rand_next !
 	end
 
-	next @ 20077 * 12345 + std_rand_next !
-	next @ 65535 / 32768 %
+	std_rand_next @ 20077 * 12345 + std_rand_next !
+	std_rand_next @ 65535 / 32768 %
 end
 
 func srand begin
