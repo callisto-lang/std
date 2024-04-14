@@ -1,7 +1,47 @@
+include "array.cal"
+
 inline ++ begin
 	1 +
 end
 
 inline -- begin
 	1 -
+end
+
+func max begin
+	let Array arr
+	arr a<
+
+	let cell i
+	let cell ret
+	1 i !
+	0 arr a@ ret !
+	while i @ arr @ < do
+		if i @ arr a@ ret @ > then
+			i @ arr a@ ret !
+		end
+
+		i @ 1 + i !
+	end
+
+	ret @
+end
+
+func min begin
+	let Array arr
+	arr a<
+
+	let cell i
+	let cell ret
+	1 i !
+	0 arr a@ ret !
+	while i @ arr @ < do
+		if i @ arr a@ ret @ < then
+			i @ arr a@ ret !
+		end
+
+		i @ 1 + i !
+	end
+
+	ret @
 end
