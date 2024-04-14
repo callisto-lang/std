@@ -1,5 +1,6 @@
 feature IO
 feature Exit
+feature Time
 
 inline __linux86_pop_rdi begin asm
 	"sub r15, 8"
@@ -309,4 +310,13 @@ func >> begin
 		"shr rax, cl"
 	end
 	__linux86_push_rax
+end
+
+func get_epoch_time begin
+	asm
+		"mov rax, 201" # time syscall
+		"xor rdi, rdi"
+		"syscall"
+	end
+	__linux86_push_rax # stuff is returned with rax right?
 end
