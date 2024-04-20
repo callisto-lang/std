@@ -1,0 +1,9 @@
+func printntstr begin
+	let addr str
+	str !
+
+	while str @ c@ do
+		str @ c@ printch
+		str @ 1 + str !
+	end
+end

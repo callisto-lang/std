@@ -7,6 +7,11 @@ inline __linux86_pop_rdi begin asm
 	"mov rdi, [r15]"
 end end
 
+inline __linux86_pop_rsi begin asm
+	"sub r15, 8"
+	"mov rsi, [r15]"
+end end
+
 inline __linux86_pop_rax begin asm
 	"sub r15, 8"
 	"mov rax, [r15]"
@@ -19,7 +24,12 @@ end end
 
 inline __linux86_pop_rcx begin asm
 	"sub r15, 8"
-	"mov rbx, [r15]"
+	"mov rcx, [r15]"
+end end
+
+inline __linux86_pop_rdx begin asm
+	"sub r15, 8"
+	"mov rdx, [r15]"
 end end
 
 inline __linux86_push_rax begin asm
@@ -319,4 +329,91 @@ func get_epoch_time begin
 		"syscall"
 	end
 	__linux86_push_rax # stuff is returned with rax right?
+end
+
+const FILE_READ 1
+const FILE_WRITE 2
+const __linux86_const_O_RDONLY 0
+const __linux86_const_O_WRONLY 1
+const __linux86_const_O_RDWR 2
+
+struct File
+	cell fd
+end
+
+func open_file begin
+	let addr path
+	let cell mode
+	mode !
+	path !
+
+	let array 4096 u8 pathBytes
+	let cell i
+	let addr src
+	let addr dest
+	0 i !
+
+	path @ Array.elements + @ src !
+	pathBytes dest !
+
+	while i @ path @ @ < do
+		src @ c@ dest @ c!
+
+		i @ 1 + i !
+		src @ 1 + src !
+		dest @ 1 + dest !
+	end
+
+	# just in case
+	0 pathBytes 4095 + c!
+
+	let cell modeFlag
+
+	if FILE_READ FILE_WRITE and mode @ = then
+		__linux86_const_O_RDWR modeFlag !
+	elseif FILE_READ mode @ = then
+		__linux86_const_O_RDONLY modeFlag !
+	elseif FILE_WRITE mode @ = then
+		__linux86_const_O_WRONLY modeFlag !
+	end
+
+	pathBytes
+	modeFlag @
+
+	__linux86_pop_rdx
+	__linux86_pop_rdi
+	asm
+		"mov rax, 2" # open syscall
+		"xor rsi, rsi"
+		"syscall"
+	end
+
+	__linux86_push_rax
+end
+
+func file< begin
+	!
+end
+
+func file@ begin
+	let cell count
+	let addr buf
+	let cell fd
+
+	count !
+	buf !
+	@ fd !
+
+	count @
+	buf @
+	fd @
+
+	__linux86_pop_rdi
+	__linux86_pop_rsi
+	__linux86_pop_rdx
+
+	asm
+		"xor rax, rax" # 0 = read
+		"syscall"
+	end
 end
