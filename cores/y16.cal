@@ -1,4 +1,7 @@
 enable IO
+restrict Exit
+restrict Time
+restrict File
 
 inline __y16_pop_a begin asm
 	"ldsi a 2"

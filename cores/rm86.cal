@@ -1,4 +1,7 @@
 enable IO
+restrict Exit
+restrict Time
+restrict File
 
 inline __rm86_pop_ax begin asm
 	"sub si, 2"
