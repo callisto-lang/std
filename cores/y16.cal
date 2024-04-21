@@ -1,4 +1,4 @@
-feature IO
+enable IO
 
 inline __y16_pop_a begin asm
 	"ldsi a 2"
@@ -12,7 +12,7 @@ inline __y16_pop_b begin asm
 	"rdw b sr"
 end end
 
-implements IO func printch begin
+func printch begin
 	__y16_pop_a
 	asm
 		"ldsi b 0"

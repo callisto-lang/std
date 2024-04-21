@@ -1,4 +1,4 @@
-feature IO
+enable IO
 
 inline __rm86_pop_ax begin asm
 	"sub si, 2"
@@ -35,7 +35,7 @@ inline __rm86_push_dx begin asm
 	"add si, 2"
 end end
 
-implements IO func printch begin
+func printch begin
 	__rm86_pop_ax
 	asm
 		"mov ah, 0x0E"
