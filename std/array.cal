@@ -39,6 +39,38 @@ func a! begin
 	end
 end
 
+func a= begin
+	let addr arr1
+	let addr arr2
+
+	arr2 !
+	arr1 !
+
+	if arr1 @ @ arr2 @ @ = not then
+		0 return
+	end
+
+	let cell i
+	0 i !
+
+	while i @ arr1 @ @ < do
+		if i @ arr1 @ a@ i @ arr2 @ a@ = not then
+			0 return
+		end
+
+		i @ 1 + i !
+	end
+
+	1
+end
+
+func al= begin
+	let Array arr2
+	arr2 a<
+
+	arr2 a=
+end
+
 func allength begin
 	let Array arr a<
 	arr @
