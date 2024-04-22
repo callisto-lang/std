@@ -13,7 +13,13 @@ func a@ begin
 	offset !
 
 	arr @ Array.memberSize + @ offset @ * offset !
-	arr @ Array.elements + @ offset @ + @
+	arr @ Array.elements + @ offset @ +
+
+	if arr @ Array.memberSize + @ 1 = then
+		c@
+	else
+		@
+	end
 end
 
 func a! begin
@@ -24,14 +30,19 @@ func a! begin
 	offset !
 
 	arr @ Array.memberSize + @ offset @ * offset !
-	arr @ Array.elements + @ offset @ + !
+	arr @ Array.elements + @ offset @ +
+
+	if arr @ Array.memberSize + @ 1 = then
+		c!
+	else
+		!
+	end
 end
 
 func allength begin
 	let Array arr a<
 	arr @
 end
-
 
 func max begin
 	let Array arr
