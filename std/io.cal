@@ -11,6 +11,10 @@ func printdec_loop begin
 	end
 end
 
+## ## printdec
+## Parameters: cell value
+##
+## Prints the given value as decimal to stdout
 func printdec begin
 	if dup then
 		printdec_loop
@@ -19,6 +23,10 @@ func printdec begin
 	end
 end
 
+## ## printstr
+## Parameters: Array* str
+##
+## Prints the given string to stdout
 func printstr begin
 	let addr  arr
 	let usize length
@@ -33,12 +41,20 @@ func printstr begin
 	end
 end
 
+## ## printlstr
+## Parameters: Array str
+##
+## Prints an array literal from the stack to stdout
 func printlstr begin
 	let Array arr
 	arr a<
 	arr printstr
 end
 
+## ## new_line
+## Parameters:
+##
+## Prints a new line to stdout
 func new_line begin
 	'\r' '\n' printch printch
 end

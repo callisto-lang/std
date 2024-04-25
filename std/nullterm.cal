@@ -1,3 +1,7 @@
+## ## printntstr
+## Parameters: addr str
+##
+## Prints a null-terminated string to stdout from the given pointer
 func printntstr begin
 	let addr str
 	str !

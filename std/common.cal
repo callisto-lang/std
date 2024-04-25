@@ -1,1 +1,3 @@
+## This file just contains an include for common libraries, which are:
+## - ops.cal
 include "ops.cal"

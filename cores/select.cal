@@ -1,11 +1,8 @@
+## This header automatically includes the correct core for the compiler's set target
+
 # Real mode x86 core
 version RM86
 	include "rm86.cal"
-end
-
-# YETI-16 Mk2 core
-version Y16
-	include "y16.cal"
 end
 
 # Linux x86_64 core

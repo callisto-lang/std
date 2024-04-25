@@ -1,13 +1,25 @@
 include "array.cal"
 
+## ## (Inline) ++
+## Parameters: cell num
+##
+## Returns num + 1
 inline ++ begin
 	1 +
 end
 
+## ## (Inline) --
+## Parameters: cell num
+##
+## Returns num - 1
 inline -- begin
 	1 -
 end
 
+## ## memcopy
+## Parameters: addr dest, addr src, cell n
+##
+## Copies n bytes from src to dest
 func memcopy begin
 	let addr dest
 	let addr src
