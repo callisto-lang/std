@@ -1,4 +1,6 @@
 ## Supported features: IO, Exit, Time, File
+##
+## Cell size = 64 bits
 enable IO
 enable Exit
 enable Time
