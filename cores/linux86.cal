@@ -211,7 +211,7 @@ func - begin
 	__linux86_push_rax
 end
 
-func s- begin + end
+func s- begin - end
 
 func * begin
 	__linux86_pop_rbx
