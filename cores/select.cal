@@ -9,3 +9,8 @@ end
 version Linux86
 	include "linux86.cal"
 end
+
+# Windows x86_64 core
+version Win64
+	include "win64.cal"
+end
