@@ -56,6 +56,9 @@ func printch begin
 	asm
 		"extern putchar"
 		"call putchar"
+		"extern fflush"
+		"xor rcx, rcx"
+		"call fflush"
 	end
 end
 
