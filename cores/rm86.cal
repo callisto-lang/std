@@ -21,6 +21,11 @@ inline __rm86_pop_di begin asm
 	"mov di, [si]"
 end end
 
+inline __rm86_pop_dx begin asm
+	"sub si, 2"
+	"mov cx, [si]"
+end end
+
 inline __rm86_pop_cx begin asm
 	"sub si, 2"
 	"mov cx, [si]"
