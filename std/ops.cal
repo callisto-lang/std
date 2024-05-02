@@ -32,7 +32,7 @@ func memcopy begin
 	0 i !
 
 	while i @ n @ < do
-		src @ c@ dest @ c!
+		src @ b@ dest @ c!
 		i @ 1 + i !
 		dest @ 1 + dest !
 		src @ 1 + src !

@@ -6,8 +6,8 @@ func printntstr begin
 	let addr str
 	str !
 
-	while str @ c@ do
-		str @ c@ printch
+	while str @ b@ do
+		str @ b@ printch
 		str @ 1 + str !
 	end
 end

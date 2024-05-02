@@ -145,7 +145,7 @@ func ! begin
 	end
 end
 
-func c@ begin
+func b@ begin
 	__rm86_pop_bx
 	asm
 		"xor ah, ah"

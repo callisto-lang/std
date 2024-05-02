@@ -159,7 +159,7 @@ func ! begin
 	end
 end
 
-func c@ begin
+func b@ begin
 	__linux86_pop_rbx
 	asm
 		"mov rax, 0"
@@ -361,7 +361,7 @@ func open_file begin
 	pathBytes dest !
 
 	while i @ path @ @ < do
-		src @ c@ dest @ c!
+		src @ b@ dest @ c!
 
 		i @ 1 + i !
 		src @ 1 + src !

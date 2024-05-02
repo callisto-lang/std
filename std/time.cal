@@ -1,0 +1,5 @@
+inline seconds begin end
+inline minutes begin 60 * end
+inline hours begin 3600 * end
+inline days begin 86400 * end
+inline years begin 31557600 * end
