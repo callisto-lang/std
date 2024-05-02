@@ -162,7 +162,7 @@ end
 func b@ begin
 	__linux86_pop_rbx
 	asm
-		"mov rax, 0"
+		"xor rax, rax"
 		"mov al, [rbx]"
 	end
 	__linux86_push_rax
@@ -173,6 +173,40 @@ func b! begin
 	__linux86_pop_rax
 	asm
 		"mov [rbx], al"
+	end
+end
+
+func w@ begin
+	__linux86_pop_rbx
+	asm
+		"xor rax, rax"
+		"mov ax, [rbx]"
+	end
+	__linux86_push_rax
+end
+
+func w! begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"mov [rbx], ax"
+	end
+end
+
+func d@ begin
+	__linux86_pop_rbx
+	asm
+		"xor rax, rax"
+		"mov eax, [rbx]"
+	end
+	__linux86_push_rax
+end
+
+func d! begin
+	__linux86_pop_rbx
+	__linux86_pop_rax
+	asm
+		"mov [rbx], eax"
 	end
 end
 

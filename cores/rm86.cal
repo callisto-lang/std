@@ -162,6 +162,22 @@ func b! begin
 	end
 end
 
+func w@ begin
+	__rm86_pop_bx
+	asm
+		"mov ax, [bx]"
+	end
+	__rm86_push_ax
+end
+
+func w! begin
+	__rm86_pop_bx
+	__rm86_pop_ax
+	asm
+		"mov [bx], ax"
+	end
+end
+
 func dup begin
 	__rm86_pop_ax
 	__rm86_push_ax
