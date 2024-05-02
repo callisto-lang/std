@@ -168,7 +168,7 @@ func b@ begin
 	__linux86_push_rax
 end
 
-func c! begin
+func b! begin
 	__linux86_pop_rbx
 	__linux86_pop_rax
 	asm
@@ -361,7 +361,7 @@ func open_file begin
 	pathBytes dest !
 
 	while i @ path @ @ < do
-		src @ b@ dest @ c!
+		src @ b@ dest @ b!
 
 		i @ 1 + i !
 		src @ 1 + src !
@@ -369,7 +369,7 @@ func open_file begin
 	end
 
 	# just in case
-	0 pathBytes 4095 + c!
+	0 pathBytes 4095 + b!
 
 	let cell modeFlag
 

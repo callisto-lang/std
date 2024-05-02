@@ -154,7 +154,7 @@ func b@ begin
 	__rm86_push_ax
 end
 
-func c! begin
+func b! begin
 	__rm86_pop_di
 	__rm86_pop_bx
 	asm

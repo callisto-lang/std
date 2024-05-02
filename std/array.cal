@@ -49,7 +49,7 @@ func a! begin
 	arr @ Array.elements + @ offset @ +
 
 	if arr @ Array.memberSize + @ 1 = then
-		c!
+		b!
 	else
 		!
 	end
