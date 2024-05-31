@@ -98,26 +98,6 @@ func a= begin
 	1
 end
 
-## ## al=
-## Parameters: Array* arr1, Array arr2
-##
-## Same as a=, except the 2nd array is a literal from the stack
-func al= begin
-	let Array arr2
-	arr2 a<
-
-	arr2 a=
-end
-
-## ## allength
-## Parameters: Array array
-##
-## Returns the length of an array literal
-func allength begin
-	let Array arr a<
-	arr @
-end
-
 # Following 2 functions are going to soon be replaced, so not documented
 func max begin
 	let Array arr

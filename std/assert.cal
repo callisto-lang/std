@@ -2,7 +2,7 @@ include "io.cal"
 
 inline assert begin
 	if not then
-		"Assertion thrown\n" printlstr
+		"Assertion thrown\n" printstr
 		1 exit
 	end
 end
