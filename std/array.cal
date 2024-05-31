@@ -1,13 +1,18 @@
+include "assert.cal"
+
 ## ## a<
-## Parameters: Array* var
+## Parameters: Array* src, Array* var
 ##
 ## Takes an array literal from the stack and writes it to the given variable
 func a< begin
+	let addr src
 	let addr var
 	var !
-	var @ Array.elements + !
-	var @ Array.memberSize + !
-	var @ !
+	src !
+
+	src @ @ var @ !
+	src @ Array.memberSize + @ var @ Array.memberSize + !
+	src @ Array.elements + @ var @ Array.elements + !
 end
 
 ## ## a@
@@ -27,6 +32,10 @@ func a@ begin
 
 	if arr @ Array.memberSize + @ 1 = then
 		b@
+	elseif arr @ Array.memberSize + @ 2 = then
+		w@
+	elseif arr @ Array.memberSize + @ 4 = then
+		d@
 	else
 		@
 	end
@@ -50,6 +59,10 @@ func a! begin
 
 	if arr @ Array.memberSize + @ 1 = then
 		b!
+	elseif arr @ Array.memberSize + @ 2 = then
+		w@
+	elseif arr @ Array.memberSize + @ 4 = then
+		d@
 	else
 		!
 	end

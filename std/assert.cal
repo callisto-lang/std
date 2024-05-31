@@ -1,0 +1,8 @@
+include "io.cal"
+
+inline assert begin
+	if not then
+		"Assertion thrown\n" printlstr
+		1 exit
+	end
+end

@@ -57,10 +57,6 @@ end
 
 alias overwrite sockaddr_in sockaddr_in_padded # i am so sorry
 
-func hton begin
-
-end
-
 func socket begin
 	__linux86_pop_rdx
 	__linux86_pop_rsi
