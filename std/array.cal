@@ -33,9 +33,19 @@ func a@ begin
 	if arr @ Array.memberSize + @ 1 = then
 		b@
 	elseif arr @ Array.memberSize + @ 2 = then
-		w@
+		version 16Bit
+			w@
+		end
+		version not 16Bit
+			assert
+		end
 	elseif arr @ Array.memberSize + @ 4 = then
-		d@
+		version 32Bit
+			d@
+		end
+		version not 32Bit
+			assert
+		end
 	else
 		@
 	end
@@ -60,9 +70,19 @@ func a! begin
 	if arr @ Array.memberSize + @ 1 = then
 		b!
 	elseif arr @ Array.memberSize + @ 2 = then
-		w@
+		version 16Bit
+			w@
+		end
+		version not 16Bit
+			assert
+		end
 	elseif arr @ Array.memberSize + @ 4 = then
-		d@
+		version 32Bit
+			d@
+		end
+		version not 32Bit
+			assert
+		end
 	else
 		!
 	end
@@ -71,7 +91,7 @@ end
 ## ## a=
 ## Parameters: Array* arr1, Array* arr2
 ##
-## Returns 1 if the arrays are equal, 0 if not (will soon be changed to max cell value
+## Returns true if the arrays are equal, false if not (will soon be changed to max cell value
 ## if true)
 func a= begin
 	let addr arr1
@@ -89,50 +109,11 @@ func a= begin
 
 	while i @ arr1 @ @ < do
 		if i @ arr1 @ a@ i @ arr2 @ a@ = not then
-			0 return
+			false return
 		end
 
 		i @ 1 + i !
 	end
 
-	1
-end
-
-# Following 2 functions are going to soon be replaced, so not documented
-func max begin
-	let Array arr
-	arr a<
-
-	let cell i
-	let cell ret
-	1 i !
-	0 arr a@ ret !
-	while i @ arr @ < do
-		if i @ arr a@ ret @ > then
-			i @ arr a@ ret !
-		end
-
-		i @ 1 + i !
-	end
-
-	ret @
-end
-
-func min begin
-	let Array arr
-	arr a<
-
-	let cell i
-	let cell ret
-	1 i !
-	0 arr a@ ret !
-	while i @ arr @ < do
-		if i @ arr a@ ret @ < then
-			i @ arr a@ ret !
-		end
-
-		i @ 1 + i !
-	end
-
-	ret @
+	true
 end
