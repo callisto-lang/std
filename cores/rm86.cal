@@ -1,7 +1,6 @@
 ## Supported features: IO
 ##
 ## Cell size = 16 bits
-enable IO
 restrict Exit
 restrict Time
 restrict File
