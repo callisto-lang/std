@@ -47,20 +47,24 @@ inline __linux86_push_rdx begin asm
 	"add r15, 8"
 end end
 
-func printch begin asm
-	"sub r15, 8"
-	"mov rsi, r15"
-	"mov rax, 1"
-	"mov rdi, 1"
-	"mov rdx, 1"
-	"syscall"
-end end
-
-func exit begin
-	__linux86_pop_rdi
-	asm
-		"mov rax, 60"
+version IO
+	func printch begin asm
+		"sub r15, 8"
+		"mov rsi, r15"
+		"mov rax, 1"
+		"mov rdi, 1"
+		"mov rdx, 1"
 		"syscall"
+	end end
+end
+
+version Exit
+	func exit begin
+		__linux86_pop_rdi
+		asm
+			"mov rax, 60"
+			"syscall"
+		end
 	end
 end
 
@@ -356,98 +360,102 @@ func >> begin
 	__linux86_push_rax
 end
 
-func get_epoch_time begin
-	asm
-		"mov rax, 201" # time syscall
-		"xor rdi, rdi"
-		"syscall"
+version Time
+	func get_epoch_time begin
+		asm
+			"mov rax, 201" # time syscall
+			"xor rdi, rdi"
+			"syscall"
+		end
+		__linux86_push_rax # stuff is returned with rax right?
 	end
-	__linux86_push_rax # stuff is returned with rax right?
 end
 
-const FILE_READ 1
-const FILE_WRITE 2
-const __linux86_const_O_RDONLY 0
-const __linux86_const_O_WRONLY 1
-const __linux86_const_O_RDWR 2
+version File
+	const FILE_READ 1
+	const FILE_WRITE 2
+	const __linux86_const_O_RDONLY 0
+	const __linux86_const_O_WRONLY 1
+	const __linux86_const_O_RDWR 2
 
-struct File
-	cell fd
-end
-
-func open_file begin
-	let addr path
-	let cell mode
-	mode !
-	path !
-
-	let array 4096 u8 pathBytes
-	let cell i
-	let addr src
-	let addr dest
-	0 i !
-
-	path @ Array.elements + @ src !
-	pathBytes dest !
-
-	while i @ path @ @ < do
-		src @ b@ dest @ b!
-
-		i @ 1 + i !
-		src @ 1 + src !
-		dest @ 1 + dest !
+	struct File
+		cell fd
 	end
 
-	# just in case
-	0 pathBytes 4095 + b!
+	func open_file begin
+		let addr path
+		let cell mode
+		mode !
+		path !
 
-	let cell modeFlag
+		let array 4096 u8 pathBytes
+		let cell i
+		let addr src
+		let addr dest
+		0 i !
 
-	if FILE_READ FILE_WRITE and mode @ = then
-		__linux86_const_O_RDWR modeFlag !
-	elseif FILE_READ mode @ = then
-		__linux86_const_O_RDONLY modeFlag !
-	elseif FILE_WRITE mode @ = then
-		__linux86_const_O_WRONLY modeFlag !
+		path @ Array.elements + @ src !
+		pathBytes dest !
+
+		while i @ path @ @ < do
+			src @ b@ dest @ b!
+
+			i @ 1 + i !
+			src @ 1 + src !
+			dest @ 1 + dest !
+		end
+
+		# just in case
+		0 pathBytes 4095 + b!
+
+		let cell modeFlag
+
+		if FILE_READ FILE_WRITE and mode @ = then
+			__linux86_const_O_RDWR modeFlag !
+		elseif FILE_READ mode @ = then
+			__linux86_const_O_RDONLY modeFlag !
+		elseif FILE_WRITE mode @ = then
+			__linux86_const_O_WRONLY modeFlag !
+		end
+
+		pathBytes
+		modeFlag @
+
+		__linux86_pop_rdx
+		__linux86_pop_rdi
+		asm
+			"mov rax, 2" # open syscall
+			"xor rsi, rsi"
+			"syscall"
+		end
+
+		__linux86_push_rax
 	end
 
-	pathBytes
-	modeFlag @
-
-	__linux86_pop_rdx
-	__linux86_pop_rdi
-	asm
-		"mov rax, 2" # open syscall
-		"xor rsi, rsi"
-		"syscall"
+	func file< begin
+		!
 	end
 
-	__linux86_push_rax
-end
+	func file@ begin
+		let cell count
+		let addr buf
+		let cell fd
 
-func file< begin
-	!
-end
+		count !
+		buf !
+		@ fd !
 
-func file@ begin
-	let cell count
-	let addr buf
-	let cell fd
+		count @
+		buf @
+		fd @
 
-	count !
-	buf !
-	@ fd !
+		__linux86_pop_rdi
+		__linux86_pop_rsi
+		__linux86_pop_rdx
 
-	count @
-	buf @
-	fd @
-
-	__linux86_pop_rdi
-	__linux86_pop_rsi
-	__linux86_pop_rdx
-
-	asm
-		"xor rax, rax" # 0 = read
-		"syscall"
+		asm
+			"xor rax, rax" # 0 = read
+			"syscall"
+		end
 	end
 end

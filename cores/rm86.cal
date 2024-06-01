@@ -45,11 +45,13 @@ inline __rm86_push_dx begin asm
 	"add si, 2"
 end end
 
-func printch begin
-	__rm86_pop_ax
-	asm
-		"mov ah, 0x0E"
-		"int 0x10"
+version IO
+	func printch begin
+		__rm86_pop_ax
+		asm
+			"mov ah, 0x0E"
+			"int 0x10"
+		end
 	end
 end
 
