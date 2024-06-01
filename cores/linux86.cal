@@ -1,10 +1,6 @@
 ## Supported features: IO, Exit, Time, File
 ##
 ## Cell size = 64 bits
-restrict IO
-restrict Exit
-restrict Time
-restrict File
 
 inline __linux86_pop_rdi begin asm
 	"sub r15, 8"

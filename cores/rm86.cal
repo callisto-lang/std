@@ -1,10 +1,6 @@
 ## Supported features: IO
 ##
 ## Cell size = 16 bits
-restrict IO
-restrict Exit
-restrict Time
-restrict File
 
 inline __rm86_pop_ax begin asm
 	"sub si, 2"
