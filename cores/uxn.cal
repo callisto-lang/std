@@ -103,7 +103,7 @@ inline xor begin asm
 end end
 
 inline not begin
-	# TODO
+	"#ffff EOR2"
 end
 
 inline << begin asm
