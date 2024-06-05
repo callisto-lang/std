@@ -109,9 +109,9 @@ inline xor begin asm
 	"EOR2"
 end end
 
-inline not begin
+inline not begin asm
 	"#ffff EOR2"
-end
+end end
 
 inline << begin asm
 	"#40 SFT2 NIP SFT2"
