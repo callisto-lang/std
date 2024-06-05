@@ -17,9 +17,99 @@ func = begin asm
 end end
 
 func > begin asm
-	"EQU2"
+	"GTH2"
 	",&true JCN"
 	"#0000 JMP2r"
 	"&true"
 	"#ffff JMP2r"
+end end
+
+func >= begin asm
+	"GTH2k STH EQU2 STHr ORA ,&true JCN"
+	"#0000 JMP2r"
+	"&true"
+	"#ffff JMP2r"
+end end
+
+func < begin asm
+	"LTH2"
+	",&true JCN"
+	"#0000 JMP2r"
+	"&true"
+	"#ffff JMP2r"
+end end
+
+func <= begin asm
+	"LTH2k STH EQU2 STHr ORA ,&true JCN"
+	"#0000 JMP2r"
+	"&true"
+	"#ffff JMP2r"
+end end
+
+inline @ begin asm
+	"LDA2"
+end end
+
+inline ! begin asm
+	"STA2"
+end end
+
+inline b@ begin asm
+	"LDA #00 SWP"
+end end
+
+inline b! begin asm
+	"STH2 NIP STH2r STA"
+end end
+
+inline dup begin asm
+	"DUP2"
+end end
+
+inline drop begin asm
+	"POP2"
+end end
+
+inline swap begin asm
+	"SWP2"
+end end
+
+inline + begin asm
+	"ADD2"
+end end
+
+inline - begin asm
+	"SUB2"
+end end
+
+inline * begin asm
+	"MUL2"
+end end
+
+inline / begin asm
+	"DIV2"
+end end
+
+inline and begin asm
+	"AND2"
+end end
+
+inline or begin asm
+	"ORA2"
+end end
+
+inline xor begin asm
+	"EOR2"
+end end
+
+inline not begin
+	# TODO
+end
+
+inline << begin asm
+	"#40 SFT2 NIP SFT2"
+end end
+
+inline >> begin asm
+	"NIP SFT2"
 end end
