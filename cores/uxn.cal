@@ -62,6 +62,9 @@ inline b! begin asm
 	"STH2 NIP STH2r STA"
 end end
 
+inline w@ begin @ end
+inline w! begin ! end
+
 inline dup begin asm
 	"DUP2"
 end end
