@@ -1,4 +1,4 @@
-include "assert.cal"
+include "# TODO!!!.cal"
 
 ## ## a<
 ## Parameters: Array* src, Array* var
@@ -37,14 +37,14 @@ func a@ begin
 			w@
 		end
 		version not 16Bit
-			assert
+			# TODO!!!
 		end
 	elseif arr @ Array.memberSize + @ 4 = then
 		version 32Bit
 			d@
 		end
 		version not 32Bit
-			assert
+			# TODO!!!
 		end
 	else
 		@
@@ -74,14 +74,14 @@ func a! begin
 			w@
 		end
 		version not 16Bit
-			assert
+			# TODO!!!
 		end
 	elseif arr @ Array.memberSize + @ 4 = then
 		version 32Bit
 			d@
 		end
 		version not 32Bit
-			assert
+			# TODO!!!
 		end
 	else
 		!
