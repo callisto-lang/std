@@ -93,6 +93,10 @@ inline / begin asm
 	"DIV2"
 end end
 
+inline % begin asm
+	"DIV2k MUL2 SUB2"
+end end
+
 inline and begin asm
 	"AND2"
 end end
