@@ -1,5 +1,6 @@
 include "io.cal"
 extern printstr
+extern exit
 
 inline assert begin
 	if not then
