@@ -1,0 +1,25 @@
+## Supported features: IO
+##
+## Cell size = 16 bits
+
+version IO
+	inline printch begin asm
+		"NIP .Console/write DEO"
+	end end	
+end
+
+func = begin asm
+	"EQU2"
+	",&true JCN"
+	"#0000 JMP2r"
+	"&true"
+	"#ffff JMP2r"
+end end
+
+func > begin asm
+	"EQU2"
+	",&true JCN"
+	"#0000 JMP2r"
+	"&true"
+	"#ffff JMP2r"
+end end

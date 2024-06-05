@@ -48,3 +48,16 @@ end
 func new_line begin
 	'\r' '\n' printch printch
 end
+
+## ## readln
+## Parameters: Array* dest
+##
+## Reads `dest.length` bytes from stdin and writes the result to `dest`
+func readln begin
+	let addr dest
+	dest !
+
+	dest @ @ # length
+	dest @ Array.elements + @ # buffer
+	stdin @ file@
+end

@@ -9,3 +9,7 @@ end
 version Linux86
 	include "linux86.cal"
 end
+
+version UXN
+	include "uxn.cal"
+end

@@ -382,6 +382,13 @@ version File
 		cell fd
 	end
 
+	let File stdin
+	let File stdout
+	let File stderr
+	0 stdin !
+	1 stdout !
+	2 stderr !
+
 	func open_file begin
 		let addr path
 		let cell mode
