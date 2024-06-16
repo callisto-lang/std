@@ -11,3 +11,21 @@ func printntstr begin
 		str @ 1 + str !
 	end
 end
+
+## ## ntstr_length
+## Parameters: addr str
+##
+## Returns the length of a null-terminated string
+func ntstr_length begin
+	let addr str
+	str !
+	let cell ret
+	0 ret !
+
+	while str @ b@ do
+		ret @ 1 + ret !
+		str @ 1 + str !
+	end
+
+	ret @
+end

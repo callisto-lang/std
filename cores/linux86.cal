@@ -378,6 +378,35 @@ version File
 	const __linux86_const_O_WRONLY 1
 	const __linux86_const_O_RDWR 2
 
+	alias __linux86_dev_t     u64
+	alias __linux86_ino_t     u64
+	alias __linux86_mode_t    u32
+	alias __linux86_nlink_t   u64
+	alias __linux86_uid_t     u32
+	alias __linux86_gid_t     u32
+	alias __linux86_off_t     u64
+	alias __linux86_time_t    u64
+	alias __linux86_blksize_t u64
+	alias __linux86_blkcnt_t  u64
+
+	struct __linux86_stat
+		u64 st_dev
+		u64 st_ino
+		u64 st_nlink
+		u32 st_mode
+		u32 st_uid
+		u32 st_gid
+		u32 padding
+		u64 st_rdev
+		u64 st_size
+		u64 st_blksize
+		u64 st_blocks
+		u64 st_atime
+		u64 padding1
+		u64 st_mtime
+		u64 st_ctime
+	end
+
 	struct File
 		cell fd
 	end
@@ -465,4 +494,52 @@ version File
 			"syscall"
 		end
 	end
+
+	func file_size begin
+		let cell fd
+		@ fd !
+
+		let __linux86_stat statRes
+
+		statRes fd @
+		__linux86_pop_rsi
+		__linux86_pop_rdi
+		asm
+			"mov rax, 5" # fstat
+			"syscall"
+		end
+
+		__linux86_push_rax
+
+		if -1 = then
+			return
+		end
+
+		statRes __linux86_stat.st_size + @
+	end
+end
+
+version Args
+	func core_get_arg begin
+		let cell which
+		let cell counter
+		let addr args
+		dup which !
+		counter !
+		__linux86_argv @ args !
+
+		if which @ 0 = then args @ return end
+
+		while true do
+			if args @ b@ 0 = then
+				counter @ 1 - counter !
+
+				if counter @ 0 = then args @ 1 + return end
+			end
+
+			args @ 1 + args !
+		end
+	end
+
+	inline core_get_arg_length begin __linux86_argc @ end
 end
