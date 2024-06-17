@@ -325,3 +325,62 @@ func >> begin
 	end
 	__rm86_push_ax
 end
+
+version Args
+	func __rm86_nullterm_args begin
+		let cell i
+		let cell args
+		0 i !
+		__rm86_argv @ args !
+
+		while i @ __rm86_arglen @ < do
+			if args @ b@ ' ' = args @ b@ '\r' = or then
+				0 args @ b!
+			end
+
+			args @ 1 + args !
+			i @ 1 + i !
+		end
+
+		0 args @ b!
+	end
+
+	__rm86_nullterm_args
+
+	func core_get_arg begin
+		let cell which
+		let cell counter
+		let addr args
+		dup which !
+		counter !
+		__rm86_argv @ args !
+
+		if which @ 0 = then args @ 1 + return end
+
+		while true do
+			if args @ b@ 0 = then
+				0 args @ b!
+				counter @ 1 - counter !
+
+				if counter @ 0 = then args @ 1 + return end
+			end
+
+			args @ 1 + args !
+		end
+	end
+
+	func core_get_arg_length begin
+		let cell i
+		let cell counter
+
+		while i @ __rm86_arglen @ < do
+			if __rm86_argv @ i @ + b@ 0 = then
+				counter @ 1 + counter !
+			end
+
+			i @ 1 + i !
+		end
+
+		counter @ 1 +
+	end
+end
