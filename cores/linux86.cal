@@ -372,8 +372,11 @@ version Time
 end
 
 version File
-	const FILE_READ 1
+	const FILE_READ  1
 	const FILE_WRITE 2
+	const SEEK_SET   0
+	const SEEK_CUR   1
+	const SEEK_END   2
 	const __linux86_const_O_RDONLY 0
 	const __linux86_const_O_WRONLY 1
 	const __linux86_const_O_RDWR 2
@@ -405,6 +408,7 @@ version File
 		u64 padding1
 		u64 st_mtime
 		u64 st_ctime
+		array 24 u8 pad
 	end
 
 	struct File
@@ -473,49 +477,36 @@ version File
 	end
 
 	func file@ begin
-		let cell count
-		let addr buf
-		let cell fd
-
-		count !
-		buf !
-		@ fd !
-
-		count @
-		buf @
-		fd @
-
-		__linux86_pop_rdi
-		__linux86_pop_rsi
-		__linux86_pop_rdx
+		__linux86_pop_rdx   # Length
+		__linux86_pop_rsi   # Buffer
+		@ __linux86_pop_rdi # Fd
 
 		asm
-			"xor rax, rax" # 0 = read
+			"mov rax, 0" # read
 			"syscall"
 		end
 	end
 
-	func file_size begin
-		let cell fd
-		@ fd !
-
-		let __linux86_stat statRes
-
-		statRes fd @
+	func file_seek begin
+		__linux86_pop_rdx
 		__linux86_pop_rsi
-		__linux86_pop_rdi
+		@ __linux86_pop_rdi
+
 		asm
-			"mov rax, 5" # fstat
+			"mov rax, 8" # lseek
 			"syscall"
 		end
+	end
 
-		__linux86_push_rax
-
-		if -1 = then
-			return
+	func file_peek begin
+		@ __linux86_pop_rdi
+		asm
+			"mov rdx, 1" # SEEK_CUR
+			"xor rsi, rsi"
+			"mov rax, 8" # lseek
+			"syscall"
 		end
-
-		statRes __linux86_stat.st_size + @
+		__linux86_push_rax
 	end
 end
 
