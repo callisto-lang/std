@@ -379,7 +379,10 @@ version File
 	const SEEK_END   2
 	const __linux86_const_O_RDONLY 0
 	const __linux86_const_O_WRONLY 1
-	const __linux86_const_O_RDWR 2
+	const __linux86_const_O_RDWR   2
+	const __linux86_const_O_CREAT  64
+	const __linux86_const_S_IRUSR  256
+	const __linux86_const_S_IWUSR  128
 
 	alias __linux86_dev_t     u64
 	alias __linux86_ino_t     u64
@@ -422,6 +425,22 @@ version File
 	1 stdout !
 	2 stderr !
 
+	func __linux86_create_file begin
+		# Path
+		__linux86_pop_rdi
+		# Flags
+		__linux86_const_O_CREAT __linux86_pop_rsi
+		# Mode
+		__linux86_const_S_IWUSR __linux86_const_S_IRUSR or __linux86_pop_rdx
+		asm
+			"mov rax, 2" # Open
+			"syscall"
+			"mov rdi, rax"
+			"mov rax, 3" # Close
+			"syscall"
+		end
+	end
+
 	func open_file begin
 		let addr path
 		let cell mode
@@ -432,6 +451,7 @@ version File
 		let cell i
 		let addr src
 		let addr dest
+		let cell flags
 		0 i !
 
 		path @ Array.elements + @ src !
@@ -451,25 +471,34 @@ version File
 		let cell modeFlag
 
 		if FILE_READ FILE_WRITE and mode @ = then
+			pathBytes __linux86_create_file
 			__linux86_const_O_RDWR modeFlag !
 		elseif FILE_READ mode @ = then
 			__linux86_const_O_RDONLY modeFlag !
 		elseif FILE_WRITE mode @ = then
+			pathBytes __linux86_create_file
 			__linux86_const_O_WRONLY modeFlag !
 		end
 
 		pathBytes
-		modeFlag @
+		flags @
+		modeFlag @ or
 
-		__linux86_pop_rdx
+		__linux86_pop_rsi
 		__linux86_pop_rdi
 		asm
 			"mov rax, 2" # open syscall
-			"xor rsi, rsi"
+			"xor rdx, rdx"
 			"syscall"
 		end
+	end
 
-		__linux86_push_rax
+	func close_file begin
+		@ __linux86_pop_rdi # FD
+		asm
+			"mov rax, 3" # Close
+			"syscall"
+		end
 	end
 
 	func file< begin
@@ -485,6 +514,19 @@ version File
 			"mov rax, 0" # read
 			"syscall"
 		end
+	end
+
+	func file! begin
+		__linux86_pop_rdx   # Length
+		__linux86_pop_rsi   # Buffer
+		@ __linux86_pop_rdi # Fd
+
+		asm
+			"mov rax, 1" # write
+			"syscall"
+		end
+
+		__linux86_push_rax
 	end
 
 	func file_seek begin
