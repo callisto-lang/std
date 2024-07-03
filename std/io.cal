@@ -48,3 +48,38 @@ end
 func new_line begin
 	'\r' '\n' printch printch
 end
+
+## ## printf
+## Parameters: ..., Array* fmt
+##
+## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
+## how they are written
+##
+## Formats:
+##
+## - `%s` - String (`Array*`)
+## - `%d` - Decimal (`cell`)
+func printf begin
+	let addr fmt
+	fmt !
+
+	let cell i
+	let u8   ch
+
+	while i @ fmt @ @ < do
+		if i @ fmt @ a@ '%' = then
+			i @ 1 + i !
+			i @ fmt @ a@ ch b!
+
+			if ch b@ 's' = then
+				printstr
+			elseif ch b@ 'd' = then
+				printdec
+			end
+		else
+			i @ fmt @ a@ printch
+		end
+
+		i @ 1 + i !
+	end
+end
