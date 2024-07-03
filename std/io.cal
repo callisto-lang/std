@@ -23,6 +23,32 @@ func printdec begin
 	end
 end
 
+func printhex_loop begin
+	if dup then
+		dup 16 / printhex_loop
+		16 %
+		if dup 9 <= then
+			48 + printch
+		else
+			55 + printch
+		end
+	else
+		drop
+	end
+end
+
+## ## printhex
+## Parameters: cell value
+##
+## Prints the given value as hexadecimal to stdout
+func printhex begin
+	if dup then
+		printhex_loop
+	else
+		drop 48 printch
+	end
+end
+
 ## ## printstr
 ## Parameters: Array* str
 ##
@@ -59,6 +85,7 @@ end
 ##
 ## - `%s` - String (`Array*`)
 ## - `%d` - Decimal (`cell`)
+## - `%X` - Hexadecimal (`cell`)
 func printf begin
 	let addr fmt
 	fmt !
@@ -75,6 +102,8 @@ func printf begin
 				printstr
 			elseif ch b@ 'd' = then
 				printdec
+			elseif ch b@ 'X' = then
+				printhex
 			end
 		else
 			i @ fmt @ a@ printch
