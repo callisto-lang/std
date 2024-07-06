@@ -553,24 +553,32 @@ version File
 end
 
 version Args
-	func core_get_arg begin
-		let cell which
-		let cell counter
-		let addr args
-		dup which !
-		counter !
-		__linux86_argv @ args !
+	version LibC
+		func core_get_arg begin
+			8 * __linux86_argv @ + @
+		end
+	end
 
-		if which @ 0 = then args @ return end
+	version not LibC
+		func core_get_arg begin
+			let cell which
+			let cell counter
+			let addr args
+			dup which !
+			counter !
+			__linux86_argv @ args !
 
-		while true do
-			if args @ b@ 0 = then
-				counter @ 1 - counter !
+			if which @ 0 = then args @ return end
 
-				if counter @ 0 = then args @ 1 + return end
+			while true do
+				if args @ b@ 0 = then
+					counter @ 1 - counter !
+
+					if counter @ 0 = then args @ 1 + return end
+				end
+
+				args @ 1 + args !
 			end
-
-			args @ 1 + args !
 		end
 	end
 
