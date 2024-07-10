@@ -13,6 +13,18 @@ func a< begin
 	src @ Array.elements + @ var @ Array.elements + !
 end
 
+## ## create_array
+## Parameters: usize length, usize memberSize, addr elements, Array* dest
+##
+## Writes the Array fields to `dest`
+func create_array begin
+	let addr var
+	var !
+	var @ Array.elements + !
+	var @ Array.memberSize + !
+	var @ !
+end
+
 ## ## a@
 ## Parameters: cell offset, Array* array
 ##
