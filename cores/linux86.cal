@@ -224,7 +224,7 @@ func swap begin
 	__linux86_pop_rbx
 	__linux86_pop_rax
 	__linux86_push_rbx
-	__linux86_pop_rax
+	__linux86_push_rax
 end
 
 func + begin
