@@ -1,0 +1,346 @@
+let addr __linux_argv
+let cell __linux_argc
+
+version LibC
+	inline __x86_64_program_init begin asm
+		"mov [__global___underscore____underscore__linux__underscore__argc], edi"
+		"mov [__global___underscore____underscore__linux__underscore__argv], rsi"
+	end end
+end
+
+version not LibC
+	inline __x86_64_program_init begin asm
+		"mov rax, [rsi + 8]"
+		"mov [__global___underscore____underscore__linux__underscore__argv], rax"
+		"mov rax, [rsi]"
+		"mov [__global___underscore____underscore__linux__underscore__argc], rax"
+	end end
+end
+
+inline __x86_64_program_exit begin asm
+	"mov rax, 60"
+	"mov rdi, 0"
+	"syscall"
+end end
+
+version IO
+	func printch begin asm
+		"sub r15, 8"
+		"mov rsi, r15"
+		"mov rax, 1"
+		"mov rdi, 1"
+		"mov rdx, 1"
+		"syscall"
+	end end
+end
+
+version Exit
+	func exit begin
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 60"
+			"syscall"
+		end
+	end
+end
+
+version Time
+	func get_epoch_time begin
+		asm
+			"mov rax, 201" # time syscall
+			"xor rdi, rdi"
+			"syscall"
+		end
+		__x86_64_push_rax # stuff is returned with rax right?
+	end
+end
+
+version File
+	const FILE_READ  1
+	const FILE_WRITE 2
+	const SEEK_SET   0
+	const SEEK_CUR   1
+	const SEEK_END   2
+	const __linux_const_O_RDONLY 0
+	const __linux_const_O_WRONLY 1
+	const __linux_const_O_RDWR   2
+	const __linux_const_O_CREAT  64
+	const __linux_const_S_IRUSR  256
+	const __linux_const_S_IWUSR  128
+
+	alias __linux_dev_t     u64
+	alias __linux_ino_t     u64
+	alias __linux_mode_t    u32
+	alias __linux_nlink_t   u64
+	alias __linux_uid_t     u32
+	alias __linux_gid_t     u32
+	alias __linux_off_t     u64
+	alias __linux_time_t    u64
+	alias __linux_blksize_t u64
+	alias __linux_blkcnt_t  u64
+
+	struct __linux_stat
+		u64 st_dev
+		u64 st_ino
+		u64 st_nlink
+		u32 st_mode
+		u32 st_uid
+		u32 st_gid
+		u32 padding
+		u64 st_rdev
+		u64 st_size
+		u64 st_blksize
+		u64 st_blocks
+		u64 st_atime
+		u64 padding1
+		u64 st_mtime
+		u64 st_ctime
+		array 24 u8 pad
+	end
+
+	struct File
+		cell fd
+	end
+
+	let File stdin
+	let File stdout
+	let File stderr
+	0 stdin !
+	1 stdout !
+	2 stderr !
+
+	func __linux_create_file begin
+		# Path
+		__x86_64_pop_rdi
+		# Flags
+		__linux_const_O_CREAT __x86_64_pop_rsi
+		# Mode
+		__linux_const_S_IWUSR __linux_const_S_IRUSR or __x86_64_pop_rdx
+		asm
+			"mov rax, 2" # Open
+			"syscall"
+			"mov rdi, rax"
+			"mov rax, 3" # Close
+			"syscall"
+		end
+	end
+
+	func open_file begin
+		let addr path
+		let cell mode
+		mode !
+		path !
+
+		let array 4096 u8 pathBytes
+		let cell i
+		let addr src
+		let addr dest
+		let cell flags
+		0 i !
+
+		path @ Array.elements + @ src !
+		pathBytes dest !
+
+		while i @ path @ @ < do
+			src @ b@ dest @ b!
+
+			i @ 1 + i !
+			src @ 1 + src !
+			dest @ 1 + dest !
+		end
+
+		# just in case
+		0 pathBytes 4095 + b!
+
+		let cell modeFlag
+
+		if FILE_READ FILE_WRITE and mode @ = then
+			pathBytes __linux_create_file
+			__linux_const_O_RDWR modeFlag !
+		elseif FILE_READ mode @ = then
+			__linux_const_O_RDONLY modeFlag !
+		elseif FILE_WRITE mode @ = then
+			pathBytes __linux_create_file
+			__linux_const_O_WRONLY modeFlag !
+		end
+
+		pathBytes
+		flags @
+		modeFlag @ or
+
+		__x86_64_pop_rsi
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 2" # open syscall
+			"xor rdx, rdx"
+			"syscall"
+		end
+	end
+
+	func close_file begin
+		@ __x86_64_pop_rdi # FD
+		asm
+			"mov rax, 3" # Close
+			"syscall"
+		end
+	end
+
+	func file< begin
+		!
+	end
+
+	func file@ begin
+		__x86_64_pop_rdx   # Length
+		__x86_64_pop_rsi   # Buffer
+		@ __x86_64_pop_rdi # Fd
+
+		asm
+			"mov rax, 0" # read
+			"syscall"
+		end
+	end
+
+	func file! begin
+		__x86_64_pop_rdx   # Length
+		__x86_64_pop_rsi   # Buffer
+		@ __x86_64_pop_rdi # Fd
+
+		asm
+			"mov rax, 1" # write
+			"syscall"
+		end
+
+		__x86_64_push_rax
+	end
+
+	func file_seek begin
+		__x86_64_pop_rdx
+		__x86_64_pop_rsi
+		@ __x86_64_pop_rdi
+
+		asm
+			"mov rax, 8" # lseek
+			"syscall"
+		end
+	end
+
+	func file_peek begin
+		@ __x86_64_pop_rdi
+		asm
+			"mov rdx, 1" # SEEK_CUR
+			"xor rsi, rsi"
+			"mov rax, 8" # lseek
+			"syscall"
+		end
+		__x86_64_push_rax
+	end
+end
+
+version Args
+	version LibC
+		func core_get_arg begin
+			8 * __linux_argv @ + @
+		end
+	end
+
+	version not LibC
+		func core_get_arg begin
+			let cell which
+			let cell counter
+			let addr args
+			dup which !
+			counter !
+			__linux_argv @ args !
+
+			if which @ 0 = then args @ return end
+
+			while true do
+				if args @ b@ 0 = then
+					counter @ 1 - counter !
+
+					if counter @ 0 = then args @ 1 + return end
+				end
+
+				args @ 1 + args !
+			end
+		end
+	end
+
+	inline core_get_arg_length begin __linux_argc @ end
+end
+
+version Heap
+	version LibC
+		extern C addr malloc usize end
+		extern C void free addr end
+	end
+
+	version not LibC
+		const __linux_PROT_READ     1
+		const __linux_PROT_WRITE    2
+		const __linux_MAP_PRIVATE   2
+		const __linux_MAP_ANONYMOUS 32
+		const __linux_MREMAP_MAYMOVE 1
+		const __linux_MREMAP_FIXED   2
+
+		func __linux_mmap begin
+			__x86_64_pop_r9  # pgoff
+			__x86_64_pop_r8  # fd
+			__x86_64_pop_r10 # flags
+			__x86_64_pop_rdx # prot
+			__x86_64_pop_rsi # len
+			__x86_64_pop_rdi # addr
+
+			asm
+				"mov rax, 9" # mmap syscall
+				"syscall"
+			end
+
+			__x86_64_push_rax
+		end
+
+		func malloc begin
+			let cell sz
+			sz !
+
+			0 sz @ 8 + __linux_PROT_READ __linux_PROT_WRITE or
+			__linux_MAP_PRIVATE __linux_MAP_ANONYMOUS or -1 0 __linux_mmap
+
+			dup sz @ swap ! # write size
+			8 +
+		end
+
+		func __linux_mremap begin
+			__x86_64_pop_r8  # new_addr
+			__x86_64_pop_r10 # flags
+			__x86_64_pop_rdx # new_len
+			__x86_64_pop_rsi # old_len
+			__x86_64_pop_rdi # addr
+
+			asm
+				"mov rax, 25" # mremap syscall
+				"syscall"
+			end
+
+			__x86_64_push_rax
+		end
+
+
+
+		func __linux_munmap begin
+			__x86_64_pop_rsi # length
+			__x86_64_pop_rdi # addr
+
+			asm
+				"mov rax, 11" # munmap syscall
+				"syscall"
+			end
+
+			__x86_64_push_rax
+		end
+
+		func free begin
+			dup 8 - @ swap 8 - swap 8 + __linux_munmap
+		end
+	end
+end

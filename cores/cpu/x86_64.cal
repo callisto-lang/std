@@ -1,0 +1,351 @@
+inline __x86_64_pop_rdi begin asm
+	"sub r15, 8"
+	"mov rdi, [r15]"
+end end
+
+inline __x86_64_pop_rsi begin asm
+	"sub r15, 8"
+	"mov rsi, [r15]"
+end end
+
+inline __x86_64_pop_rax begin asm
+	"sub r15, 8"
+	"mov rax, [r15]"
+end end
+
+inline __x86_64_pop_rbx begin asm
+	"sub r15, 8"
+	"mov rbx, [r15]"
+end end
+
+inline __x86_64_pop_rcx begin asm
+	"sub r15, 8"
+	"mov rcx, [r15]"
+end end
+
+inline __x86_64_pop_rdx begin asm
+	"sub r15, 8"
+	"mov rdx, [r15]"
+end end
+
+inline __x86_64_pop_r10 begin asm
+	"sub r15, 8"
+	"mov r10, [r15]"
+end end
+
+inline __x86_64_pop_r9 begin asm
+	"sub r15, 8"
+	"mov r9, [r15]"
+end end
+
+inline __x86_64_pop_r8 begin asm
+	"sub r15, 8"
+	"mov r8, [r15]"
+end end
+
+inline __x86_64_push_rax begin asm
+	"mov [r15], rax"
+	"add r15, 8"
+end end
+
+inline __x86_64_push_rbx begin asm
+	"mov [r15], rbx"
+	"add r15, 8"
+end end
+
+inline __x86_64_push_rdx begin asm
+	"mov [r15], rdx"
+	"add r15, 8"
+end end
+
+func = begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"cmp rax, rbx"
+		"je .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func > begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"cmp rax, rbx"
+		"jg .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func >= begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"cmp rax, rbx"
+		"jge .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func < begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"cmp rax, rbx"
+		"jl .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func <= begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"cmp rax, rbx"
+		"jle .push_1"
+		"mov qword [r15], 0"
+		"add r15, 8"
+		"ret"
+		".push_1:"
+		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"add r15, 8"
+	end
+end
+
+func @ begin
+	__x86_64_pop_rbx
+	asm
+		"mov rax, [rbx]"
+	end
+	__x86_64_push_rax
+end
+
+func ! begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"mov [rbx], rax"
+	end
+end
+
+func b@ begin
+	__x86_64_pop_rbx
+	asm
+		"xor rax, rax"
+		"mov al, [rbx]"
+	end
+	__x86_64_push_rax
+end
+
+func b! begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"mov [rbx], al"
+	end
+end
+
+func w@ begin
+	__x86_64_pop_rbx
+	asm
+		"xor rax, rax"
+		"mov ax, [rbx]"
+	end
+	__x86_64_push_rax
+end
+
+func w! begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"mov [rbx], ax"
+	end
+end
+
+func d@ begin
+	__x86_64_pop_rbx
+	asm
+		"xor rax, rax"
+		"mov eax, [rbx]"
+	end
+	__x86_64_push_rax
+end
+
+func d! begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"mov [rbx], eax"
+	end
+end
+
+func dup begin
+	__x86_64_pop_rax
+	__x86_64_push_rax
+	__x86_64_push_rax
+end
+
+func drop begin asm
+	"sub r15, 8"
+end end
+
+func swap begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	__x86_64_push_rbx
+	__x86_64_push_rax
+end
+
+func + begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"add rax, rbx"
+	end
+	__x86_64_push_rax
+end
+
+func s+ begin + end
+
+func - begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"sub rax, rbx"
+	end
+	__x86_64_push_rax
+end
+
+func s- begin - end
+
+func * begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"mul rbx"
+	end
+	__x86_64_push_rax
+end
+
+func s* begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"imul rbx"
+	end
+	__x86_64_push_rax
+end
+
+func / begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"xor rdx, rdx"
+		"div rbx"
+	end
+	__x86_64_push_rax
+end
+
+func s/ begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"xor rdx, rdx"
+		"idiv rbx"
+	end
+	__x86_64_push_rax
+end
+
+func % begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"xor rdx, rdx"
+		"div rbx"
+	end
+	__x86_64_push_rdx
+end
+
+func s% begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"xor rdx, rdx"
+		"idiv rbx"
+	end
+	__x86_64_push_rdx
+end
+
+func and begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"and rax, rbx"
+	end
+	__x86_64_push_rax
+end
+
+func or begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"or rax, rbx"
+	end
+	__x86_64_push_rax
+end
+
+func xor begin
+	__x86_64_pop_rbx
+	__x86_64_pop_rax
+	asm
+		"xor rax, rbx"
+	end
+	__x86_64_push_rax
+end
+
+func not begin
+	__x86_64_pop_rax
+	asm
+		"not rax"
+	end
+	__x86_64_push_rax
+end
+
+func << begin
+	__x86_64_pop_rcx
+	__x86_64_pop_rax
+	asm
+		"shl rax, cl"
+	end
+	__x86_64_push_rax
+end
+
+func >> begin
+	__x86_64_pop_rcx
+	__x86_64_pop_rax
+	asm
+		"shr rax, cl"
+	end
+	__x86_64_push_rax
+end

@@ -1,15 +1,24 @@
-## This header automatically includes the correct core for the compiler's set target
+###### CPU ######
 
 # Real mode x86 core
 version RM86
-	include "rm86.cal"
+	include "cpu/rm86.cal"
 end
 
-# Linux x86_64 core
-version Linux86
-	include "linux86.cal"
+# x86_64 core
+version x86_64
+	include "cpu/x86_64.cal"
 end
 
 version UXN
 	include "uxn.cal"
 end
+
+###### OS ######
+version RM86 version DOS
+	include "os/rm86_dos.cal"
+end end
+
+version x86_64 version Linux
+	include "os/x86_64_linux.cal"
+end end

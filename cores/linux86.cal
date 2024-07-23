@@ -32,6 +32,21 @@ inline __linux86_pop_rdx begin asm
 	"mov rdx, [r15]"
 end end
 
+inline __linux86_pop_r10 begin asm
+	"sub r15, 8"
+	"mov r10, [r15]"
+end end
+
+inline __linux86_pop_r9 begin asm
+	"sub r15, 8"
+	"mov r9, [r15]"
+end end
+
+inline __linux86_pop_r8 begin asm
+	"sub r15, 8"
+	"mov r8, [r15]"
+end end
+
 inline __linux86_push_rax begin asm
 	"mov [r15], rax"
 	"add r15, 8"
@@ -583,4 +598,80 @@ version Args
 	end
 
 	inline core_get_arg_length begin __linux86_argc @ end
+end
+
+version Heap
+	version LibC
+		extern C addr malloc usize end
+		extern C void free addr end
+	end
+
+	version not LibC
+		const __linux86_PROT_READ     1
+		const __linux86_PROT_WRITE    2
+		const __linux86_MAP_PRIVATE   2
+		const __linux86_MAP_ANONYMOUS 32
+		const __linux86_MREMAP_MAYMOVE 1
+		const __linux86_MREMAP_FIXED   2
+
+		func __linux86_mmap begin
+			__linux86_pop_r9  # pgoff
+			__linux86_pop_r8  # fd
+			__linux86_pop_r10 # flags
+			__linux86_pop_rdx # prot
+			__linux86_pop_rsi # len
+			__linux86_pop_rdi # addr
+
+			asm
+				"mov rax, 9" # mmap syscall
+				"syscall"
+			end
+
+			__linux86_push_rax
+		end
+
+		func malloc begin
+			let cell sz
+			sz !
+
+			0 sz @ 8 + __linux86_PROT_READ __linux86_PROT_WRITE or
+			__linux86_MAP_PRIVATE __linux86_MAP_ANONYMOUS or -1 0 __linux86_mmap
+
+			dup sz @ swap ! # write size
+			8 +
+		end
+
+		func __linux86_mremap begin
+			__linux86_pop_r8  # new_addr
+			__linux86_pop_r10 # flags
+			__linux86_pop_rdx # new_len
+			__linux86_pop_rsi # old_len
+			__linux86_pop_rdi # addr
+
+			asm
+				"mov rax, 25" # mremap syscall
+				"syscall"
+			end
+
+			__linux86_push_rax
+		end
+
+
+
+		func __linux86_munmap begin
+			__linux86_pop_rsi # length
+			__linux86_pop_rdi # addr
+
+			asm
+				"mov rax, 11" # munmap syscall
+				"syscall"
+			end
+
+			__linux86_push_rax
+		end
+
+		func free begin
+			dup 8 - @ swap 8 - swap 8 + __linux86_munmap
+		end
+	end
 end
