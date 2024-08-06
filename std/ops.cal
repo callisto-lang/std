@@ -24,17 +24,17 @@ func memcopy begin
 	let addr dest
 	let addr src
 	let cell n
-	n !
-	src !
-	dest !
+	-> n
+	-> src
+	-> dest
 
 	let cell i
-	0 i !
+	0 -> i
 
-	while i @ n @ < do
-		src @ b@ dest @ b!
-		i @ 1 + i !
-		dest @ 1 + dest !
-		src @ 1 + src !
+	while i n < do
+		src b@ dest b!
+		i 1 + -> i
+		dest 1 + -> dest
+		src 1 + -> src
 	end
 end

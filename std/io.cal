@@ -58,12 +58,12 @@ func printstr begin
 	let usize length
 	let usize i
 
-	arr !
-	arr @ @ length !
+	-> arr
+	arr @ -> length
 
-	while i @ length @ < do
-		i @ arr @ a@ printch
-		i @ 1 + i !
+	while i length < do
+		i arr a@ printch
+		i 1 + -> i
 	end
 end
 
@@ -88,27 +88,27 @@ end
 ## - `%X` - Hexadecimal (`cell`)
 func printf begin
 	let addr fmt
-	fmt !
+	-> fmt
 
 	let cell i
 	let u8   ch
 
-	while i @ fmt @ @ < do
-		if i @ fmt @ a@ '%' = then
-			i @ 1 + i !
-			i @ fmt @ a@ ch b!
+	while i fmt @ < do
+		if i fmt a@ '%' = then
+			i 1 + -> i
+			i fmt @ a@ -> ch
 
-			if ch b@ 's' = then
+			if ch 's' = then
 				printstr
-			elseif ch b@ 'd' = then
+			elseif ch 'd' = then
 				printdec
-			elseif ch b@ 'X' = then
+			elseif ch 'X' = then
 				printhex
 			end
 		else
-			i @ fmt @ a@ printch
+			i fmt a@ printch
 		end
 
-		i @ 1 + i !
+		i 1 + -> i
 	end
 end

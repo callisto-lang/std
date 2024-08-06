@@ -10,15 +10,15 @@ requires Args
 ## Gets the `which`th command line argument, and saves it in `ret`
 func get_arg begin
 	let addr arr
-	arr !
+	-> arr
 	let cell which
-	which !
+	-> which
 	let addr argStr
-	which @ core_get_arg argStr !
+	which core_get_arg -> argStr
 
-	argStr @ ntstr_length arr @ Array.length + !
-	1 arr @ Array.memberSize + !
-	argStr @ arr @ Array.elements + !
+	argStr ntstr_length arr Array.length + !
+	1 arr Array.memberSize + !
+	argStr arr Array.elements + !
 end
 
 ## ## get_args_length

@@ -4,11 +4,11 @@
 ## Prints a null-terminated string to stdout from the given pointer
 func printntstr begin
 	let addr str
-	str !
+	-> str
 
-	while str @ b@ do
-		str @ b@ printch
-		str @ 1 + str !
+	while str b@ do
+		str b@ printch
+		str 1 + -> str
 	end
 end
 
@@ -18,14 +18,14 @@ end
 ## Returns the length of a null-terminated string
 func ntstr_length begin
 	let addr str
-	str !
+	-> str
 	let cell ret
-	0 ret !
+	0 -> ret
 
-	while str @ b@ do
-		ret @ 1 + ret !
-		str @ 1 + str !
+	while str b@ do
+		ret 1 + -> ret
+		str 1 + -> str
 	end
 
-	ret @
+	ret
 end

@@ -128,45 +128,45 @@ version File
 	func open_file begin
 		let addr path
 		let cell mode
-		mode !
-		path !
+		-> mode
+		-> path
 
 		let array 4096 u8 pathBytes
 		let cell i
 		let addr src
 		let addr dest
 		let cell flags
-		0 i !
+		0 -> i
 
-		path @ Array.elements + @ src !
-		pathBytes dest !
+		path Array.elements + @ -> src
+		pathBytes -> dest
 
-		while i @ path @ @ < do
-			src @ b@ dest @ b!
+		while i path @ < do
+			src b@ dest b!
 
-			i @ 1 + i !
-			src @ 1 + src !
-			dest @ 1 + dest !
+			i 1 + -> i
+			src 1 + -> src
+			dest 1 + -> dest
 		end
 
 		# just in case
-		0 pathBytes 4095 + b!
+		0 &pathBytes 4095 + b!
 
 		let cell modeFlag
 
-		if FILE_READ FILE_WRITE and mode @ = then
+		if FILE_READ FILE_WRITE and mode = then
 			pathBytes __linux_create_file
-			__linux_const_O_RDWR modeFlag !
-		elseif FILE_READ mode @ = then
-			__linux_const_O_RDONLY modeFlag !
-		elseif FILE_WRITE mode @ = then
+			__linux_const_O_RDWR -> modeFlag
+		elseif FILE_READ mode = then
+			__linux_const_O_RDONLY -> modeFlag
+		elseif FILE_WRITE mode = then
 			pathBytes __linux_create_file
-			__linux_const_O_WRONLY modeFlag !
+			__linux_const_O_WRONLY -> modeFlag
 		end
 
-		pathBytes
-		flags @
-		modeFlag @ or
+		&pathBytes
+		flags
+		modeFlag or
 
 		__x86_64_pop_rsi
 		__x86_64_pop_rdi
@@ -239,7 +239,7 @@ end
 version Args
 	version LibC
 		func core_get_arg begin
-			8 * __linux_argv @ + @
+			8 * __linux_argv + @
 		end
 	end
 
@@ -248,25 +248,25 @@ version Args
 			let cell which
 			let cell counter
 			let addr args
-			dup which !
-			counter !
-			__linux_argv @ args !
+			dup -> which
+			-> counter
+			__linux_argv -> args
 
-			if which @ 0 = then args @ return end
+			if which 0 = then args return end
 
 			while true do
-				if args @ b@ 0 = then
-					counter @ 1 - counter !
+				if args b@ 0 = then
+					counter 1 - -> counter
 
-					if counter @ 0 = then args @ 1 + return end
+					if counter 0 = then args 1 + return end
 				end
 
-				args @ 1 + args !
+				args 1 + -> args
 			end
 		end
 	end
 
-	inline core_get_arg_length begin __linux_argc @ end
+	inline core_get_arg_length begin __linux_argc end
 end
 
 version Heap
@@ -301,12 +301,12 @@ version Heap
 
 		func malloc begin
 			let cell sz
-			sz !
+			-> sz
 
-			0 sz @ 8 + __linux_PROT_READ __linux_PROT_WRITE or
+			0 sz 8 + __linux_PROT_READ __linux_PROT_WRITE or
 			__linux_MAP_PRIVATE __linux_MAP_ANONYMOUS or -1 0 __linux_mmap
 
-			dup sz @ swap ! # write size
+			dup sz swap ! # write size
 			8 +
 		end
 
