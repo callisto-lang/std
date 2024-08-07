@@ -1,7 +1,7 @@
 ## ## global std_rand_next
 ## Cell variable containing the random number generator's state
 let cell std_rand_next
-1 std_rand_next !
+1 -> std_rand_next
 
 ## ## const RAND_MAX
 ## Contains the maximum return value of rand
