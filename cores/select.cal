@@ -22,3 +22,10 @@ end end
 version x86_64 version Linux
 	include "os/x86_64_linux.cal"
 end end
+
+###### CallistoScript ######
+version CallistoScript
+	version Lua
+		include "cs/lua.cal"
+	end
+end

@@ -40,24 +40,34 @@ func a@ begin
 	arr Array.memberSize + @ offset * -> offset
 	arr Array.elements + @ offset +
 
-	if arr Array.memberSize + @ 1 = then
-		b@
-	elseif arr Array.memberSize + @ 2 = then
-		version 16Bit
-			w@
+	version CallistoScript
+		if arr Array.memberSize + @ 1 = then
+			@
+		else
+			return # TODO!!!
 		end
-		version not 16Bit
-			# TODO!!!
+	end
+
+	version not CallistoScript
+		if arr Array.memberSize + @ 1 = then
+			b@
+		elseif arr Array.memberSize + @ 2 = then
+			version 16Bit
+				w@
+			end
+			version not 16Bit
+				# TODO!!!
+			end
+		elseif arr Array.memberSize + @ 4 = then
+			version 32Bit
+				d@
+			end
+			version not 32Bit
+				# TODO!!!
+			end
+		else
+			@
 		end
-	elseif arr Array.memberSize + @ 4 = then
-		version 32Bit
-			d@
-		end
-		version not 32Bit
-			# TODO!!!
-		end
-	else
-		@
 	end
 end
 
@@ -77,24 +87,34 @@ func a! begin
 	arr Array.memberSize + @ offset * -> offset
 	arr Array.elements + @ offset +
 
-	if arr Array.memberSize + @ 1 = then
-		b!
-	elseif arr Array.memberSize + @ 2 = then
-		version 16Bit
-			w@
+	version CallistoScript
+		if arr Array.memberSize + @ 1 = then
+			!
+		else
+			return # TODO!!!
 		end
-		version not 16Bit
-			# TODO!!!
+	end
+
+	version not CallistoScript
+		if arr Array.memberSize + @ 1 = then
+			b!
+		elseif arr Array.memberSize + @ 2 = then
+			version 16Bit
+				w@
+			end
+			version not 16Bit
+				# TODO!!!
+			end
+		elseif arr Array.memberSize + @ 4 = then
+			version 32Bit
+				d@
+			end
+			version not 32Bit
+				# TODO!!!
+			end
+		else
+			!
 		end
-	elseif arr Array.memberSize + @ 4 = then
-		version 32Bit
-			d@
-		end
-		version not 32Bit
-			# TODO!!!
-		end
-	else
-		!
 	end
 end
 

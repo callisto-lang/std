@@ -91,7 +91,7 @@ func printf begin
 	-> fmt
 
 	let cell i
-	let u8   ch
+	let cell ch
 
 	while i fmt @ < do
 		if i fmt a@ '%' = then
