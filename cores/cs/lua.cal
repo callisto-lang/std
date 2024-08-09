@@ -158,7 +158,7 @@ func / begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
-		"regA = regA / regB"
+		"regA = regA // regB"
 	end
 	__lua_push_a
 end
@@ -234,6 +234,6 @@ version IO
 		__lua_pop_a
 		asm
 			"io.write(string.char(regA));"
-		end	
+		end
 	end
 end
