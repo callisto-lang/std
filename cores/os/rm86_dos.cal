@@ -4,9 +4,9 @@ let addr argv
 inline __rm86_program_init begin asm
 	"xor ah, ah"
 	"mov al, [0x80]"
-	"mov [__global___rm86_arglen], ax"
+	"mov [__global___us____us__rm86__us__arglen], ax"
 	"mov ax, 0x81"
-	"mov [__global___rm86_argv], ax"
+	"mov [__global___us____us__rm86__us__argv], ax"
 end end
 
 inline __rm86_program_exit begin

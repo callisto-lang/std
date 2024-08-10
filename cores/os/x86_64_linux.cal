@@ -3,17 +3,17 @@ let cell __linux_argc
 
 version LibC
 	inline __x86_64_program_init begin asm
-		"mov [__global___linux_argc], edi"
-		"mov [__global___linux_argv], rsi"
+		"mov [__global___us____us__linux__us__argc], edi"
+		"mov [__global___us____us__linux__us__argv], rsi"
 	end end
 end
 
 version not LibC
 	inline __x86_64_program_init begin asm
 		"mov rax, [rsi + 8]"
-		"mov [__global___linux_argv], rax"
+		"mov [__global___us____us__linux__us__argv], rax"
 		"mov rax, [rsi]"
-		"mov [__global___linux_argc], rax"
+		"mov [__global___us____us__linux__us__argc], rax"
 	end end
 end
 

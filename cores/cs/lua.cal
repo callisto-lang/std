@@ -1,0 +1,255 @@
+inline __lua_pop_a begin asm
+	"dsp = dsp - 1;"
+	"regA = mem[dsp];"
+end end
+
+inline __lua_pop_b begin asm
+	"dsp = dsp - 1;"
+	"regB = mem[dsp];"
+end end
+
+inline __lua_push_a begin asm
+	"mem[dsp] = regA;"
+	"dsp = dsp + 1;"
+end end
+
+inline __lua_push_b begin asm
+	"mem[dsp] = regB;"
+	"dsp = dsp + 1;"
+end end
+
+func = begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"if regA == regB then"
+		"    mem[dsp] = -1"
+		"    dsp = dsp + 1"
+		"else"
+		"    mem[dsp] = 0"
+		"    dsp = dsp + 1"
+		"end"
+	end
+end
+
+func > begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"if regA > regB then"
+		"    mem[dsp] = -1"
+		"    dsp = dsp + 1"
+		"else"
+		"    mem[dsp] = 0"
+		"    dsp = dsp + 1"
+		"end"
+	end
+end
+
+func >= begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"if regA >= regB then"
+		"    mem[dsp] = -1"
+		"    dsp = dsp + 1"
+		"else"
+		"    mem[dsp] = 0"
+		"    dsp = dsp + 1"
+		"end"
+	end
+end
+
+func < begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"if regA < regB then"
+		"    mem[dsp] = -1"
+		"    dsp = dsp + 1"
+		"else"
+		"    mem[dsp] = 0"
+		"    dsp = dsp + 1"
+		"end"
+	end
+end
+
+func <= begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"if regA <= regB then"
+		"    mem[dsp] = -1"
+		"    dsp = dsp + 1"
+		"else"
+		"    mem[dsp] = 0"
+		"    dsp = dsp + 1"
+		"end"
+	end
+end
+
+func @ begin
+	__lua_pop_a
+	asm
+		"regA = mem[regA]"
+	end
+	__lua_push_a
+end
+
+func ! begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"mem[regB] = regA"
+	end
+end
+
+func dup begin
+	__lua_pop_a
+	__lua_push_a
+	__lua_push_a
+end
+
+func drop begin asm
+	"dsp = dsp - 1"
+end end
+
+func swap begin
+	__lua_pop_a
+	__lua_pop_b
+	__lua_push_a
+	__lua_push_b
+end
+
+func + begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA + regB"
+	end
+	__lua_push_a
+end
+
+inline s+ begin + end
+
+func - begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA - regB"
+	end
+	__lua_push_a
+end
+
+inline s- begin - end
+
+func * begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA * regB"
+	end
+	__lua_push_a
+end
+
+inline s* begin * end
+
+func / begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA // regB"
+	end
+	__lua_push_a
+end
+
+inline s/ begin / end
+
+func % begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA % regB"
+	end
+	__lua_push_a
+end
+
+inline s% begin % end
+
+func and begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA and regB"
+	end
+	__lua_push_a
+end
+
+func or begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA or regB"
+	end
+	__lua_push_a
+end
+
+func xor begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA ~ regB"
+	end
+	__lua_push_a
+end
+
+func not begin
+	__lua_pop_a
+	asm
+		"regA = ~regA"
+	end
+	__lua_push_a
+end
+
+func << begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA << regB"
+	end
+	__lua_push_a
+end
+
+func >> begin
+	__lua_pop_b
+	__lua_pop_a
+	asm
+		"regA = regA >> regB"
+	end
+	__lua_push_a
+end
+
+version IO
+	func printch begin
+		__lua_pop_a
+		asm
+			"io.write(string.char(regA));"
+		end
+	end
+end
+
+version Exit
+	func exit begin asm
+		"os.exit()"
+	end end
+end
+
+version Time
+	func get_epoch_time begin
+		asm
+			"regA = os.time(os.date('!*t'))"
+		end
+
+		__lua_push_a
+	end
+end
