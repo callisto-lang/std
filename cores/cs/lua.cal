@@ -237,3 +237,19 @@ version IO
 		end
 	end
 end
+
+version Exit
+	func exit begin asm
+		"os.exit()"
+	end end
+end
+
+version Time
+	func get_epoch_time begin
+		asm
+			"regA = os.time(os.date('!*t'))"
+		end
+
+		__lua_push_a
+	end
+end
