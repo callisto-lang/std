@@ -180,7 +180,7 @@ func and begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
-		"regA = regA and regB"
+		"regA = regA & regB"
 	end
 	__lua_push_a
 end
@@ -189,7 +189,7 @@ func or begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
-		"regA = regA or regB"
+		"regA = regA | regB"
 	end
 	__lua_push_a
 end
