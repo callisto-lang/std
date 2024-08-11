@@ -19,9 +19,15 @@ version RM86 version DOS
 	include "os/rm86_dos.cal"
 end end
 
-version x86_64 version Linux
-	include "os/x86_64_linux.cal"
-end end
+version x86_64
+	version Linux
+		include "os/x86_64_linux.cal"
+	end
+
+	version OSX
+		include "os/x86_64_osx.cal"
+	end
+end
 
 ###### CallistoScript ######
 version CallistoScript
