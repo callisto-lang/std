@@ -1,0 +1,28 @@
+inline __x86_64_program_init begin end
+
+inline __x86_64_program_exit begin asm
+	"mov rax, 0x2000001"
+	"mov rdi, 0"
+	"syscall"
+end end
+
+version IO
+	func printch begin asm
+		"sub r15, 8"
+		"mov rax, 0x2000004"
+		"mov rdi, 1"
+		"mov rsi, r15"
+		"mov rdx, 1"
+		"syscall"
+	end end
+end
+
+version Exit
+	func exir begin
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 0x2000001"
+			"syscall"
+		end
+	end
+end
