@@ -1,4 +1,10 @@
-inline __x86_64_program_init begin end
+let addr __osx_argv
+let cell __osx_argc
+
+inline __x86_64_program_init begin asm
+	"mov [__global___us____us__osx__us__argc], edi"
+	"mov [__global___us____us__osx__us__argv], rsi"
+end end
 
 inline __x86_64_program_exit begin asm
 	"mov rax, 0x2000001"
@@ -17,8 +23,16 @@ version IO
 	end end
 end
 
+version Args
+	func core_get_arg begin
+		8 * __osx_argv + @
+	end
+
+	inline core_get_arg_length begin __osx_argc end
+end
+
 version Exit
-	func exir begin
+	func exit begin
 		__x86_64_pop_rdi
 		asm
 			"mov rax, 0x2000001"
