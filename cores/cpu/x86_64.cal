@@ -133,7 +133,7 @@ func <= begin
 	end
 end
 
-func @ begin
+inline @ begin
 	__x86_64_pop_rbx
 	asm
 		"mov rax, [rbx]"
@@ -141,7 +141,7 @@ func @ begin
 	__x86_64_push_rax
 end
 
-func ! begin
+inline ! begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -149,7 +149,7 @@ func ! begin
 	end
 end
 
-func b@ begin
+inline b@ begin
 	__x86_64_pop_rbx
 	asm
 		"xor rax, rax"
@@ -158,7 +158,7 @@ func b@ begin
 	__x86_64_push_rax
 end
 
-func b! begin
+inline b! begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -166,7 +166,7 @@ func b! begin
 	end
 end
 
-func w@ begin
+inline w@ begin
 	__x86_64_pop_rbx
 	asm
 		"xor rax, rax"
@@ -175,7 +175,7 @@ func w@ begin
 	__x86_64_push_rax
 end
 
-func w! begin
+inline w! begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -183,7 +183,7 @@ func w! begin
 	end
 end
 
-func d@ begin
+inline d@ begin
 	__x86_64_pop_rbx
 	asm
 		"xor rax, rax"
@@ -192,7 +192,7 @@ func d@ begin
 	__x86_64_push_rax
 end
 
-func d! begin
+inline d! begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -200,24 +200,24 @@ func d! begin
 	end
 end
 
-func dup begin
+inline dup begin
 	__x86_64_pop_rax
 	__x86_64_push_rax
 	__x86_64_push_rax
 end
 
-func drop begin asm
+inline drop begin asm
 	"sub r15, 8"
 end end
 
-func swap begin
+inline swap begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	__x86_64_push_rbx
 	__x86_64_push_rax
 end
 
-func + begin
+inline + begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -226,9 +226,9 @@ func + begin
 	__x86_64_push_rax
 end
 
-func s+ begin + end
+inline s+ begin + end
 
-func - begin
+inline - begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -237,9 +237,9 @@ func - begin
 	__x86_64_push_rax
 end
 
-func s- begin - end
+inline s- begin - end
 
-func * begin
+inline * begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -248,7 +248,7 @@ func * begin
 	__x86_64_push_rax
 end
 
-func s* begin
+inline s* begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -257,7 +257,7 @@ func s* begin
 	__x86_64_push_rax
 end
 
-func / begin
+inline / begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -267,7 +267,7 @@ func / begin
 	__x86_64_push_rax
 end
 
-func s/ begin
+inline s/ begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -277,7 +277,7 @@ func s/ begin
 	__x86_64_push_rax
 end
 
-func % begin
+inline % begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -287,7 +287,7 @@ func % begin
 	__x86_64_push_rdx
 end
 
-func s% begin
+inline s% begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -297,7 +297,7 @@ func s% begin
 	__x86_64_push_rdx
 end
 
-func and begin
+inline and begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -306,7 +306,7 @@ func and begin
 	__x86_64_push_rax
 end
 
-func or begin
+inline or begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -315,7 +315,7 @@ func or begin
 	__x86_64_push_rax
 end
 
-func xor begin
+inline xor begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -324,7 +324,7 @@ func xor begin
 	__x86_64_push_rax
 end
 
-func not begin
+inline not begin
 	__x86_64_pop_rax
 	asm
 		"not rax"
@@ -332,7 +332,7 @@ func not begin
 	__x86_64_push_rax
 end
 
-func << begin
+inline << begin
 	__x86_64_pop_rcx
 	__x86_64_pop_rax
 	asm
@@ -341,7 +341,7 @@ func << begin
 	__x86_64_push_rax
 end
 
-func >> begin
+inline >> begin
 	__x86_64_pop_rcx
 	__x86_64_pop_rax
 	asm

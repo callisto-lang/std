@@ -123,7 +123,7 @@ func <= begin
 	end
 end
 
-func @ begin
+inline @ begin
 	__rm86_pop_bx
 	asm
 		"mov ax, [bx]"
@@ -131,7 +131,7 @@ func @ begin
 	__rm86_push_ax
 end
 
-func ! begin
+inline ! begin
 	__rm86_pop_di
 	__rm86_pop_bx
 	asm
@@ -139,7 +139,7 @@ func ! begin
 	end
 end
 
-func b@ begin
+inline b@ begin
 	__rm86_pop_bx
 	asm
 		"xor ah, ah"
@@ -148,7 +148,7 @@ func b@ begin
 	__rm86_push_ax
 end
 
-func b! begin
+inline b! begin
 	__rm86_pop_di
 	__rm86_pop_bx
 	asm
@@ -156,7 +156,7 @@ func b! begin
 	end
 end
 
-func w@ begin
+inline w@ begin
 	__rm86_pop_bx
 	asm
 		"mov ax, [bx]"
@@ -164,7 +164,7 @@ func w@ begin
 	__rm86_push_ax
 end
 
-func w! begin
+inline w! begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -172,24 +172,24 @@ func w! begin
 	end
 end
 
-func dup begin
+inline dup begin
 	__rm86_pop_ax
 	__rm86_push_ax
 	__rm86_push_ax
 end
 
-func drop begin asm
+inline drop begin asm
 	"sub si, 2"
 end end
 
-func swap begin
+inline swap begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	__rm86_push_bx
 	__rm86_push_ax
 end
 
-func + begin
+inline + begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -198,9 +198,9 @@ func + begin
 	__rm86_push_ax
 end
 
-func s+ begin + end
+inline s+ begin + end
 
-func - begin
+inline - begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -209,9 +209,9 @@ func - begin
 	__rm86_push_ax
 end
 
-func s- begin - end
+inline s- begin - end
 
-func * begin
+inline * begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -220,7 +220,7 @@ func * begin
 	__rm86_push_ax
 end
 
-func s* begin
+inline s* begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -229,7 +229,7 @@ func s* begin
 	__rm86_push_ax
 end
 
-func / begin
+inline / begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -239,7 +239,7 @@ func / begin
 	__rm86_push_ax
 end
 
-func s/ begin
+inline s/ begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -249,7 +249,7 @@ func s/ begin
 	__rm86_push_ax
 end
 
-func % begin
+inline % begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -259,7 +259,7 @@ func % begin
 	__rm86_push_dx
 end
 
-func s% begin
+inline s% begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -269,7 +269,7 @@ func s% begin
 	__rm86_push_dx
 end
 
-func and begin
+inline and begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -278,7 +278,7 @@ func and begin
 	__rm86_push_ax
 end
 
-func or begin
+inline or begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -287,7 +287,7 @@ func or begin
 	__rm86_push_ax
 end
 
-func xor begin
+inline xor begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -296,7 +296,7 @@ func xor begin
 	__rm86_push_ax
 end
 
-func not begin
+inline not begin
 	__rm86_pop_ax
 	asm
 		"not ax"
@@ -304,7 +304,7 @@ func not begin
 	__rm86_push_ax
 end
 
-func << begin
+inline << begin
 	__rm86_pop_cx
 	__rm86_pop_ax
 	asm
@@ -313,7 +313,7 @@ func << begin
 	__rm86_push_ax
 end
 
-func >> begin
+inline >> begin
 	__rm86_pop_cx
 	__rm86_pop_ax
 	asm
