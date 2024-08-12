@@ -1,0 +1,22 @@
+include "array.cal"
+
+## ## parse_int
+## Parameters: Array* string
+##
+## Returns integer value represented by string
+func parse_int begin
+	let addr arr
+	-> arr
+
+	let cell pos
+	let cell len
+
+	0 -> pos
+	arr Array.length + @ -> len
+
+	0
+	while pos len < do
+		10 * pos arr a@ '0' - +
+		pos 1 + -> pos
+	end
+end

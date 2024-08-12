@@ -10,9 +10,9 @@ end
 
 version not LibC
 	inline __x86_64_program_init begin asm
-		"mov rax, [rsi + 8]"
+		"mov rax, [rsp + 16]"
 		"mov [__global___us____us__linux__us__argv], rax"
-		"mov rax, [rsi]"
+		"mov rax, [rsp + 8]"
 		"mov [__global___us____us__linux__us__argc], rax"
 	end end
 end
