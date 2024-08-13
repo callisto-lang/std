@@ -139,7 +139,7 @@ version File
 		0 -> i
 
 		path Array.elements + @ -> src
-		pathBytes -> dest
+		&pathBytes -> dest
 
 		while i path @ < do
 			src b@ dest b!
@@ -155,12 +155,12 @@ version File
 		let cell modeFlag
 
 		if FILE_READ FILE_WRITE and mode = then
-			pathBytes __linux_create_file
+			&pathBytes __linux_create_file
 			__linux_const_O_RDWR -> modeFlag
 		elseif FILE_READ mode = then
 			__linux_const_O_RDONLY -> modeFlag
 		elseif FILE_WRITE mode = then
-			pathBytes __linux_create_file
+			&pathBytes __linux_create_file
 			__linux_const_O_WRONLY -> modeFlag
 		end
 
@@ -175,6 +175,8 @@ version File
 			"xor rdx, rdx"
 			"syscall"
 		end
+
+		__x86_64_push_rax
 	end
 
 	func close_file begin
