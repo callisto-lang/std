@@ -72,7 +72,7 @@ end
 ##
 ## Prints a new line to stdout
 func new_line begin
-	'\r' '\n' printch printch
+	'\r' printch '\n' printch
 end
 
 ## ## printf
@@ -96,7 +96,7 @@ func printf begin
 	while i fmt @ < do
 		if i fmt a@ '%' = then
 			i 1 + -> i
-			i fmt @ a@ -> ch
+			i fmt a@ -> ch
 
 			if ch 's' = then
 				printstr

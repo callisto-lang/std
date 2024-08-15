@@ -100,7 +100,7 @@ func a! begin
 			b!
 		elseif arr Array.memberSize + @ 2 = then
 			version 16Bit
-				w@
+				w!
 			end
 			version not 16Bit
 				# TODO!!!

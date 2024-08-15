@@ -10,7 +10,7 @@ end
 
 version not LibC
 	inline __x86_64_program_init begin asm
-		"mov rax, [rsp + 16]"
+		"lea rax, [rsp + 16]"
 		"mov [__global___us____us__linux__us__argv], rax"
 		"mov rax, [rsp + 8]"
 		"mov [__global___us____us__linux__us__argc], rax"
@@ -154,7 +154,7 @@ version File
 
 		let cell modeFlag
 
-		if FILE_READ FILE_WRITE and mode = then
+		if FILE_READ FILE_WRITE or mode = then
 			&pathBytes __linux_create_file
 			__linux_const_O_RDWR -> modeFlag
 		elseif FILE_READ mode = then
@@ -239,33 +239,8 @@ version File
 end
 
 version Args
-	version LibC
-		func core_get_arg begin
-			8 * __linux_argv + @
-		end
-	end
-
-	version not LibC
-		func core_get_arg begin
-			let cell which
-			let cell counter
-			let addr args
-			dup -> which
-			-> counter
-			__linux_argv -> args
-
-			if which 0 = then args return end
-
-			while true do
-				if args b@ 0 = then
-					counter 1 - -> counter
-
-					if counter 0 = then args 1 + return end
-				end
-
-				args 1 + -> args
-			end
-		end
+	func core_get_arg begin
+		8 * __linux_argv + @
 	end
 
 	inline core_get_arg_length begin __linux_argc end
@@ -342,7 +317,7 @@ version Heap
 		end
 
 		func free begin
-			dup 8 - @ swap 8 - swap 8 + __linux_munmap
+			dup 8 - @ swap 8 - swap 8 + __linux_munmap drop
 		end
 	end
 end
