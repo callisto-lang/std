@@ -302,7 +302,20 @@ version Heap
 			__x86_64_push_rax
 		end
 
+		func realloc begin
+			let addr ptr
+			let usize sz
+			8 + -> sz
+			8 - -> ptr
 
+			let usize oldSz
+			ptr @ 8 + -> oldSz
+
+			let addr ptr2
+			sz malloc 8 - -> ptr2
+
+			ptr2 oldSz sz __linux_MREMAP_MAYMOVE __linux_MREMAP_FIXED or ptr __linux_mremap
+		end
 
 		func __linux_munmap begin
 			__x86_64_pop_rsi # length
