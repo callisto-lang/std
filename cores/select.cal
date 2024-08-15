@@ -10,6 +10,10 @@ version x86_64
 	include "cpu/x86_64.cal"
 end
 
+version arm64
+	include "cpu/arm64.cal"
+end
+
 version UXN
 	include "uxn.cal"
 end
@@ -26,6 +30,12 @@ version x86_64
 
 	version OSX
 		include "os/x86_64_osx.cal"
+	end
+end
+
+version arm64
+	version Linux
+		include "os/arm64_linux.cal"
 	end
 end
 

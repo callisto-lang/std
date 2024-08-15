@@ -1,0 +1,304 @@
+inline __arm64_pop_x0 begin asm
+	"ldr x0, [x19, #-8]!"
+end end
+
+inline __arm64_pop_x1 begin asm
+	"ldr x1, [x19, #-8]!"
+end end
+
+inline __arm64_pop_x2 begin asm
+	"ldr x2, [x19, #-8]!"
+end end
+
+inline __arm64_pop_x3 begin asm
+	"ldr x3, [x19, #-8]!"
+end end
+
+inline __arm64_pop_x4 begin asm
+	"ldr x4, [x19, #-8]!"
+end end
+
+inline __arm64_pop_x5 begin asm
+	"ldr x5, [x19, #-8]!"
+end end
+
+inline __arm64_pop_x9 begin asm
+	"ldr x9, [x19, #-8]!"
+end end
+
+inline __arm64_pop_x10 begin asm
+	"ldr x10, [x19, #-8]!"
+end end
+
+inline __arm64_pop_x11 begin asm
+	"ldr x11, [x19, #-8]!"
+end end
+
+inline __arm64_push_x0 begin asm
+	"str x0, [x19], #8"
+end end
+
+inline __arm64_push_x9 begin asm
+	"str x9, [x19], #8"
+end end
+
+inline __arm64_push_x10 begin asm
+	"str x10, [x19], #8"
+end end
+
+func = begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, eq"
+	end
+	__arm64_push_x9
+end
+
+func > begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, gt"
+	end
+	__arm64_push_x9
+end
+
+func >= begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, ge"
+	end
+	__arm64_push_x9
+end
+
+func < begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, lt"
+	end
+	__arm64_push_x9
+end
+
+func <= begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, le"
+	end
+	__arm64_push_x9
+end
+
+func @ begin
+	__arm64_pop_x9
+	asm
+		"ldr x9, [x9]"
+	end
+	__arm64_push_x9
+end
+
+func ! begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"str x9, [x10]"
+	end
+end
+
+func b@ begin
+	__arm64_pop_x9
+	asm
+		"ldrb w9, [x9]"
+	end
+	__arm64_push_x9
+end
+
+func b! begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"strb w9, [x10]"
+	end
+end
+
+func w@ begin
+	__arm64_pop_x9
+	asm
+		"ldrh w9, [x9]"
+	end
+	__arm64_push_x9
+end
+
+func w! begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"strh w9, [x10]"
+	end
+end
+
+func d@ begin
+	__arm64_pop_x9
+	asm
+		"ldr w9, [x9]"
+	end
+	__arm64_push_x9
+end
+
+func d! begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"str w9, [x10]"
+	end
+end
+
+func dup begin
+	asm
+		"ldr x9, [x19, #-8]"
+	end
+	__arm64_push_x9
+end
+
+func drop begin asm
+	"sub x19, x19, #8"
+end end
+
+func swap begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	__arm64_push_x10
+	__arm64_push_x9
+end
+
+func + begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"add x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func s+ begin + end
+
+func - begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"sub x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func s- begin - end
+
+func * begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"mul x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func s* begin * end
+
+func / begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"udiv x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func s/ begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"sdiv x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func % begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"udiv x11, x9, x10"
+		"msub x9, x11, x10, x9"
+	end
+	__arm64_push_x9
+end
+
+func s% begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"sdiv x11, x9, x10"
+		"mul x11, x11, x10"
+		"sub x9, x9, x11"
+	end
+	__arm64_push_x9
+end
+
+func and begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"and x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func or begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"orr x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func xor begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"eor x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func not begin
+	__arm64_pop_x9
+	asm
+		"mvn x9, x9"
+	end
+	__arm64_push_x9
+end
+
+func << begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"lsl x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func >> begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"lsr x9, x9, x10"
+	end
+	__arm64_push_x9
+end
