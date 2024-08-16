@@ -37,6 +37,10 @@ version arm64
 	version Linux
 		include "os/arm64_linux.cal"
 	end
+
+	version OSX
+		include "os/arm64_osx.cal"
+	end
 end
 
 ###### CallistoScript ######
