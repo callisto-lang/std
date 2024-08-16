@@ -53,12 +53,11 @@ end
 ## Parameters: Array* str
 ##
 ## Prints the given string to stdout
-func printstr begin
+func printstr addr arr begin
 	let addr  arr
 	let usize length
 	let usize i
 
-	-> arr
 	arr @ -> length
 
 	while i length < do
@@ -86,10 +85,7 @@ end
 ## - `%s` - String (`Array*`)
 ## - `%d` - Decimal (`cell`)
 ## - `%X` - Hexadecimal (`cell`)
-func printf begin
-	let addr fmt
-	-> fmt
-
+func printf addr fmt begin
 	let cell i
 	let cell ch
 

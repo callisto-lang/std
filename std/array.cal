@@ -2,12 +2,7 @@
 ## Parameters: Array* src, Array* var
 ##
 ## Takes an array literal from the stack and writes it to the given variable
-func a< begin
-	let addr src
-	let addr var
-	-> var
-	-> src
-
+func a< addr src addr var begin
 	src @ var !
 	src Array.memberSize + @ var Array.memberSize + !
 	src Array.elements + @ var Array.elements + !
@@ -31,12 +26,7 @@ end
 ## Returns array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func a@ begin
-	let addr  arr
-	let usize offset
-	-> arr
-	-> offset
-
+func a@ cell offset addr arr begin
 	arr Array.memberSize + @ offset * -> offset
 	arr Array.elements + @ offset +
 

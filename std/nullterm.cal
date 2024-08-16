@@ -2,10 +2,7 @@
 ## Parameters: addr str
 ##
 ## Prints a null-terminated string to stdout from the given pointer
-func printntstr begin
-	let addr str
-	-> str
-
+func printntstr addr str begin
 	while str b@ do
 		str b@ printch
 		str 1 + -> str
@@ -16,9 +13,7 @@ end
 ## Parameters: addr str
 ##
 ## Returns the length of a null-terminated string
-func ntstr_length begin
-	let addr str
-	-> str
+func ntstr_length addr str begin
 	let cell ret
 	0 -> ret
 

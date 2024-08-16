@@ -20,14 +20,7 @@ end
 ## Parameters: addr dest, addr src, cell n
 ##
 ## Copies n bytes from src to dest
-func memcopy begin
-	let addr dest
-	let addr src
-	let cell n
-	-> n
-	-> src
-	-> dest
-
+func memcopy addr dest addr src cell n begin
 	let cell i
 	0 -> i
 
