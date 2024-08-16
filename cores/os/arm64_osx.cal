@@ -27,6 +27,128 @@ version IO
 	end end
 end
 
+version File
+	const FILE_READ  1
+	const FILE_WRITE 2
+
+	const SEEK_SET   0
+	const SEEK_CUR   1
+	const SEEK_END   2
+
+	const __osx_O_RDONLY 0
+	const __osx_O_WRONLY 1
+	const __osx_O_RDWR   2
+	const __osx_O_CREAT  0x200
+
+	const __osx_default_mode 0o666
+
+	struct File
+		cell fd
+	end
+
+	let File stdin
+	let File stdout
+	let File stderr
+	0 &stdin !
+	1 &stdout !
+	2 &stderr !
+
+	func open_file begin
+		let addr path
+		let cell mode
+		-> mode
+		-> path
+
+		let array 4096 u8 pathBuf
+
+		path Array.elements + @
+		&pathBuf
+		path @
+		__arm64_memcpy
+
+		let cell flags
+
+		if FILE_READ FILE_WRITE or mode = then
+			__osx_O_RDWR __osx_O_CREAT or -> flags
+		elseif FILE_READ mode = then
+			__osx_O_RDONLY -> flags
+		elseif FILE_WRITE mode = then
+			__osx_O_WRONLY __osx_O_CREAT or -> flags
+		end
+
+		&pathBuf
+		flags
+		__osx_default_mode
+
+		__arm64_pop_x2
+		__arm64_pop_x1
+		__arm64_pop_x0
+		asm
+			"mov x16, #5" # open syscall
+			"svc #80"
+		end
+		__arm64_push_x0
+	end
+
+	func close_file begin
+		@ __arm64_pop_x0 # FD
+		asm
+			"mov x16, #6" # Close
+			"svc #80"
+		end
+	end
+
+	func file< begin
+		!
+	end
+
+	func file@ begin
+		__arm64_pop_x2   # Length
+		__arm64_pop_x1   # Buffer
+		@ __arm64_pop_x0 # Fd
+
+		asm
+			"mov x16, #3" # read
+			"svc #80"
+		end
+	end
+
+	func file! begin
+		__arm64_pop_x2   # Length
+		__arm64_pop_x1   # Buffer
+		@ __arm64_pop_x0 # Fd
+
+		asm
+			"mov x16, #4" # write
+			"svc #80"
+		end
+
+		__arm64_push_x0
+	end
+
+	func file_seek begin
+		__arm64_pop_x2   # Whence
+		__arm64_pop_x1   # Offset
+		@ __arm64_pop_x0 # Fd
+
+		asm
+			"mov x16, #199" # lseek
+			"svc #80"
+		end
+	end
+
+	func file_peek begin
+		@ __arm64_pop_x0
+		asm
+			"mov x1, #0"
+			"mov x2, #1" # SEEK_CUR
+			"mov x16, #199" # lseek
+			"svc #80"
+		end
+		__arm64_push_x0
+	end
+end
+
 version Args
 	func core_get_arg begin
 		8 * __osx_argv + @
