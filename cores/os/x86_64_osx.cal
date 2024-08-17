@@ -158,6 +158,31 @@ version Args
 	inline core_get_arg_length begin __osx_argc end
 end
 
+version Time
+	struct __osx_timeval
+		cell sec
+		cell usec
+	end
+
+	func get_epoch_time begin
+		let __osx_timeval tv
+		&tv
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 0x2000000 + 116" # gettimeofday
+			"xor rsi, rsi"
+			"syscall"
+		end
+		&tv @
+	end
+end
+
+version Heap
+	extern C addr malloc usize end
+	extern C addr realloc addr usize end
+	extern C void free addr end
+end
+
 version Exit
 	func exit begin
 		__x86_64_pop_rdi
