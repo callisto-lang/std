@@ -1,7 +1,7 @@
 ## ## a<
 ## Parameters: Array* src, Array* var
 ##
-## Takes an array literal from the stack and writes it to the given variable
+## Takes an array from the stack and writes it to the given variable
 func a< addr src addr var begin
 	src @ var !
 	src Array.memberSize + @ var Array.memberSize + !

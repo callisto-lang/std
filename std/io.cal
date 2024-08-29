@@ -54,7 +54,6 @@ end
 ##
 ## Prints the given string to stdout
 func printstr addr arr begin
-	let addr  arr
 	let usize length
 	let usize i
 

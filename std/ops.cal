@@ -16,18 +16,33 @@ inline -- begin
 	1 -
 end
 
-## ## memcopy
+## ## copy_mem
 ## Parameters: addr dest, addr src, cell n
 ##
 ## Copies n bytes from src to dest
-func memcopy addr dest addr src cell n begin
+func copy_mem addr dest addr src cell n begin
 	let cell i
 	0 -> i
 
 	while i n < do
 		src b@ dest b!
-		i 1 + -> i
-		dest 1 + -> dest
-		src 1 + -> src
+		i ++ -> i
+		dest ++ -> dest
+		src ++ -> src
+	end
+end
+
+## ## fill_mem
+## Parameters: addr dest, cell n, cell value
+##
+## Sets n bytes of dest to value
+func fill_mem addr dest cell n cell value begin
+	let cell i
+	0 -> i
+
+	while i n < do
+		value dest b!
+		i ++ -> i
+		dest ++ -> i
 	end
 end

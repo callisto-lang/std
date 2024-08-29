@@ -1,0 +1,107 @@
+error # DO NOT USE
+
+requires Heap
+
+include "ops.cal"
+include "io.cal"
+
+## ## struct Vector
+##
+## An array allocated on the heap with a capacity
+struct Vector : Array
+	usize capacity
+end
+
+implement Vector init
+	let addr vec
+	-> vec
+
+	0 vec Vector.length + !
+	0 vec Vector.memberSize + !
+	0 vec Vector.elements + !
+	0 vec Vector.capacity + !
+end
+
+implement Vector deinit
+	let addr vec
+	-> vec
+
+	if vec Vector.elements + @ 0 = not then
+		vec Vector.elements + @ free
+	end
+end
+
+## ## to_vector
+## Parameters: Array* arr, Vector* vec
+##
+## Turns an array into a vector and writes the new vector to `vec`
+func to_vector addr arr addr vec begin
+	arr @ vec ! # copy length
+	arr @ vec Vector.capacity + ! # set capacity to length
+	arr Array.memberSize + @ vec Vector.memberSize + !
+
+	arr @ arr Array.memberSize + @ * malloc vec Vector.elements + !
+
+	vec Vector.elements + @ # dest
+	arr Array.elements + @ # src
+	arr @ arr Array.memberSize + @ * # n
+	copy_mem
+end
+
+## ## init_vector
+## Parameters: Array* type, Vector* vec
+##
+## Sets a vector type and initialises capacity, looks like this:
+##
+## ```
+## [u8] &vec init_vector
+## ```
+##
+## Only use this on empty vectors or it will leak memory
+func init_vector addr type addr vec begin
+	let usize typeSize
+	type Array.memberSize + @ -> typeSize
+
+	typeSize vec Vector.memberSize + !
+	1 vec Vector.capacity + !
+	typeSize malloc vec Vector.elements + !
+end
+
+## ## resize_vector
+## Parameters: cell newSize, Vector* vec
+##
+## Resizes a vector and re-allocates elements if needed
+func resize_vector cell newSize addr vec begin
+	"Capacity: " printstr vec Vector.capacity + @ printdec new_line
+	"New size: " printstr newSize printdec new_line
+	if newSize vec Vector.capacity + @ < then
+		"Not reallocating\n" printstr
+		newSize vec Vector.length + !
+	else
+		"Reallocating\n" printstr
+		vec Vector.elements + @ newSize realloc vec Vector.elements + !
+		"Done\n" printstr
+		newSize vec Vector.length + !
+		newSize vec Vector.capacity + !
+	end
+end
+
+## ## vector_push_cell
+## Parameters: cell value, Vector* vec
+##
+## Pushes the value to the vector
+func vector_push_cell cell value addr vec begin
+	vec @ ++ vec resize_vector
+	value vec @ -- vec a!
+end
+
+## ## vector_pop_cell
+## Parameters: Vector* vec
+##
+## Returns: cell value
+##
+## Pops a value from the vector and returns it
+func vector_pop_cell addr vec begin
+	vec @ -- vec a@
+	vec @ -- vec resize_vector
+end

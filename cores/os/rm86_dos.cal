@@ -13,6 +13,17 @@ inline __rm86_program_exit begin
 	"ret"
 end
 
+version Exit
+	func exit begin
+		__rm86_pop_ax
+
+		asm
+			"mov ah, 0x4C"
+			"int 0x21"
+		end
+	end
+end
+
 version Args
 	func __rm86_nullterm_args begin
 		let cell i
