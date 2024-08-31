@@ -1,4 +1,4 @@
-## Supported features: IO
+## Supported features: IO, Exit
 ##
 ## Cell size = 16 bits
 
@@ -6,6 +6,12 @@ version IO
 	inline printch begin asm
 		"NIP .Console/write DEO"
 	end end	
+end
+
+version Exit
+	inline exit begin asm
+		"BRK"
+	end end
 end
 
 func = begin asm
