@@ -240,8 +240,13 @@ version IO version Exit
 		end
 	end
 
+	inline __core_new_line begin
+		13 printch 10 printch
+	end
+
 	func __arm64_exception begin
-		&_cal_exception Exception.msg + c"Unhandled exception: %s" printf new_line
+		c"Unhandled exception: " __core_printstr
+		&_cal_exception Exception.msg + __core_printstr __core_new_line
 		1 exit
 	end
 end end
