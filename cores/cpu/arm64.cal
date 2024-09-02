@@ -46,6 +46,21 @@ inline __arm64_push_x10 begin asm
 	"str x10, [x19], #8"
 end end
 
+# src, dest, len
+inline __arm64_memcpy begin
+	__arm64_pop_x11
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"1:"
+		"ldrb w12, [x9], #1"
+		"strb w12, [x10], #1"
+		"subs x11, x11, #1"
+		"bne 1b"
+	end
+end
+
+
 func = begin
 	__arm64_pop_x10
 	__arm64_pop_x9

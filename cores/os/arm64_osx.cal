@@ -1,25 +1,29 @@
 let addr __osx_argv
 let cell __osx_argc
 
-inline __x86_64_program_init begin asm
-	"mov [__global___us____us__osx__us__argc], edi"
-	"mov [__global___us____us__osx__us__argv], rsi"
+inline __arm64_program_init begin asm
+	"adrp x9, __global___us____us__osx__us__argc@PAGE"
+	"add x9, x9, __global___us____us__osx__us__argc@PAGEOFF"
+	"str x0, [x9]"
+	"adrp x9, __global___us____us__osx__us__argv@PAGE"
+	"add x9, x9, __global___us____us__osx__us__argv@PAGEOFF"
+	"str x1, [x9]"
 end end
 
-inline __x86_64_program_exit begin asm
-	"mov rax, 0x2000001"
-	"mov rdi, 0"
-	"syscall"
+inline __arm64_program_exit begin asm
+	"mov x16, 1"
+	"mov x0, 0"
+	"svc #80"
 end end
 
 version IO
 	func printch begin asm
-		"sub r15, 8"
-		"mov rax, 0x2000004"
-		"mov rdi, 1"
-		"mov rsi, r15"
-		"mov rdx, 1"
-		"syscall"
+		"sub x19, x19, #8"
+		"mov x16, 4"
+		"mov x0, 1"
+		"mov x1, x19"
+		"mov x2, 1"
+		"svc #80"
 	end end
 end
 
@@ -60,12 +64,7 @@ version File
 		path Array.elements + @
 		&pathBuf
 		path @
-
-		__x86_64_pop_rcx
-		__x86_64_pop_rdi
-		__x86_64_pop_rsi
-		asm "rep movsb" end
-		0 &pathBuf path @ + b!
+		__arm64_memcpy
 
 		let cell flags
 
@@ -81,21 +80,21 @@ version File
 		flags
 		__osx_default_mode
 
-		__x86_64_pop_rdx
-		__x86_64_pop_rsi
-		__x86_64_pop_rdi
+		__arm64_pop_x2
+		__arm64_pop_x1
+		__arm64_pop_x0
 		asm
-			"mov rax, 0x2000000 + 5" # open syscall
-			"syscall"
+			"mov x16, #5" # open syscall
+			"svc #80"
 		end
-		__x86_64_push_rax
+		__arm64_push_x0
 	end
 
 	func close_file begin
-		@ __x86_64_pop_rdi # FD
+		@ __arm64_pop_x0 # FD
 		asm
-			"mov rax, 0x2000000 + 6" # Close
-			"syscall"
+			"mov x16, #6" # Close
+			"svc #80"
 		end
 	end
 
@@ -104,49 +103,49 @@ version File
 	end
 
 	func file@ begin
-		__x86_64_pop_rdx   # Length
-		__x86_64_pop_rsi   # Buffer
-		@ __x86_64_pop_rdi # Fd
+		__arm64_pop_x2   # Length
+		__arm64_pop_x1   # Buffer
+		@ __arm64_pop_x0 # Fd
 
 		asm
-			"mov rax, 0x2000000 + 3" # read
-			"syscall"
+			"mov x16, #3" # read
+			"svc #80"
 		end
 	end
 
 	func file! begin
-		__x86_64_pop_rdx   # Length
-		__x86_64_pop_rsi   # Buffer
-		@ __x86_64_pop_rdi # Fd
+		__arm64_pop_x2   # Length
+		__arm64_pop_x1   # Buffer
+		@ __arm64_pop_x0 # Fd
 
 		asm
-			"mov rax, 0x2000000 + 4" # write
-			"syscall"
+			"mov x16, #4" # write
+			"svc #80"
 		end
 
-		__x86_64_push_rax
+		__arm64_push_x0
 	end
 
 	func file_seek begin
-		__x86_64_pop_rdx   # Whence
-		__x86_64_pop_rsi   # Offset
-		@ __x86_64_pop_rdi # Fd
+		__arm64_pop_x2   # Whence
+		__arm64_pop_x1   # Offset
+		@ __arm64_pop_x0 # Fd
 
 		asm
-			"mov rax, 0x2000000 + 199" # lseek
-			"syscall"
+			"mov x16, #199" # lseek
+			"svc #80"
 		end
 	end
 
 	func file_peek begin
-		@ __x86_64_pop_rdi
+		@ __arm64_pop_x0
 		asm
-			"xor rsi, rsi"
-			"mov rdx, 1" # SEEK_CUR
-			"mov rax, 0x2000000 + 199" # lseek
-			"syscall"
+			"mov x1, #0"
+			"mov x2, #1" # SEEK_CUR
+			"mov x16, #199" # lseek
+			"svc #80"
 		end
-		__x86_64_push_rax
+		__arm64_push_x0
 	end
 end
 
@@ -167,11 +166,11 @@ version Time
 	func get_epoch_time begin
 		let __osx_timeval tv
 		&tv
-		__x86_64_pop_rdi
+		__arm64_pop_x0
 		asm
-			"mov rax, 0x2000000 + 116" # gettimeofday
-			"xor rsi, rsi"
-			"syscall"
+			"mov x16, #116" # gettimeofday
+			"mov x1, #0"
+			"svc #80"
 		end
 		&tv @
 	end
@@ -185,10 +184,10 @@ end
 
 version Exit
 	func exit begin
-		__x86_64_pop_rdi
+		__arm64_pop_x0
 		asm
-			"mov rax, 0x2000001"
-			"syscall"
+			"mov x16, 1"
+			"svc #80"
 		end
 	end
 end
