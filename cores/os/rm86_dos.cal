@@ -82,3 +82,57 @@ version Args
 		counter 1 +
 	end
 end
+
+version IO version Exit
+	func __core_a@ cell offset addr arr begin
+		arr Array.memberSize + @ offset * -> offset
+		arr Array.elements + @ offset +
+
+		version CallistoScript
+			if arr Array.memberSize + @ 1 = then
+				@
+			else
+				return # TODO!!!
+			end
+		end
+
+		version not CallistoScript
+			if arr Array.memberSize + @ 1 = then
+				b@
+			elseif arr Array.memberSize + @ 2 = then
+				version 16Bit
+					w@
+				end
+				version not 16Bit
+					# TODO!!!
+				end
+			elseif arr Array.memberSize + @ 4 = then
+				version 32Bit
+					d@
+				end
+				version not 32Bit
+					# TODO!!!
+				end
+			else
+				@
+			end
+		end
+	end
+
+	func __core_printstr addr arr begin
+		let usize length
+		let usize i
+
+		arr @ -> length
+
+		while i length < do
+			i arr __core_a@ printch
+			i 1 + -> i
+		end
+	end
+
+	func __rm86_exception begin
+		exception_msg c"Unhandled exception: %s" printf new_line
+		1 exit
+	end
+end end
