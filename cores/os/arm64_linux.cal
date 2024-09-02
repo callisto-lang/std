@@ -16,20 +16,6 @@ inline __arm64_program_exit begin asm
 	"svc #0"
 end end
 
-# src, dest, len
-inline __memcpy begin
-	__arm64_pop_x11
-	__arm64_pop_x10
-	__arm64_pop_x9
-	asm
-		"1:"
-		"ldrb w12, [x9], #1"
-		"strb w12, [x10], #1"
-		"subs x11, x11, #1"
-		"bne 1b"
-	end
-end
-
 version IO
 	func printch begin asm
 		"sub x19, x19, #8"
@@ -79,7 +65,7 @@ version File
 		path Array.elements + @
 		&pathBuf
 		path @
-		__memcpy
+		__arm64_memcpy
 
 		let cell flags
 
@@ -204,6 +190,8 @@ version Heap
 		const __linux_PROT_WRITE    2
 		const __linux_MAP_PRIVATE   2
 		const __linux_MAP_ANONYMOUS 32
+		const __linux_MREMAP_MAYMOVE 1
+		const __linux_MREMAP_FIXED   2
 
 		func __linux_mmap begin
 			__arm64_pop_x5 # pgoff
@@ -232,12 +220,42 @@ version Heap
 			8 +
 		end
 
+		func __linux_mremap begin
+			__arm64_pop_x4 # new_addr
+			__arm64_pop_x3 # flags
+			__arm64_pop_x2 # new_len
+			__arm64_pop_x1 # old_len
+			__arm64_pop_x0 # addr
+
+			asm
+				"mov x8, #216" # mremap syscall
+				"svc #0"
+			end
+
+			__arm64_push_x0
+		end
+
+		func realloc begin
+			let addr ptr
+			let usize sz
+			8 + -> sz
+			8 - -> ptr
+
+			let usize oldSz
+			ptr @ 8 + -> oldSz
+
+			let addr ptr2
+			sz malloc 8 - -> ptr2
+
+			ptr2 oldSz sz __linux_MREMAP_MAYMOVE __linux_MREMAP_FIXED or ptr __linux_mremap
+		end
+
 		func __linux_munmap begin
 			__arm64_pop_x1 # length
 			__arm64_pop_x0 # addr
 
 			asm
-				"mov x0, #215" # munmap syscall
+				"mov x8, #215" # munmap syscall
 				"svc #0"
 			end
 
@@ -309,7 +327,7 @@ version IO version Exit
 	end
 
 	func __arm64_exception begin
-		exception_msg c"Unhandled exception: %s" printf new_line
+		&_cal_exception Exception.msg + c"Unhandled exception: %s" printf new_line
 		1 exit
 	end
 end end

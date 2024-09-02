@@ -132,7 +132,7 @@ version IO version Exit
 	end
 
 	func __rm86_exception begin
-		exception_msg c"Unhandled exception: %s" printf new_line
+		&_cal_exception Exception.msg + c"Unhandled exception: %s" printf new_line
 		1 exit
 	end
 end end
