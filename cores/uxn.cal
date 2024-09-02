@@ -126,3 +126,52 @@ end end
 inline >> begin asm
 	"NIP SFT2"
 end end
+
+version IO version Exit
+	func __core_a@ cell offset addr arr begin
+		arr Array.memberSize + @ offset * -> offset
+		arr Array.elements + @ offset +
+
+		if arr Array.memberSize + @ 1 = then
+			b@
+		elseif arr Array.memberSize + @ 2 = then
+			version 16Bit
+				w@
+			end
+			version not 16Bit
+				# TODO!!!
+			end
+		elseif arr Array.memberSize + @ 4 = then
+			version 32Bit
+				d@
+			end
+			version not 32Bit
+				# TODO!!!
+			end
+		else
+			@
+		end
+	end
+
+	func __core_printstr addr arr begin
+		let usize length
+		let usize i
+
+		arr @ -> length
+
+		while i length < do
+			i arr __core_a@ printch
+			i 1 + -> i
+		end
+	end
+
+	inline __core_new_line begin
+		13 printch 10 printch
+	end
+
+	func __x86_64_exception begin
+		c"Unhandled exception: " __core_printstr
+		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		1 exit
+	end
+end end
