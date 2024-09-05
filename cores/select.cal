@@ -31,6 +31,10 @@ version x86_64
 	version OSX
 		include "os/x86_64_osx.cal"
 	end
+
+	version FreeBSD
+		include "os/x86_64_freebsd.cal"
+	end
 end
 
 version arm64

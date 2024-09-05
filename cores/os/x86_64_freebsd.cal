@@ -1,0 +1,175 @@
+let addr __freebsd_argv
+let cell __freebsd_argc
+
+inline __x86_64_program_init begin asm
+	"lea rax, [rdi + 8]"
+	"mov [__global___us____us__freebsd__us__argv], rax"
+	"mov rax, [rdi]"
+	"mov [__global___us____us__freebsd__us__argc], rax"
+end end
+
+inline __x86_64_program_exit begin
+	__x86_64_pop_rdi
+
+	asm
+		"mov rax, 1" # exit
+		"syscall"
+	end	
+end
+
+version IO
+	func printch begin asm
+		"sub r15, 8"
+		"mov rdi, 1"
+		"mov rsi, r15"
+		"mov rdx, 1"
+		"mov rax, 4" # write
+		"syscall"
+	end end
+end
+
+version Exit
+	func exit begin
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 1" # exit
+			"syscall"
+		end
+	end
+end
+
+version Args
+	func core_get_arg begin
+		8 * __freebsd_argv + @
+	end
+
+	inline core_get_arg_length begin __freebsd_argc end
+end
+
+version File
+	const FILE_READ  1
+	const FILE_WRITE 2
+
+	const SEEK_SET   0
+	const SEEK_CUR   1
+	const SEEK_END   2
+
+	const __freebsd_O_RDONLY 0
+	const __freebsd_O_WRONLY 1
+	const __freebsd_O_RDWR   2
+	const __freebsd_O_CREAT  512
+
+	const __freebsd_default_mode 0o666
+
+	struct File
+		cell fd
+	end
+
+	let File stdin
+	let File stdout
+	let File stderr
+	0 &stdin !
+	1 &stdout !
+	2 &stderr !
+
+	func open_file begin
+		let addr path
+		let cell mode
+		-> mode
+		-> path
+
+		let array 4096 u8 pathBuf
+
+		path Array.elements + @
+		&pathBuf
+		path @
+
+		__x86_64_pop_rcx
+		__x86_64_pop_rdi
+		__x86_64_pop_rsi
+		asm "rep movsb" end
+		0 &pathBuf path @ + b!
+
+		let cell flags
+
+		if FILE_READ FILE_WRITE or mode = then
+			__freebsd_O_RDWR __freebsd_O_CREAT or -> flags
+		elseif FILE_READ mode = then
+			__freebsd_O_RDONLY -> flags
+		elseif FILE_WRITE mode = then
+			__freebsd_O_WRONLY __freebsd_O_CREAT or -> flags
+		end
+
+		&pathBuf
+		flags
+		__freebsd_default_mode
+
+		__x86_64_pop_rdx
+		__x86_64_pop_rsi
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 5" # open syscall
+			"syscall"
+		end
+		__x86_64_push_rax
+	end
+
+	func close_file begin
+		@ __x86_64_pop_rdi # FD
+		asm
+			"mov rax, 6" # Close
+			"syscall"
+		end
+	end
+
+	func file< begin
+		!
+	end
+
+	func file@ begin
+		__x86_64_pop_rdx   # Length
+		__x86_64_pop_rsi   # Buffer
+		@ __x86_64_pop_rdi # Fd
+
+		asm
+			"mov rax, 3" # read
+			"syscall"
+		end
+	end
+
+	func file! begin
+		__x86_64_pop_rdx   # Length
+		__x86_64_pop_rsi   # Buffer
+		@ __x86_64_pop_rdi # Fd
+
+		asm
+			"mov rax, 4" # write
+			"syscall"
+		end
+
+		__x86_64_push_rax
+	end
+
+	func file_seek begin
+		__x86_64_pop_rdx   # Whence
+		__x86_64_pop_rsi   # Offset
+		@ __x86_64_pop_rdi # Fd
+
+		asm
+			# TODO: replace this with whatever new syscall there is
+			"mov rax, 19" # lseek
+			"syscall"
+		end
+	end
+
+	func file_peek begin
+		@ __x86_64_pop_rdi
+		asm
+			"xor rsi, rsi"
+			"mov rdx, 1" # SEEK_CUR
+			"mov rax, 19" # lseek
+			"syscall"
+		end
+		__x86_64_push_rax
+	end
+end
