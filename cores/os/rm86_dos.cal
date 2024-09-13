@@ -1,3 +1,13 @@
+enable IO
+enable Args
+enable Exit
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
 let cell arglen
 let addr argv
 

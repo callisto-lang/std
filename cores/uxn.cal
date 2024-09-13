@@ -1,16 +1,25 @@
+enable IO
+enable Exit
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
 ## Supported features: IO, Exit
 ##
 ## Cell size = 16 bits
 
 version IO
 	inline printch begin asm
-		"NIP .Console/write DEO"
+		".Console/write DEO POP"
 	end end	
 end
 
 version Exit
 	inline exit begin asm
-		"BRK"
+		"BRK" # TODO: this sucks
 	end end
 end
 

@@ -1,3 +1,16 @@
+enable IO
+enable File
+enable Args
+enable Time
+enable Heap
+enable Exit
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
 let addr __linux_argv
 let cell __linux_argc
 
@@ -54,12 +67,7 @@ version File
 	1 &stdout !
 	2 &stderr !
 
-	func open_file begin
-		let addr path
-		let cell mode
-		-> mode
-		-> path
-
+	func open_file addr path cell mode begin
 		let array 4096 u8 pathBuf
 
 		path Array.elements + @
@@ -209,10 +217,7 @@ version Heap
 			__arm64_push_x0
 		end
 
-		func malloc begin
-			let cell sz
-			-> sz
-
+		func malloc cell sz begin
 			0 sz 8 + __linux_PROT_READ __linux_PROT_WRITE or
 			__linux_MAP_PRIVATE __linux_MAP_ANONYMOUS or -1 0 __linux_mmap
 
