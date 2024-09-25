@@ -4,7 +4,7 @@ include "array.cal"
 ## Parameters: Array* string
 ##
 ## Returns integer value represented by string
-func parse_int addr arr begin
+func parse_int addr arr -> cell res begin
 	let cell pos
 	let cell len
 

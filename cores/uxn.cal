@@ -12,18 +12,18 @@ restrict Exit
 ## Cell size = 16 bits
 
 version IO
-	inline printch begin asm
+	inline man unsafe printch cell ch begin asm
 		".Console/write DEO POP"
 	end end	
 end
 
 version Exit
-	inline exit begin asm
+	inline man unsafe exit cell ret begin asm
 		"BRK" # TODO: this sucks
 	end end
 end
 
-func = begin asm
+func man unsafe = cell a cell b -> cell ? begin asm
 	"EQU2"
 	",&true JCN"
 	"#0000 JMP2r"
@@ -31,7 +31,7 @@ func = begin asm
 	"#ffff JMP2r"
 end end
 
-func > begin asm
+func man unsafe > cell a cell b -> cell ? begin asm
 	"GTH2"
 	",&true JCN"
 	"#0000 JMP2r"
@@ -39,14 +39,14 @@ func > begin asm
 	"#ffff JMP2r"
 end end
 
-func >= begin asm
+func man unsafe >= cell a cell b -> cell ? begin asm
 	"GTH2k STH EQU2 STHr ORA ,&true JCN"
 	"#0000 JMP2r"
 	"&true"
 	"#ffff JMP2r"
 end end
 
-func < begin asm
+func man unsafe < cell a cell b -> cell ? begin asm
 	"LTH2"
 	",&true JCN"
 	"#0000 JMP2r"
@@ -54,90 +54,90 @@ func < begin asm
 	"#ffff JMP2r"
 end end
 
-func <= begin asm
+func man unsafe <= cell a cell b -> cell ? begin asm
 	"LTH2k STH EQU2 STHr ORA ,&true JCN"
 	"#0000 JMP2r"
 	"&true"
 	"#ffff JMP2r"
 end end
 
-inline @ begin asm
+inline man unsafe @ addr address -> cell value begin asm
 	"LDA2"
 end end
 
-inline ! begin asm
+inline man unsafe ! cell value cell address begin asm
 	"STA2"
 end end
 
-inline b@ begin asm
+inline man unsafe b@ addr address -> u8 byte begin asm
 	"LDA #00 SWP"
 end end
 
-inline b! begin asm
+inline man unsafe b! cell value addr address begin asm
 	"STH2 NIP STH2r STA"
 end end
 
-inline w@ begin @ end
-inline w! begin ! end
+inline man unsafe w@ addr address -> cell value begin @ end
+inline man unsafe w! cell value addr address begin ! end
 
-inline dup begin asm
+inline man unsafe dup cell v -> cell v1 cell v2 begin asm
 	"DUP2"
 end end
 
-inline drop begin asm
+inline man unsafe drop cell v begin asm
 	"POP2"
 end end
 
-inline swap begin asm
+inline man unsafe swap cell a cell b -> cell b cell a begin asm
 	"SWP2"
 end end
 
-inline + begin asm
+inline man unsafe + cell a cell b -> cell res begin asm
 	"ADD2"
 end end
 
-inline - begin asm
+inline man unsafe - cell a cell b -> cell res begin asm
 	"SUB2"
 end end
 
-inline * begin asm
+inline man unsafe * cell a cell b -> cell res begin asm
 	"MUL2"
 end end
 
-inline / begin asm
+inline man unsafe / cell a cell b -> cell res begin asm
 	"DIV2"
 end end
 
-inline % begin asm
+inline man unsafe % cell a cell b -> cell res begin asm
 	"DIV2k MUL2 SUB2"
 end end
 
-inline and begin asm
+inline man unsafe and cell a cell b -> cell res begin asm
 	"AND2"
 end end
 
-inline or begin asm
+inline man unsafe or cell a cell b -> cell res begin asm
 	"ORA2"
 end end
 
-inline xor begin asm
+inline man unsafe xor cell a cell b -> cell res begin asm
 	"EOR2"
 end end
 
-inline not begin asm
+inline man unsafe not cell a -> cell !a begin asm
 	"#ffff EOR2"
 end end
 
-inline << begin asm
+inline man unsafe << cell v cell by -> cell res begin asm
 	"#40 SFT2 NIP SFT2"
 end end
 
-inline >> begin asm
+inline man unsafe >> cell v cell by -> cell res begin asm
 	"NIP SFT2"
 end end
 
 version IO version Exit
-	func __core_a@ cell offset addr arr begin
+	func __core_a@ cell offset addr arr -> cell value begin
 		arr Array.memberSize + @ offset * -> offset
 		arr Array.elements + @ offset +
 
@@ -174,7 +174,7 @@ version IO version Exit
 		end
 	end
 
-	inline __core_new_line begin
+	inline man unsafe __core_new_line begin
 		13 printch 10 printch
 	end
 

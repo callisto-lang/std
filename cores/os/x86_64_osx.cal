@@ -17,19 +17,19 @@ restrict Exit
 let addr __osx_argv
 let cell __osx_argc
 
-inline __x86_64_program_init begin asm
+inline unsafe __x86_64_program_init begin asm
 	"mov [__global___us____us__osx__us__argc], edi"
 	"mov [__global___us____us__osx__us__argv], rsi"
 end end
 
-inline __x86_64_program_exit begin asm
+inline unsafe __x86_64_program_exit begin asm
 	"mov rax, 0x2000001"
 	"mov rdi, 0"
 	"syscall"
 end end
 
 version IO
-	func printch begin asm
+	func unsafe man printch cell ch begin asm
 		"sub r15, 8"
 		"mov rax, 0x2000004"
 		"mov rdi, 1"
@@ -65,12 +65,7 @@ version File
 	1 &stdout !
 	2 &stderr !
 
-	func open_file begin
-		let addr path
-		let cell mode
-		-> mode
-		-> path
-
+	func unsafe open_file addr path cell mode -> cell fd begin
 		let array 4096 u8 pathBuf
 
 		path Array.elements + @
@@ -107,7 +102,7 @@ version File
 		__x86_64_push_rax
 	end
 
-	func close_file begin
+	func unsafe man close_file addr file begin
 		@ __x86_64_pop_rdi # FD
 		asm
 			"mov rax, 0x2000000 + 6" # Close
@@ -115,11 +110,11 @@ version File
 		end
 	end
 
-	func file< begin
+	func man file< cell fd addr file begin
 		!
 	end
 
-	func file@ begin
+	func man unsafe file@ addr file addr buffer cell length begin
 		__x86_64_pop_rdx   # Length
 		__x86_64_pop_rsi   # Buffer
 		@ __x86_64_pop_rdi # Fd
@@ -130,7 +125,7 @@ version File
 		end
 	end
 
-	func file! begin
+	func man unsafe file! addr file addr buffer cell length begin
 		__x86_64_pop_rdx   # Length
 		__x86_64_pop_rsi   # Buffer
 		@ __x86_64_pop_rdi # Fd
@@ -139,11 +134,9 @@ version File
 			"mov rax, 0x2000000 + 4" # write
 			"syscall"
 		end
-
-		__x86_64_push_rax
 	end
 
-	func file_seek begin
+	func man unsafe file_seek addr file cell offset cell whence begin
 		__x86_64_pop_rdx   # Whence
 		__x86_64_pop_rsi   # Offset
 		@ __x86_64_pop_rdi # Fd
@@ -154,7 +147,7 @@ version File
 		end
 	end
 
-	func file_peek begin
+	func man unsafe file_peek addr file -> cell where begin
 		@ __x86_64_pop_rdi
 		asm
 			"xor rsi, rsi"
@@ -167,11 +160,11 @@ version File
 end
 
 version Args
-	func core_get_arg begin
+	func man core_get_arg cell which -> addr arg begin
 		8 * __osx_argv + @
 	end
 
-	inline core_get_arg_length begin __osx_argc end
+	inline core_get_arg_length -> cell len begin __osx_argc end
 end
 
 version Time
@@ -180,7 +173,7 @@ version Time
 		cell usec
 	end
 
-	func get_epoch_time begin
+	func unsafe get_epoch_time -> cell time begin
 		let __osx_timeval tv
 		&tv
 		__x86_64_pop_rdi
@@ -200,7 +193,7 @@ version Heap
 end
 
 version Exit
-	func exit begin
+	func unsafe man exit cell code begin
 		__x86_64_pop_rdi
 		asm
 			"mov rax, 0x2000001"

@@ -9,7 +9,7 @@ const RAND_MAX 32767
 
 ## ## rand
 ## Returns a random number
-func rand begin
+func rand -> cell num begin
 	std_rand_next 20077 * 12345 + -> std_rand_next
 	std_rand_next 65535 / 32768 %
 end
@@ -18,6 +18,6 @@ end
 ## Parameters: cell seed
 ##
 ## Sets the random number generator's seed and resets the state
-func srand begin
+func man srand cell seed begin
 	-> std_rand_next
 end

@@ -2,7 +2,7 @@ include "io.cal"
 extern printstr
 extern exit
 
-inline assert begin
+inline man assert cell ? begin
 	if not then
 		"Assertion thrown\n" printstr
 		1 exit

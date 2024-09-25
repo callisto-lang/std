@@ -12,7 +12,7 @@ end
 ## Parameters: usize length, usize memberSize, addr elements, Array* dest
 ##
 ## Writes the Array fields to `dest`
-func create_array begin
+func man create_array usize length usize memberSize addr elements addr dest begin
 	let addr var
 	-> var
 	var Array.elements + !
@@ -26,7 +26,7 @@ end
 ## Returns array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func a@ cell offset addr arr begin
+func a@ cell offset addr arr -> cell value begin
 	arr Array.memberSize + @ offset * -> offset
 	arr Array.elements + @ offset +
 
@@ -67,7 +67,7 @@ end
 ## Writes value to array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func a! begin
+func man a! begin
 	let addr  arr
 	let usize offset
 
@@ -113,19 +113,12 @@ end
 ##
 ## Returns true if the arrays are equal, false if not (will soon be changed to max cell value
 ## if true)
-func a= begin
-	let addr arr1
-	let addr arr2
-
-	-> arr2
-	-> arr1
-
+func a= addr arr1 addr arr2 -> cell equal begin
 	if arr1 @ arr2 @ = not then
 		0 return
 	end
 
 	let cell i
-	0 -> i
 
 	while i arr1 @ < do
 		if i arr1 a@ i arr2 a@ = not then

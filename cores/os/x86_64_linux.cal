@@ -15,14 +15,14 @@ let addr __linux_argv
 let cell __linux_argc
 
 version LibC
-	inline __x86_64_program_init begin asm
+	inline unsafe __x86_64_program_init begin asm
 		"mov [__global___us____us__linux__us__argc], edi"
 		"mov [__global___us____us__linux__us__argv], rsi"
 	end end
 end
 
 version not LibC
-	inline __x86_64_program_init begin asm
+	inline unsafe __x86_64_program_init begin asm
 		"lea rax, [rsp + 16]"
 		"mov [__global___us____us__linux__us__argv], rax"
 		"mov rax, [rsp + 8]"
@@ -30,14 +30,14 @@ version not LibC
 	end end
 end
 
-inline __x86_64_program_exit begin asm
+inline unsafe __x86_64_program_exit begin asm
 	"mov rax, 60"
 	"mov rdi, 0"
 	"syscall"
 end end
 
 version IO
-	func printch begin asm
+	func man unsafe printch cell ch begin asm
 		"sub r15, 8"
 		"mov rsi, r15"
 		"mov rax, 1"
@@ -48,7 +48,7 @@ version IO
 end
 
 version Exit
-	func exit begin
+	func man unsafe exit cell code begin
 		__x86_64_pop_rdi
 		asm
 			"mov rax, 60"
@@ -58,13 +58,14 @@ version Exit
 end
 
 version Time
-	func get_epoch_time begin
+	func man unsafe get_epoch_time -> cell time begin
 		asm
 			"mov rax, 201" # time syscall
 			"xor rdi, rdi"
 			"syscall"
 		end
 		__x86_64_push_rax # stuff is returned with rax right?
+		# yes.
 	end
 end
 
@@ -122,7 +123,7 @@ version File
 	1 &stdout !
 	2 &stderr !
 
-	func __linux_create_file begin
+	func man unsafe __linux_create_file cell mode cell flags addr path begin
 		# Path
 		__x86_64_pop_rdi
 		# Flags
@@ -138,12 +139,7 @@ version File
 		end
 	end
 
-	func open_file begin
-		let addr path
-		let cell mode
-		-> mode
-		-> path
-
+	func unsafe open_file addr path cell mode -> cell fd begin
 		let array 4096 u8 pathBytes
 		let cell i
 		let addr src
@@ -192,7 +188,7 @@ version File
 		__x86_64_push_rax
 	end
 
-	func close_file begin
+	func man unsafe close_file addr file begin
 		@ __x86_64_pop_rdi # FD
 		asm
 			"mov rax, 3" # Close
@@ -200,11 +196,11 @@ version File
 		end
 	end
 
-	func file< begin
+	func man file< cell fd addr file begin
 		!
 	end
 
-	func file@ begin
+	func man unsafe file@ addr file addr buffer cell length begin
 		__x86_64_pop_rdx   # Length
 		__x86_64_pop_rsi   # Buffer
 		@ __x86_64_pop_rdi # Fd
@@ -215,7 +211,7 @@ version File
 		end
 	end
 
-	func file! begin
+	func man unsafe file! addr file addr buffer cell length begin
 		__x86_64_pop_rdx   # Length
 		__x86_64_pop_rsi   # Buffer
 		@ __x86_64_pop_rdi # Fd
@@ -223,12 +219,10 @@ version File
 		asm
 			"mov rax, 1" # write
 			"syscall"
-		end
-
-		__x86_64_push_rax
+		end # TODO: throw if error
 	end
 
-	func file_seek begin
+	func man unsafe file_seek addr file cell offset cell whence begin
 		__x86_64_pop_rdx
 		__x86_64_pop_rsi
 		@ __x86_64_pop_rdi
@@ -239,7 +233,7 @@ version File
 		end
 	end
 
-	func file_peek begin
+	func man unsafe file_peek addr file -> cell where begin
 		@ __x86_64_pop_rdi
 		asm
 			"mov rdx, 1" # SEEK_CUR
@@ -252,11 +246,11 @@ version File
 end
 
 version Args
-	func core_get_arg begin
+	func man core_get_arg cell which -> addr str begin
 		8 * __linux_argv + @
 	end
 
-	inline core_get_arg_length begin __linux_argc end
+	inline core_get_arg_length -> cell len begin __linux_argc end
 end
 
 version Heap
@@ -274,7 +268,9 @@ version Heap
 		const __linux_MREMAP_MAYMOVE 1
 		const __linux_MREMAP_FIXED   2
 
-		func __linux_mmap begin
+		func man unsafe __linux_mmap
+			addr address cell len cell prot cell flags cell fd cell pgoff -> addr res
+		begin
 			__x86_64_pop_r9  # pgoff
 			__x86_64_pop_r8  # fd
 			__x86_64_pop_r10 # flags
@@ -290,10 +286,7 @@ version Heap
 			__x86_64_push_rax
 		end
 
-		func malloc begin
-			let cell sz
-			-> sz
-
+		func malloc cell sz -> addr res begin
 			0 sz 8 + __linux_PROT_READ __linux_PROT_WRITE or
 			__linux_MAP_PRIVATE __linux_MAP_ANONYMOUS or -1 0 __linux_mmap
 
@@ -301,7 +294,9 @@ version Heap
 			8 +
 		end
 
-		func __linux_mremap begin
+		func man unsafe __linux_mremap
+			addr addres cell oldLen cell newLen cell flags addr newAddr -> addr res
+		begin
 			__x86_64_pop_r8  # new_addr
 			__x86_64_pop_r10 # flags
 			__x86_64_pop_rdx # new_len
@@ -316,7 +311,7 @@ version Heap
 			__x86_64_push_rax
 		end
 
-		func realloc addr ptr usize sz begin
+		func realloc addr ptr usize sz -> addr address begin
 			if ptr 0 = then
 				if sz 0 = then 0 else sz malloc end
 			elseif sz 0 = then
@@ -335,7 +330,7 @@ version Heap
 			end
 		end
 
-		func __linux_munmap begin
+		func man unsafe __linux_munmap addr address cell length -> cell res begin
 			__x86_64_pop_rsi # length
 			__x86_64_pop_rdi # addr
 
@@ -347,14 +342,14 @@ version Heap
 			__x86_64_push_rax
 		end
 
-		func free begin
+		func man free begin
 			dup 8 - @ swap 8 - swap 8 + __linux_munmap drop
 		end
 	end
 end
 
 version IO version Exit
-	func __core_a@ cell offset addr arr begin
+	func __core_a@ cell offset addr arr -> cell value begin
 		arr Array.memberSize + @ offset * -> offset
 		arr Array.elements + @ offset +
 

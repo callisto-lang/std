@@ -2,7 +2,7 @@ requires IO
 
 include "array.cal"
 
-func printdec_loop begin
+func man printdec_loop cell num begin
 	if dup then
 		dup 10 / printdec_loop
 		10 % 48 + printch
@@ -15,7 +15,7 @@ end
 ## Parameters: cell value
 ##
 ## Prints the given value as decimal to stdout
-func printdec begin
+func man printdec cell value begin
 	if dup then
 		printdec_loop
 	else
@@ -23,7 +23,7 @@ func printdec begin
 	end
 end
 
-func printhex_loop begin
+func man printhex_loop cell num begin
 	if dup then
 		dup 16 / printhex_loop
 		16 %
@@ -41,7 +41,7 @@ end
 ## Parameters: cell value
 ##
 ## Prints the given value as hexadecimal to stdout
-func printhex begin
+func man printhex cell num begin
 	if dup then
 		printhex_loop
 	else
@@ -73,37 +73,38 @@ func new_line begin
 	'\r' printch '\n' printch
 end
 
-## ## printf
-## Parameters: ..., Array* fmt
-##
-## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
-## how they are written
-##
-## Formats:
-##
-## - `%s` - String (`Array*`)
-## - `%d` - Decimal (`cell`)
-## - `%X` - Hexadecimal (`cell`)
-func printf addr fmt begin
-	let cell i
-	let cell ch
+# Removed until I add a way to get this to work in safe callisto
+# ## ## printf
+# ## Parameters: ..., Array* fmt
+# ##
+# ## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
+# ## how they are written
+# ##
+# ## Formats:
+# ##
+# ## - `%s` - String (`Array*`)
+# ## - `%d` - Decimal (`cell`)
+# ## - `%X` - Hexadecimal (`cell`)
+#func printf addr fmt begin
+#	let cell i
+#	let cell ch
 
-	while i fmt @ < do
-		if i fmt a@ '%' = then
-			i 1 + -> i
-			i fmt a@ -> ch
+#	while i fmt @ < do
+#		if i fmt a@ '%' = then
+#			i 1 + -> i
+#			i fmt a@ -> ch
 
-			if ch 's' = then
-				printstr
-			elseif ch 'd' = then
-				printdec
-			elseif ch 'X' = then
-				printhex
-			end
-		else
-			i fmt a@ printch
-		end
-
-		i 1 + -> i
-	end
-end
+#			if ch 's' = then
+#				printstr
+#			elseif ch 'd' = then
+#				printdec
+#			elseif ch 'X' = then
+#				printhex
+#			end
+#		else
+#			i fmt a@ printch
+#		end
+#
+#		i 1 + -> i
+#	end
+#end
