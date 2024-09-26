@@ -67,7 +67,7 @@ end
 ## Writes value to array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func man a! begin
+func man a! cell value usize offset addr arr begin
 	let addr  arr
 	let usize offset
 
@@ -97,7 +97,7 @@ func man a! begin
 			end
 		elseif arr Array.memberSize + @ 4 = then
 			version 32Bit
-				d@
+				d!
 			end
 			version not 32Bit
 				# TODO!!!

@@ -342,7 +342,7 @@ version Heap
 			__x86_64_push_rax
 		end
 
-		func man free begin
+		func man free addr address begin
 			dup 8 - @ swap 8 - swap 8 + __linux_munmap drop
 		end
 	end
