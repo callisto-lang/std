@@ -22,4 +22,4 @@ end
 ## Parameters: none
 ##
 ## Returns the number of command line arguments
-inline get_args_length begin core_get_arg_length end
+inline get_args_length -> cell num begin core_get_arg_length end

@@ -1,6 +1,4 @@
 include "io.cal"
-extern printstr
-extern exit
 
 inline man assert cell ? begin
 	if not then
