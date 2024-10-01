@@ -108,7 +108,7 @@ version File
 		end
 	end
 
-	func file< cell fd addr file begin
+	func man file< cell fd addr file begin
 		!
 	end
 

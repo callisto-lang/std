@@ -11,6 +11,9 @@ restrict Exit
 let cell arglen
 let addr argv
 
+let addr __rm86_argv
+let cell __rm86_arglen
+
 inline unsafe __rm86_program_init begin asm
 	"xor ah, ah"
 	"mov al, [0x80]"
@@ -55,7 +58,7 @@ version Args
 
 	__rm86_nullterm_args
 
-	func core_get_arg cell which -> addr str begin
+	func man core_get_arg cell which -> addr str begin
 		let cell which
 		let cell counter
 		let addr args

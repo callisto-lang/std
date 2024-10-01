@@ -47,7 +47,7 @@ inline man unsafe __arm64_push_x10 -> cell v begin asm
 end end
 
 # src, dest, len
-inline __arm64_memcpy addr src addr dest cell len begin
+inline man unsafe __arm64_memcpy addr src addr dest cell len begin
 	__arm64_pop_x11
 	__arm64_pop_x10
 	__arm64_pop_x9

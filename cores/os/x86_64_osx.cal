@@ -203,7 +203,7 @@ version Exit
 end
 
 version IO version Exit
-	func __core_a@ cell offset addr arr begin
+	func __core_a@ cell offset addr arr -> cell value begin
 		arr Array.memberSize + @ offset * -> offset
 		arr Array.elements + @ offset +
 
