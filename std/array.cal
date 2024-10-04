@@ -93,14 +93,16 @@ func man a! cell value usize offset addr arr begin
 				w!
 			end
 			version not 16Bit
-				# TODO!!!
+				drop drop
+				c"Can't write 16 bit values to array" throw
 			end
 		elseif arr Array.memberSize + @ 4 = then
 			version 32Bit
 				d!
 			end
 			version not 32Bit
-				# TODO!!!
+				drop drop
+				c"Can't write 32 bit values to array" throw
 			end
 		else
 			!

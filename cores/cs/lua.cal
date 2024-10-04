@@ -1,24 +1,24 @@
-inline __lua_pop_a begin asm
+inline man unsafe __lua_pop_a cell v begin asm
 	"dsp = dsp - 1;"
 	"regA = mem[dsp];"
 end end
 
-inline __lua_pop_b begin asm
+inline man unsafe __lua_pop_b cell v begin asm
 	"dsp = dsp - 1;"
 	"regB = mem[dsp];"
 end end
 
-inline __lua_push_a begin asm
+inline man unsafe __lua_push_a -> cell v begin asm
 	"mem[dsp] = regA;"
 	"dsp = dsp + 1;"
 end end
 
-inline __lua_push_b begin asm
+inline man unsafe __lua_push_b -> cell v begin asm
 	"mem[dsp] = regB;"
 	"dsp = dsp + 1;"
 end end
 
-func = begin
+func man unsafe = cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -32,7 +32,7 @@ func = begin
 	end
 end
 
-func > begin
+func man unsafe > cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -46,7 +46,7 @@ func > begin
 	end
 end
 
-func >= begin
+func man unsafe >= cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -60,7 +60,7 @@ func >= begin
 	end
 end
 
-func < begin
+func man unsafe < cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -74,7 +74,7 @@ func < begin
 	end
 end
 
-func <= begin
+func man unsafe <= cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -88,7 +88,7 @@ func <= begin
 	end
 end
 
-func @ begin
+func man unsafe @ addr address -> cell value begin
 	__lua_pop_a
 	asm
 		"regA = mem[regA]"
@@ -96,7 +96,7 @@ func @ begin
 	__lua_push_a
 end
 
-func ! begin
+func man unsafe ! cell value addr address begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -104,24 +104,24 @@ func ! begin
 	end
 end
 
-func dup begin
+func man unsafe dup cell v -> cell v cell v begin
 	__lua_pop_a
 	__lua_push_a
 	__lua_push_a
 end
 
-func drop begin asm
+func man unsafe drop cell v begin asm
 	"dsp = dsp - 1"
 end end
 
-func swap begin
+func man unsafe swap cell a cell b -> cell b cell a begin
 	__lua_pop_a
 	__lua_pop_b
 	__lua_push_a
 	__lua_push_b
 end
 
-func + begin
+func man unsafe + cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -130,9 +130,9 @@ func + begin
 	__lua_push_a
 end
 
-inline s+ begin + end
+inline man unsafe s+ cell a cell b -> cell res begin + end
 
-func - begin
+func man unsafe - cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -141,9 +141,9 @@ func - begin
 	__lua_push_a
 end
 
-inline s- begin - end
+inline man unsafe s- cell a cell b -> cell res begin - end
 
-func * begin
+func man unsafe * cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -152,9 +152,9 @@ func * begin
 	__lua_push_a
 end
 
-inline s* begin * end
+inline man unsafe s* cell a cell b -> cell res begin * end
 
-func / begin
+func man unsafe / cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -163,9 +163,9 @@ func / begin
 	__lua_push_a
 end
 
-inline s/ begin / end
+inline man unsafe s/ cell a cell b -> cell res begin / end
 
-func % begin
+func man unsafe % cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -174,9 +174,9 @@ func % begin
 	__lua_push_a
 end
 
-inline s% begin % end
+inline man unsafe s% cell a cell b -> cell res begin % end
 
-func and begin
+func man unsafe and cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -185,7 +185,7 @@ func and begin
 	__lua_push_a
 end
 
-func or begin
+func man unsafe or cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -194,7 +194,7 @@ func or begin
 	__lua_push_a
 end
 
-func xor begin
+func man unsafe xor cell a cell b -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -203,7 +203,7 @@ func xor begin
 	__lua_push_a
 end
 
-func not begin
+func man unsafe not cell v -> cell !v begin
 	__lua_pop_a
 	asm
 		"regA = ~regA"
@@ -211,7 +211,7 @@ func not begin
 	__lua_push_a
 end
 
-func << begin
+func man unsafe << cell v cell by -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -220,7 +220,7 @@ func << begin
 	__lua_push_a
 end
 
-func >> begin
+func man unsafe >> cell v cell by -> cell res begin
 	__lua_pop_b
 	__lua_pop_a
 	asm
@@ -230,7 +230,7 @@ func >> begin
 end
 
 version IO
-	func printch begin
+	func man unsafe printch cell ch begin
 		__lua_pop_a
 		asm
 			"io.write(string.char(regA));"
@@ -239,13 +239,13 @@ version IO
 end
 
 version Exit
-	func exit begin asm
+	func man unsafe exit cell code begin asm
 		"os.exit()"
 	end end
 end
 
 version Time
-	func get_epoch_time begin
+	func man unsafe get_epoch_time -> cell time begin
 		asm
 			"regA = os.time(os.date('!*t'))"
 		end

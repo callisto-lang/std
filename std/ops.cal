@@ -24,7 +24,12 @@ func copy_mem addr dest addr src cell n begin
 	let cell i
 
 	while i n < do
-		src b@ dest b!
+		version CallistoScript
+			src @ dest !
+		end
+		version not CallistoScript
+			src b@ dest b!
+		end
 		i ++ -> i
 		dest ++ -> dest
 		src ++ -> src
@@ -39,7 +44,12 @@ func fill_mem addr dest cell n cell value begin
 	let cell i
 
 	while i n < do
-		value dest b!
+		version CallistoScript
+			value dest !
+		end
+		version not CallistoScript
+			value dest b!
+		end
 		i ++ -> i
 		dest ++ -> i
 	end
