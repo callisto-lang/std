@@ -13,9 +13,8 @@ end
 ## Parameters: addr str
 ##
 ## Returns the length of a null-terminated string
-func ntstr_length addr str begin
+func ntstr_length addr str -> cell len begin
 	let cell ret
-	0 -> ret
 
 	while str b@ do
 		ret 1 + -> ret

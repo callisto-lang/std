@@ -16,7 +16,7 @@ restrict Exit
 let addr __osx_argv
 let cell __osx_argc
 
-inline __arm64_program_init begin asm
+inline unsafe __arm64_program_init begin asm
 	"adrp x9, __global___us____us__osx__us__argc@PAGE"
 	"add x9, x9, __global___us____us__osx__us__argc@PAGEOFF"
 	"str x0, [x9]"
@@ -25,14 +25,14 @@ inline __arm64_program_init begin asm
 	"str x1, [x9]"
 end end
 
-inline __arm64_program_exit begin asm
+inline unsafe __arm64_program_exit begin asm
 	"mov x16, 1"
 	"mov x0, 0"
 	"svc #80"
 end end
 
 version IO
-	func printch begin asm
+	func man unsafe printch cell ch begin asm
 		"sub x19, x19, #8"
 		"mov x16, 4"
 		"mov x0, 1"
@@ -68,7 +68,7 @@ version File
 	1 &stdout !
 	2 &stderr !
 
-	func open_file addr path cell mode begin
+	func unsafe open_file addr path cell mode -> cell fd begin
 		let array 4096 u8 pathBuf
 
 		path Array.elements + @
@@ -100,7 +100,7 @@ version File
 		__arm64_push_x0
 	end
 
-	func close_file begin
+	func man unsafe close_file addr file begin
 		@ __arm64_pop_x0 # FD
 		asm
 			"mov x16, #6" # Close
@@ -108,11 +108,11 @@ version File
 		end
 	end
 
-	func file< begin
+	func man file< cell fd addr file begin
 		!
 	end
 
-	func file@ begin
+	func man unsafe file@ addr file addr buffer cell length begin
 		__arm64_pop_x2   # Length
 		__arm64_pop_x1   # Buffer
 		@ __arm64_pop_x0 # Fd
@@ -123,7 +123,7 @@ version File
 		end
 	end
 
-	func file! begin
+	func man unsafe file! addr file addr buffer cell length begin
 		__arm64_pop_x2   # Length
 		__arm64_pop_x1   # Buffer
 		@ __arm64_pop_x0 # Fd
@@ -132,11 +132,9 @@ version File
 			"mov x16, #4" # write
 			"svc #80"
 		end
-
-		__arm64_push_x0
 	end
 
-	func file_seek begin
+	func man unsafe file_seek addr file cell offset begin
 		__arm64_pop_x2   # Whence
 		__arm64_pop_x1   # Offset
 		@ __arm64_pop_x0 # Fd
@@ -147,7 +145,7 @@ version File
 		end
 	end
 
-	func file_peek begin
+	func man unsafe file_peek addr file -> cell where begin
 		@ __arm64_pop_x0
 		asm
 			"mov x1, #0"
@@ -160,11 +158,11 @@ version File
 end
 
 version Args
-	func core_get_arg begin
+	func man core_get_arg cell which -> addr str begin
 		8 * __osx_argv + @
 	end
 
-	inline core_get_arg_length begin __osx_argc end
+	inline core_get_arg_length -> cell len begin __osx_argc end
 end
 
 version Time
@@ -173,7 +171,7 @@ version Time
 		cell usec
 	end
 
-	func get_epoch_time begin
+	func man unsafe get_epoch_time -> cell time begin
 		let __osx_timeval tv
 		&tv
 		__arm64_pop_x0
@@ -199,7 +197,7 @@ version Heap
 end
 
 version Exit
-	func exit begin
+	func man unsafe exit cell code begin
 		__arm64_pop_x0
 		asm
 			"mov x16, 1"
@@ -209,7 +207,7 @@ version Exit
 end
 
 version IO version Exit
-	func __core_a@ cell offset addr arr begin
+	func __core_a@ cell offset addr arr -> cell value begin
 		arr Array.memberSize + @ offset * -> offset
 		arr Array.elements + @ offset +
 

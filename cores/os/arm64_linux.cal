@@ -14,7 +14,7 @@ restrict Exit
 let addr __linux_argv
 let cell __linux_argc
 
-inline __arm64_program_init begin asm
+inline unsafe __arm64_program_init begin asm
 	"add x9, sp, #8"
 	"ldr x10, =__global___us____us__linux__us__argv"
 	"str x9, [x10]"
@@ -23,14 +23,14 @@ inline __arm64_program_init begin asm
 	"str x9, [x10]"
 end end
 
-inline __arm64_program_exit begin asm
+inline unsafe __arm64_program_exit begin asm
 	"mov x8, #93"
 	"mov x0, #0"
 	"svc #0"
 end end
 
 version IO
-	func printch begin asm
+	func unsafe man printch cell ch begin asm
 		"sub x19, x19, #8"
 		"mov x8, #64"
 		"mov x0, #1"
@@ -67,7 +67,7 @@ version File
 	1 &stdout !
 	2 &stderr !
 
-	func open_file addr path cell mode begin
+	func unsafe open_file addr path cell mode -> cell fd begin
 		let array 4096 u8 pathBuf
 
 		path Array.elements + @
@@ -101,7 +101,7 @@ version File
 		__arm64_push_x0
 	end
 
-	func close_file begin
+	func unsafe man close_file cell fd begin
 		@ __arm64_pop_x0 # FD
 		asm
 			"mov x8, #57" # Close
@@ -109,11 +109,11 @@ version File
 		end
 	end
 
-	func file< begin
+	func man file< cell fd addr file begin
 		!
 	end
 
-	func file@ begin
+	func unsafe man file@ addr file addr buffer cell length begin
 		__arm64_pop_x2   # Length
 		__arm64_pop_x1   # Buffer
 		@ __arm64_pop_x0 # Fd
@@ -124,7 +124,7 @@ version File
 		end
 	end
 
-	func file! begin
+	func unsafe man file! addr file addr buffer cell length begin
 		__arm64_pop_x2   # Length
 		__arm64_pop_x1   # Buffer
 		@ __arm64_pop_x0 # Fd
@@ -133,11 +133,9 @@ version File
 			"mov x8, #64" # write
 			"svc #0"
 		end
-
-		__arm64_push_x0
 	end
 
-	func file_seek begin
+	func unsafe man file_seek addr file cell offset cell whence begin
 		__arm64_pop_x2   # Whence
 		__arm64_pop_x1   # Offset
 		@ __arm64_pop_x0 # Fd
@@ -148,7 +146,7 @@ version File
 		end
 	end
 
-	func file_peek begin
+	func unsafe man file_peek addr file -> cell where begin
 		@ __arm64_pop_x0
 		asm
 			"mov x1, #0"
@@ -161,11 +159,11 @@ version File
 end
 
 version Args
-	func core_get_arg begin
+	func man core_get_arg cell which -> addr str begin
 		8 * __linux_argv + @
 	end
 
-	inline core_get_arg_length begin __linux_argc end
+	inline man core_get_arg_length -> cell len begin __linux_argc end
 end
 
 version Time
@@ -174,7 +172,7 @@ version Time
 		cell usec
 	end
 
-	func get_epoch_time begin
+	func unsafe get_epoch_time -> cell time begin
 		let __linux_timeval tv
 		&tv
 		__arm64_pop_x0
@@ -201,7 +199,9 @@ version Heap
 		const __linux_MREMAP_MAYMOVE 1
 		const __linux_MREMAP_FIXED   2
 
-		func __linux_mmap begin
+		func man unsafe __linux_mmap
+			addr address cell len cell prot cell flags cell fd cell pgoff -> addr address
+		begin
 			__arm64_pop_x5 # pgoff
 			__arm64_pop_x4 # fd
 			__arm64_pop_x3 # flags
@@ -217,7 +217,7 @@ version Heap
 			__arm64_push_x0
 		end
 
-		func malloc cell sz begin
+		func malloc cell sz -> addr res begin
 			0 sz 8 + __linux_PROT_READ __linux_PROT_WRITE or
 			__linux_MAP_PRIVATE __linux_MAP_ANONYMOUS or -1 0 __linux_mmap
 
@@ -225,7 +225,9 @@ version Heap
 			8 +
 		end
 
-		func __linux_mremap begin
+		func man unsafe __linux_mremap
+			addr address cell oldLen cell newLen cell flags addr newAddr
+		begin
 			__arm64_pop_x4 # new_addr
 			__arm64_pop_x3 # flags
 			__arm64_pop_x2 # new_len
@@ -240,22 +242,23 @@ version Heap
 			__arm64_push_x0
 		end
 
-		func realloc begin
-			let addr ptr
+		func man realloc addr address cell sz -> addr ptr begin
+			let addr address
 			let usize sz
 			8 + -> sz
-			8 - -> ptr
+			8 - -> address
 
 			let usize oldSz
-			ptr @ 8 + -> oldSz
+			address @ 8 + -> oldSz
 
-			let addr ptr2
-			sz malloc 8 - -> ptr2
+			let addr address2
+			sz malloc 8 - -> address2
 
-			ptr2 oldSz sz __linux_MREMAP_MAYMOVE __linux_MREMAP_FIXED or ptr __linux_mremap
+			address2 oldSz sz __linux_MREMAP_MAYMOVE __linux_MREMAP_FIXED or address
+			__linux_mremap
 		end
 
-		func __linux_munmap begin
+		func man unsafe __linux_munmap addr address cell length -> cell res begin
 			__arm64_pop_x1 # length
 			__arm64_pop_x0 # addr
 
@@ -267,14 +270,14 @@ version Heap
 			__arm64_push_x0
 		end
 
-		func free begin
+		func man free addr address begin
 			dup 8 - @ swap 8 - swap 8 + __linux_munmap drop
 		end
 	end
 end
 
 version Exit
-	func exit begin
+	func man unsafe exit cell code begin
 		asm
 			"ldr x0, [x19, #-8]!"
 			"mov x8, #93"
@@ -284,7 +287,7 @@ version Exit
 end
 
 version IO version Exit
-	func __core_a@ cell offset addr arr begin
+	func __core_a@ cell offset addr arr -> cell v begin
 		arr Array.memberSize + @ offset * -> offset
 		arr Array.elements + @ offset +
 

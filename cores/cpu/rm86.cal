@@ -1,45 +1,45 @@
-inline __rm86_pop_ax begin asm
+inline man unsafe __rm86_pop_ax cell v begin asm
 	"sub si, 2"
 	"mov ax, [si]"
 end end
 
-inline __rm86_pop_bx begin asm
+inline man unsafe __rm86_pop_bx cell v begin asm
 	"sub si, 2"
 	"mov bx, [si]"
 end end
 
-inline __rm86_pop_di begin asm
+inline man unsafe __rm86_pop_di cell v begin asm
 	"sub si, 2"
 	"mov di, [si]"
 end end
 
-inline __rm86_pop_dx begin asm
+inline man unsafe __rm86_pop_dx cell v begin asm
 	"sub si, 2"
 	"mov cx, [si]"
 end end
 
-inline __rm86_pop_cx begin asm
+inline man unsafe __rm86_pop_cx cell v begin asm
 	"sub si, 2"
 	"mov cx, [si]"
 end end
 
-inline __rm86_push_ax begin asm
+inline man unsafe __rm86_push_ax -> cell reg begin asm
 	"mov [si], ax"
 	"add si, 2"
 end end
 
-inline __rm86_push_bx begin asm
+inline man unsafe __rm86_push_bx -> cell reg begin asm
 	"mov [si], bx"
 	"add si, 2"
 end end
 
-inline __rm86_push_dx begin asm
+inline man unsafe __rm86_push_dx -> cell reg begin asm
 	"mov [si], dx"
 	"add si, 2"
 end end
 
 version IO
-	func printch begin
+	func man unsafe printch cell char begin
 		__rm86_pop_ax
 		asm
 			"mov ah, 0x0E"
@@ -48,7 +48,7 @@ version IO
 	end
 end
 
-func = begin
+func man unsafe = cell a cell b -> cell res begin
 	__rm86_pop_ax
 	__rm86_pop_bx
 	asm
@@ -63,7 +63,7 @@ func = begin
 	end
 end
 
-func > begin
+func man unsafe > cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -78,7 +78,7 @@ func > begin
 	end
 end
 
-func >= begin
+func man unsafe >= cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -93,7 +93,7 @@ func >= begin
 	end
 end
 
-func < begin
+func man unsafe < cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -108,7 +108,7 @@ func < begin
 	end
 end
 
-func <= begin
+func man unsafe <= cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -123,7 +123,7 @@ func <= begin
 	end
 end
 
-inline @ begin
+inline man unsafe @ addr address -> cell v begin
 	__rm86_pop_bx
 	asm
 		"mov ax, [bx]"
@@ -131,7 +131,7 @@ inline @ begin
 	__rm86_push_ax
 end
 
-inline ! begin
+inline man unsafe ! cell v addr address begin
 	__rm86_pop_di
 	__rm86_pop_bx
 	asm
@@ -139,7 +139,7 @@ inline ! begin
 	end
 end
 
-inline b@ begin
+inline man unsafe b@ addr address -> cell v begin
 	__rm86_pop_bx
 	asm
 		"xor ah, ah"
@@ -148,7 +148,7 @@ inline b@ begin
 	__rm86_push_ax
 end
 
-inline b! begin
+inline man unsafe b! cell v addr address begin
 	__rm86_pop_di
 	__rm86_pop_bx
 	asm
@@ -156,7 +156,7 @@ inline b! begin
 	end
 end
 
-inline w@ begin
+inline man unsafe w@ addr address -> cell v begin
 	__rm86_pop_bx
 	asm
 		"mov ax, [bx]"
@@ -164,7 +164,7 @@ inline w@ begin
 	__rm86_push_ax
 end
 
-inline w! begin
+inline man unsafe w! cell v addr address begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -172,24 +172,24 @@ inline w! begin
 	end
 end
 
-inline dup begin
+inline man unsafe dup cell v -> cell v cell v begin
 	__rm86_pop_ax
 	__rm86_push_ax
 	__rm86_push_ax
 end
 
-inline drop begin asm
+inline man unsafe drop cell v begin asm
 	"sub si, 2"
 end end
 
-inline swap begin
+inline man unsafe swap cell a cell b -> cell b cell a begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	__rm86_push_bx
 	__rm86_push_ax
 end
 
-inline + begin
+inline man unsafe + cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -198,9 +198,9 @@ inline + begin
 	__rm86_push_ax
 end
 
-inline s+ begin + end
+inline man unsafe s+ cell a cell b -> cell res begin + end
 
-inline - begin
+inline man unsafe - cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -209,9 +209,9 @@ inline - begin
 	__rm86_push_ax
 end
 
-inline s- begin - end
+inline man unsafe s- cell a cell b -> cell res begin - end
 
-inline * begin
+inline man unsafe * cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -220,7 +220,7 @@ inline * begin
 	__rm86_push_ax
 end
 
-inline s* begin
+inline man unsafe s* cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -229,7 +229,7 @@ inline s* begin
 	__rm86_push_ax
 end
 
-inline / begin
+inline man unsafe / cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -239,7 +239,7 @@ inline / begin
 	__rm86_push_ax
 end
 
-inline s/ begin
+inline man unsafe s/ cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -249,7 +249,7 @@ inline s/ begin
 	__rm86_push_ax
 end
 
-inline % begin
+inline man unsafe % cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -259,7 +259,7 @@ inline % begin
 	__rm86_push_dx
 end
 
-inline s% begin
+inline man unsafe s% cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -269,7 +269,7 @@ inline s% begin
 	__rm86_push_dx
 end
 
-inline and begin
+inline man unsafe and cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -278,7 +278,7 @@ inline and begin
 	__rm86_push_ax
 end
 
-inline or begin
+inline man unsafe or cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -287,7 +287,7 @@ inline or begin
 	__rm86_push_ax
 end
 
-inline xor begin
+inline man unsafe xor cell a cell b -> cell res begin
 	__rm86_pop_bx
 	__rm86_pop_ax
 	asm
@@ -296,7 +296,7 @@ inline xor begin
 	__rm86_push_ax
 end
 
-inline not begin
+inline man unsafe not cell v -> cell !v begin
 	__rm86_pop_ax
 	asm
 		"not ax"
@@ -304,7 +304,7 @@ inline not begin
 	__rm86_push_ax
 end
 
-inline << begin
+inline man unsafe << cell v cell by -> cell res begin
 	__rm86_pop_cx
 	__rm86_pop_ax
 	asm
@@ -313,7 +313,7 @@ inline << begin
 	__rm86_push_ax
 end
 
-inline >> begin
+inline man unsafe >> cell v cell by -> cell res begin
 	__rm86_pop_cx
 	__rm86_pop_ax
 	asm
