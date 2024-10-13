@@ -26,7 +26,7 @@ end
 ## Returns array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func a@ cell offset addr arr -> cell value begin
+func error a@ cell offset addr arr -> cell value begin
 	arr Array.memberSize + @ offset * -> offset
 	arr Array.elements + @ offset +
 
@@ -46,14 +46,14 @@ func a@ cell offset addr arr -> cell value begin
 				w@
 			end
 			version not 16Bit
-				# TODO!!!
+				c"Can't read 16-bit values from array" throw
 			end
 		elseif arr Array.memberSize + @ 4 = then
 			version 32Bit
 				d@
 			end
 			version not 32Bit
-				# TODO!!!
+				c"Can't read 32-bit values from array" throw
 			end
 		else
 			@
@@ -67,7 +67,7 @@ end
 ## Writes value to array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func man a! cell value usize offset addr arr begin
+func error man a! cell value usize offset addr arr begin
 	let addr  arr
 	let usize offset
 
