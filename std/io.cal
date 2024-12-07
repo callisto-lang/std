@@ -53,13 +53,10 @@ end
 ## Parameters: Array* str
 ##
 ## Prints the given string to stdout
-func printstr addr arr begin
-	let usize length
+func printstr ptr Array arr begin
 	let usize i
 
-	arr @ -> length
-
-	while i length < do
+	while i arr.length < do
 		i arr a@ printch
 		i 1 + -> i
 	end

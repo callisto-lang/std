@@ -4,15 +4,13 @@ include "array.cal"
 ## Parameters: Array* string
 ##
 ## Returns integer value represented by string
-func parse_int addr arr -> cell res begin
+func parse_int ptr Array arr -> cell res begin
 	let cell pos
-	let cell len
 
 	0 -> pos
-	arr Array.length + @ -> len
 
 	0
-	while pos len < do
+	while pos arr.length < do
 		10 * pos arr a@ '0' - +
 		pos 1 + -> pos
 	end
