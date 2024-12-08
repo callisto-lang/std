@@ -1,3 +1,13 @@
+enable IO
+enable Exit
+enable Time
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
 inline man unsafe __lua_pop_a cell v begin asm
 	"dsp = dsp - 1;"
 	"regA = mem[dsp];"
@@ -306,7 +316,7 @@ version IO version Exit
 		13 printch 10 printch
 	end
 
-	func __x86_64_exception begin
+	func __lua_exception begin
 		c"Unhandled exception: " __core_printstr
 		&_cal_exception Exception.msg + __core_printstr __core_new_line
 		1 exit
