@@ -1,5 +1,6 @@
 include "array.cal"
 include "io.cal"
+include "ops.cal"
 
 struct Vector : Array
 	usize capacity
@@ -19,7 +20,9 @@ implement Vector deinit
 	let ptr Vector vec
 	-> vec
 
-	vec.elements free
+	if vec.elements 0 = not then
+		vec.elements free
+	end
 end
 
 func alloc_vec_capacity ptr Vector vec begin
@@ -28,11 +31,18 @@ end
 
 func double_vec_capacity ptr Vector vec begin
 	vec.capacity 2 * -> vec.capacity
+	vec alloc_vec_capacity
+end
+
+func halve_vec_capacity ptr Vector vec begin
+	vec.capacity 2 / -> vec.capacity
+	vec alloc_vec_capacity
 end
 
 func init_vec usize typeSize ptr Vector vec begin
 	typeSize -> vec.memberSize
 	1 -> vec.capacity
+	0 -> vec.length
 	vec alloc_vec_capacity
 end
 
@@ -44,9 +54,70 @@ func man vec_push cell value ptr Vector vec begin
 		vec double_vec_capacity
 	end
 
-	vec.length 1 + vec a!
+	vec.length 1 + -> vec.length
+	vec.length 1 - vec a!
 end
 
-func vec_top ptr Vector vec -> cell value begin
+func error vec_top ptr Vector vec -> cell value begin
+	if vec.length 0 = then
+		"vec_top: Vector empty" throw
+	end
+
 	vec.length 1 - vec a@
+end
+
+func error vec_pop ptr Vector vec begin
+	if vec.length 0 = then
+		"vec_pop: Vector empty" throw
+	end
+
+	vec.length 1 - -> vec.length
+
+	if vec.length vec.capacity 2 / < then
+		vec halve_vec_capacity
+	end 
+end
+
+func error vec_remove cell index ptr Vector vec begin
+	if index vec.length >= then
+		c"vec_remove: Index out of bounds" throw
+	end
+
+	if index vec.length 1 - = then
+		vec vec_pop
+		return
+	end
+
+	index vec a^ # dest
+	index 1 + vec a^ # src
+	vec.length index - vec.memberSize * # n
+	copy_mem
+
+	vec.length 1 - -> vec.length
+
+	if vec.length vec.capacity 2 / < then
+		vec halve_vec_capacity
+	end 
+end
+
+func error vec_insert cell value cell index ptr Vector vec begin
+	if index vec.length > then
+		c"vec_insert: Index out of bounds" throw
+	end
+
+	if index vec.length = then
+		value vec vec_push
+		return
+	end
+
+	if vec.length 1 + vec.capacity > then
+		vec double_vec_capacity
+	end
+
+	index 1 + vec a^ # dest
+	index vec a^ # src
+	vec.length index - vec.memberSize * # n
+	copy_mem
+
+	vec.length 1 + -> vec.length
 end

@@ -20,13 +20,29 @@ func man create_array usize length usize memberSize addr elements ptr Array dest
 	-> dest.length
 end
 
+## ## a&
+## Parameters: cell offset, Array* array
+##
+## Returns &array[offset]
+func error a^ cell offset ptr Array arr -> addr address begin
+	if offset arr.length >= then
+		c"a^: Index out of bounds" throw
+	end
+
+	arr.elements offset arr.memberSize * +
+end
+
 ## ## a@
 ## Parameters: cell offset, Array* array
 ##
 ## Returns array[offset]
 ##
-## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
+## Supports all integer sizes
 func error a@ cell offset ptr Array arr -> cell value begin
+	if offset arr.length >= then
+		c"a@: Index out of bounds" throw
+	end
+
 	arr.memberSize offset * -> offset
 	arr.elements offset +
 
@@ -46,14 +62,14 @@ func error a@ cell offset ptr Array arr -> cell value begin
 				w@
 			end
 			version not 16Bit
-				c"Can't read 16-bit values from array" throw
+				c"a@: Can't read 16-bit values from array" throw
 			end
 		elseif arr.memberSize 4 = then
 			version 32Bit
 				d@
 			end
 			version not 32Bit
-				c"Can't read 32-bit values from array" throw
+				c"a@: Can't read 32-bit values from array" throw
 			end
 		else
 			@
@@ -74,6 +90,10 @@ func error man a! cell value usize offset ptr Array arr begin
 	-> arr
 	-> offset
 
+	if offset arr.length >= then
+		c"a!: Index out of bounds" throw
+	end
+
 	arr.memberSize offset * -> offset
 	arr.elements offset +
 
@@ -82,7 +102,7 @@ func error man a! cell value usize offset ptr Array arr begin
 			!
 		else
 			drop drop
-			c"Can't write values that are bigger than cells to an array" throw
+			c"a!: Can't write values that are bigger than cells to an array" throw
 		end
 	end
 
@@ -95,7 +115,7 @@ func error man a! cell value usize offset ptr Array arr begin
 			end
 			version not 16Bit
 				drop drop
-				c"Can't write 16 bit values to array" throw
+				c"a!: Can't write 16 bit values to array" throw
 			end
 		elseif arr.memberSize 4 = then
 			version 32Bit
@@ -103,7 +123,7 @@ func error man a! cell value usize offset ptr Array arr begin
 			end
 			version not 32Bit
 				drop drop
-				c"Can't write 32 bit values to array" throw
+				c"a!: Can't write 32 bit values to array" throw
 			end
 		else
 			!
