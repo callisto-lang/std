@@ -295,7 +295,7 @@ version Heap
 		end
 
 		func man unsafe __linux_mremap
-			addr addres cell oldLen cell newLen cell flags addr newAddr -> addr res
+			addr address cell oldLen cell newLen cell flags addr newAddr -> addr res
 		begin
 			__x86_64_pop_r8  # new_addr
 			__x86_64_pop_r10 # flags
@@ -311,22 +311,22 @@ version Heap
 			__x86_64_push_rax
 		end
 
-		func realloc addr ptr usize sz -> addr address begin
-			if ptr 0 = then
+		func realloc addr address usize sz -> addr address begin
+			if address 0 = then
 				if sz 0 = then 0 else sz malloc end
 			elseif sz 0 = then
 				0
 			else
 				sz 8 + -> sz
-				ptr 8 - -> ptr
+				address 8 - -> address
 
 				let usize oldSz
-				ptr @ 8 + -> oldSz
+				address @ 8 + -> oldSz
 
-				let addr ptr2
-				sz malloc 8 - -> ptr2
+				let addr address2
+				sz malloc 8 - -> address2
 
-				ptr2 oldSz sz __linux_MREMAP_MAYMOVE __linux_MREMAP_FIXED or ptr __linux_mremap
+				address2 oldSz sz __linux_MREMAP_MAYMOVE __linux_MREMAP_FIXED or address __linux_mremap
 			end
 		end
 

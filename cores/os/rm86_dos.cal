@@ -70,7 +70,7 @@ version Args
 
 		while true do
 			if args b@ 0 = then
-				0 args b!
+				0 args b! # what?
 				counter 1 - -> counter
 
 				if counter 0 = then args 1 + return end

@@ -2,22 +2,22 @@
 ## Parameters: Array* src, Array* var
 ##
 ## Takes an array from the stack and writes it to the given variable
-func a< addr src addr var begin
-	src @ var !
-	src Array.memberSize + @ var Array.memberSize + !
-	src Array.elements + @ var Array.elements + !
+func a< ptr Array src ptr Array var begin
+	src.length -> var.length
+	src.memberSize -> var.memberSize
+	src.elements -> var.elements
 end
 
 ## ## create_array
 ## Parameters: usize length, usize memberSize, addr elements, Array* dest
 ##
 ## Writes the Array fields to `dest`
-func man create_array usize length usize memberSize addr elements addr dest begin
-	let addr var
-	-> var
-	var Array.elements + !
-	var Array.memberSize + !
-	var !
+func man create_array usize length usize memberSize addr elements ptr Array dest begin
+	let ptr Array dest
+	-> dest
+	-> dest.elements
+	-> dest.memberSize
+	-> dest.length
 end
 
 ## ## a@
@@ -26,12 +26,12 @@ end
 ## Returns array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func a@ cell offset addr arr -> cell value begin
-	arr Array.memberSize + @ offset * -> offset
-	arr Array.elements + @ offset +
+func error a@ cell offset ptr Array arr -> cell value begin
+	arr.memberSize offset * -> offset
+	arr.elements offset +
 
 	version CallistoScript
-		if arr Array.memberSize + @ 1 = then
+		if arr.memberSize 1 = then
 			@
 		else
 			return # TODO!!!
@@ -39,21 +39,21 @@ func a@ cell offset addr arr -> cell value begin
 	end
 
 	version not CallistoScript
-		if arr Array.memberSize + @ 1 = then
+		if arr.memberSize 1 = then
 			b@
-		elseif arr Array.memberSize + @ 2 = then
+		elseif arr.memberSize 2 = then
 			version 16Bit
 				w@
 			end
 			version not 16Bit
-				# TODO!!!
+				c"Can't read 16-bit values from array" throw
 			end
-		elseif arr Array.memberSize + @ 4 = then
+		elseif arr.memberSize 4 = then
 			version 32Bit
 				d@
 			end
 			version not 32Bit
-				# TODO!!!
+				c"Can't read 32-bit values from array" throw
 			end
 		else
 			@
@@ -67,28 +67,29 @@ end
 ## Writes value to array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func man a! cell value usize offset addr arr begin
-	let addr  arr
-	let usize offset
+func error man a! cell value usize offset ptr Array arr begin
+	let ptr Array arr
+	let usize     offset
 
 	-> arr
 	-> offset
 
-	arr Array.memberSize + @ offset * -> offset
-	arr Array.elements + @ offset +
+	arr.memberSize offset * -> offset
+	arr.elements offset +
 
 	version CallistoScript
-		if arr Array.memberSize + @ 1 = then
+		if arr.memberSize 1 = then
 			!
 		else
-			return # TODO!!!
+			drop drop
+			c"Can't write values that are bigger than cells to an array" throw
 		end
 	end
 
 	version not CallistoScript
-		if arr Array.memberSize + @ 1 = then
+		if arr.memberSize 1 = then
 			b!
-		elseif arr Array.memberSize + @ 2 = then
+		elseif arr.memberSize 2 = then
 			version 16Bit
 				w!
 			end
@@ -96,7 +97,7 @@ func man a! cell value usize offset addr arr begin
 				drop drop
 				c"Can't write 16 bit values to array" throw
 			end
-		elseif arr Array.memberSize + @ 4 = then
+		elseif arr.memberSize 4 = then
 			version 32Bit
 				d!
 			end
@@ -115,14 +116,14 @@ end
 ##
 ## Returns true if the arrays are equal, false if not (will soon be changed to max cell value
 ## if true)
-func a= addr arr1 addr arr2 -> cell equal begin
-	if arr1 @ arr2 @ = not then
-		0 return
+func a= ptr Array arr1 ptr Array arr2 -> cell equal begin
+	if arr1.length arr2.length = not then
+		false return
 	end
 
 	let cell i
 
-	while i arr1 @ < do
+	while i arr1.length < do
 		if i arr1 a@ i arr2 a@ = not then
 			false return
 		end
