@@ -114,10 +114,12 @@ func error vec_insert cell value cell index ptr Vector vec begin
 		vec double_vec_capacity
 	end
 
-	index 1 + vec a^ # dest
+	index 1 + vec.memberSize * vec.elements + # dest
 	index vec a^ # src
 	vec.length index - vec.memberSize * # n
 	copy_mem
 
 	vec.length 1 + -> vec.length
+
+	value index vec a!
 end

@@ -20,7 +20,7 @@ func man create_array usize length usize memberSize addr elements ptr Array dest
 	-> dest.length
 end
 
-## ## a&
+## ## a^
 ## Parameters: cell offset, Array* array
 ##
 ## Returns &array[offset]
