@@ -46,6 +46,24 @@ func init_vec usize typeSize ptr Vector vec begin
 	vec alloc_vec_capacity
 end
 
+func free_vec ptr Vector vec begin
+	vec.elements free
+
+	0 -> vec.length
+	0 -> vec.memberSize
+	0 -> vec.elements
+	0 -> vec.capacity
+end
+
+func to_vec ptr Array arr ptr Vector vec begin
+	arr.length -> vec.length
+	arr.length -> vec.capacity
+	arr.memberSize -> vec.memberSize
+
+	vec alloc_vec_capacity
+	vec.elements arr.elements arr.length arr.memberSize * copy_mem
+end
+
 func man vec_push cell value ptr Vector vec begin
 	let ptr Vector vec
 	-> vec
