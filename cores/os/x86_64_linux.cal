@@ -261,12 +261,13 @@ version Heap
 	end
 
 	version not LibC
-		const __linux_PROT_READ     1
-		const __linux_PROT_WRITE    2
-		const __linux_MAP_PRIVATE   2
-		const __linux_MAP_ANONYMOUS 32
-		const __linux_MREMAP_MAYMOVE 1
-		const __linux_MREMAP_FIXED   2
+		const __linux_PROT_READ        1
+		const __linux_PROT_WRITE       2
+		const __linux_MAP_PRIVATE      2
+		const __linux_MAP_ANONYMOUS    32
+		const __linux_MREMAP_MAYMOVE   1
+		const __linux_MREMAP_FIXED     2
+		const __linux_MREMAP_DONTUNMAP 4
 
 		func man unsafe __linux_mmap
 			addr address cell len cell prot cell flags cell fd cell pgoff -> addr res
@@ -327,7 +328,26 @@ version Heap
 			dup 8 - @ swap 8 - swap 8 + __linux_munmap drop
 		end
 
+		func __copy_mem addr dest addr src cell n begin
+			let cell i
+
+			while i n < do
+				version CallistoScript
+					src @ dest !
+				end
+				version not CallistoScript
+					src b@ dest b!
+				end
+				i 1 + -> i
+				dest 1 + -> dest
+				src 1 + -> src
+			end
+		end
+
 		func realloc addr address usize sz -> addr address begin
+			let addr oldAddr
+			address -> oldAddr
+
 			if address 0 = then
 				if sz 0 = then 0 else sz malloc end
 			elseif sz 0 = then
@@ -343,8 +363,22 @@ version Heap
 				sz malloc 8 - -> address2
 
 				let addr ret
-				address2 oldSz sz __linux_MREMAP_MAYMOVE __linux_MREMAP_FIXED or address __linux_mremap
-				-> ret
+				address2 oldSz sz __linux_MREMAP_MAYMOVE 0 __linux_mremap -> ret
+
+				if ret 8000000000000000 and then
+					sz malloc -> ret
+
+					# copy old data
+					ret oldAddr sz 8 - __copy_mem
+
+					# free old data
+					oldAddr free
+
+					# write new size
+					sz ret 8 - !
+
+					ret return
+				end
 
 				# write new size
 				sz ret !
