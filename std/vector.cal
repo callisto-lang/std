@@ -6,12 +6,15 @@ include "ops.cal"
 ## Vector is a dynamic array allocated on the heap. It is automatically freed when it
 ## goes out of scope
 ##
-## Members
+## #### Members
 ##
 ## - `usize length` - length of the vector
 ## - `usize memberSize` - size (bytes) of 1 element
 ## - `addr  elements` - pointer to the vector's elements
 ## - `usize capacity` - capacity of the vector
+##
+## This structure inherits from `Array`, so you can use functions made for `Array` on
+## an instance of `Vector`
 struct Vector : Array
 	usize capacity
 end
