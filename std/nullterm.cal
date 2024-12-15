@@ -1,10 +1,10 @@
-## ## printntstr
+## ## print_ntstr
 ## Parameters: addr str
 ##
 ## Prints a null-terminated string to stdout from the given pointer
-func printntstr addr str begin
+func print_ntstr addr str begin
 	while str b@ do
-		str b@ printch
+		str b@ print_ch
 		str 1 + -> str
 	end
 end

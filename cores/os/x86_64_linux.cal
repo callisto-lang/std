@@ -37,7 +37,7 @@ inline unsafe __x86_64_program_exit begin asm
 end end
 
 version IO
-	func man unsafe printch cell ch begin asm
+	func man unsafe print_ch cell ch begin asm
 		"sub r15, 8"
 		"mov rsi, r15"
 		"mov rax, 1"
@@ -255,7 +255,7 @@ end
 
 version Heap
 	version LibC
-		extern C addr malloc usize end
+		extern C addr malloc usize as alloc
 		extern C addr realloc addr usize end
 		extern C void free addr end
 	end
@@ -287,7 +287,7 @@ version Heap
 			__x86_64_push_rax
 		end
 
-		func malloc cell sz -> addr res begin
+		func alloc cell sz -> addr res begin
 			0 sz 8 + __linux_PROT_READ __linux_PROT_WRITE or
 			__linux_MAP_PRIVATE __linux_MAP_ANONYMOUS or -1 0 __linux_mmap
 
@@ -432,13 +432,13 @@ version IO version Exit
 		arr @ -> length
 
 		while i length < do
-			i arr __core_a@ printch
+			i arr __core_a@ print_ch
 			i 1 + -> i
 		end
 	end
 
 	inline __core_new_line begin
-		13 printch 10 printch
+		13 print_ch 10 print_ch
 	end
 
 	func __x86_64_exception begin

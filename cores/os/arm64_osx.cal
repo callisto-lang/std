@@ -32,7 +32,7 @@ inline unsafe __arm64_program_exit begin asm
 end end
 
 version IO
-	func man unsafe printch cell ch begin asm
+	func man unsafe print_ch cell ch begin asm
 		"sub x19, x19, #8"
 		"mov x16, 4"
 		"mov x0, 1"
@@ -186,7 +186,7 @@ end
 
 version Heap
 	version LibC
-		extern C addr malloc usize end
+		extern C addr malloc usize as alloc
 		extern C addr realloc addr usize end
 		extern C void free addr end
 	end
@@ -249,13 +249,13 @@ version IO version Exit
 		arr @ -> length
 
 		while i length < do
-			i arr __core_a@ printch
+			i arr __core_a@ print_ch
 			i 1 + -> i
 		end
 	end
 
 	inline __core_new_line begin
-		13 printch 10 printch
+		13 print_ch 10 print_ch
 	end
 
 	func __arm64_exception begin

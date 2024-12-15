@@ -131,6 +131,14 @@ func error man a! cell value usize offset ptr Array arr begin
 	end
 end
 
+## ## a!from
+## Parameters addr address, cell offset, ptr Array array
+##
+## Writes the dereferenced value of `address` to array[offset]
+func a!from addr address cell offset ptr Array arr begin
+
+end
+
 ## ## a=
 ## Parameters: Array* arr1, Array* arr2
 ##
@@ -152,4 +160,18 @@ func a= ptr Array arr1 ptr Array arr2 -> cell equal begin
 	end
 
 	true
+end
+
+## ## a..
+## Parameters: cell start, cell length, ptr Array array, ptr Array ret
+##
+## Sets `ret` to a slice of `array`, starting at `start` and is `length` in size
+func error a.. cell start cell length ptr Array arr ptr Array ret begin
+	if start length + arr.length >= then
+		"a..: Out of bounds array slice" throw
+	end
+
+	length -> ret.length
+	arr.memberSize -> ret.memberSize
+	start arr a^ -> ret.elements
 end

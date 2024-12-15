@@ -29,7 +29,7 @@ inline unsafe __x86_64_program_exit begin
 end
 
 version IO
-	func man unsafe printch cell ch begin asm
+	func man unsafe print_ch cell ch begin asm
 		"sub r15, 8"
 		"mov rdi, 1"
 		"mov rsi, r15"

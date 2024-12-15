@@ -30,7 +30,7 @@ inline unsafe __arm64_program_exit begin asm
 end end
 
 version IO
-	func unsafe man printch cell ch begin asm
+	func unsafe man print_ch cell ch begin asm
 		"sub x19, x19, #8"
 		"mov x8, #64"
 		"mov x0, #1"
@@ -187,7 +187,8 @@ end
 
 version Heap
 	version LibC
-		extern C addr malloc usize end
+		extern C addr malloc usize as alloc
+		extern C addr realloc addr usize end
 		extern C void free addr end
 	end
 
@@ -218,7 +219,7 @@ version Heap
 			__arm64_push_x0
 		end
 
-		func malloc cell sz -> addr res begin
+		func alloc cell sz -> addr res begin
 			0 sz 8 + __linux_PROT_READ __linux_PROT_WRITE or
 			__linux_MAP_PRIVATE __linux_MAP_ANONYMOUS or -1 0 __linux_mmap
 
@@ -373,13 +374,13 @@ version IO version Exit
 		arr @ -> length
 
 		while i length < do
-			i arr __core_a@ printch
+			i arr __core_a@ print_ch
 			i 1 + -> i
 		end
 	end
 
 	inline __core_new_line begin
-		13 printch 10 printch
+		13 print_ch 10 print_ch
 	end
 
 	func __arm64_exception begin

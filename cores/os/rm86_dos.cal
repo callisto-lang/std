@@ -139,13 +139,13 @@ version IO version Exit
 		arr @ -> length
 
 		while i length < do
-			i arr __core_a@ printch
+			i arr __core_a@ print_ch
 			i 1 + -> i
 		end
 	end
 
 	inline __core_new_line begin
-		13 printch 10 printch
+		13 print_ch 10 print_ch
 	end
 
 	func __rm86_exception begin

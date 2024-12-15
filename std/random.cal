@@ -14,10 +14,10 @@ func rand -> cell num begin
 	std_rand_next 65535 / 32768 %
 end
 
-## ## srand
+## ## seed_rand
 ## Parameters: cell seed
 ##
 ## Sets the random number generator's seed and resets the state
-func man srand cell seed begin
+func man seed_rand cell seed begin
 	-> std_rand_next
 end

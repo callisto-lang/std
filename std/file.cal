@@ -1,0 +1,5 @@
+requires File
+
+func read_to_vec ptr Array path ptr Vector vec begin
+
+end

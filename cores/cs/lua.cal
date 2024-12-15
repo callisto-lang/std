@@ -240,7 +240,7 @@ func man unsafe >> cell v cell by -> cell res begin
 end
 
 version IO
-	func man unsafe printch cell ch begin
+	func man unsafe print_ch cell ch begin
 		__lua_pop_a
 		asm
 			"io.write(string.char(regA));"
@@ -307,13 +307,13 @@ version IO version Exit
 		arr @ -> length
 
 		while i length < do
-			i arr __core_a@ printch
+			i arr __core_a@ print_ch
 			i 1 + -> i
 		end
 	end
 
 	inline __core_new_line begin
-		13 printch 10 printch
+		13 print_ch 10 print_ch
 	end
 
 	func __lua_exception begin

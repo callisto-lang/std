@@ -39,7 +39,7 @@ inline man unsafe __rm86_push_dx -> cell reg begin asm
 end end
 
 version IO
-	func man unsafe printch cell char begin
+	func man unsafe print_ch cell char begin
 		__rm86_pop_ax
 		asm
 			"mov ah, 0x0E"

@@ -2,62 +2,62 @@ requires IO
 
 include "array.cal"
 
-func man printdec_loop cell num begin
+func man print_dec_loop cell num begin
 	if dup then
-		dup 10 / printdec_loop
-		10 % 48 + printch
+		dup 10 / print_dec_loop
+		10 % 48 + print_ch
 	else
 		drop
 	end
 end
 
-## ## printdec
+## ## print_dec
 ## Parameters: cell value
 ##
 ## Prints the given value as decimal to stdout
-func man printdec cell value begin
+func man print_dec cell value begin
 	if dup then
-		printdec_loop
+		print_dec_loop
 	else
-		drop 48 printch
+		drop 48 print_ch
 	end
 end
 
-func man printhex_loop cell num begin
+func man print_hex_loop cell num begin
 	if dup then
-		dup 16 / printhex_loop
+		dup 16 / print_hex_loop
 		16 %
 		if dup 9 <= then
-			48 + printch
+			48 + print_ch
 		else
-			55 + printch
+			55 + print_ch
 		end
 	else
 		drop
 	end
 end
 
-## ## printhex
+## ## print_hex
 ## Parameters: cell value
 ##
 ## Prints the given value as hexadecimal to stdout
-func man printhex cell num begin
+func man print_hex cell num begin
 	if dup then
-		printhex_loop
+		print_hex_loop
 	else
-		drop 48 printch
+		drop 48 print_ch
 	end
 end
 
-## ## printstr
+## ## print_str
 ## Parameters: Array* str
 ##
 ## Prints the given string to stdout
-func printstr ptr Array arr begin
+func print_str ptr Array arr begin
 	let usize i
 
 	while i arr.length < do
-		i arr a@ printch
+		i arr a@ print_ch
 		i 1 + -> i
 	end
 end
@@ -67,7 +67,7 @@ end
 ##
 ## Prints a new line to stdout
 func new_line begin
-	'\r' printch '\n' printch
+	'\r' print_ch '\n' print_ch
 end
 
 # Removed until I add a way to get this to work in safe callisto
@@ -92,14 +92,14 @@ end
 #			i fmt a@ -> ch
 
 #			if ch 's' = then
-#				printstr
+#				print_str
 #			elseif ch 'd' = then
-#				printdec
+#				print_dec
 #			elseif ch 'X' = then
-#				printhex
+#				print_hex
 #			end
 #		else
-#			i fmt a@ printch
+#			i fmt a@ print_ch
 #		end
 #
 #		i 1 + -> i

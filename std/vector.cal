@@ -1,3 +1,5 @@
+requires Heap
+
 include "array.cal"
 include "io.cal"
 include "ops.cal"
@@ -116,6 +118,19 @@ func man vec_push cell value ptr Vector vec begin
 
 	vec.length 1 + -> vec.length
 	vec.length 1 - vec a!
+end
+
+## ## vec_push_from
+## Parameters: addr address, ptr Vector vec
+##
+## Pushes the dereferenced value of `address` to `vec`
+func vec_push_from addr address ptr Vector vec begin
+	if vec.length 1 + vec.capacity > then
+		vec double_vec_capacity
+	end
+
+	vec.length 1 + -> vec.length
+	
 end
 
 ## ## vec_top

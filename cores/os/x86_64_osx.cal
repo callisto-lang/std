@@ -29,7 +29,7 @@ inline unsafe __x86_64_program_exit begin asm
 end end
 
 version IO
-	func unsafe man printch cell ch begin asm
+	func unsafe man print_ch cell ch begin asm
 		"sub r15, 8"
 		"mov rax, 0x2000004"
 		"mov rdi, 1"
@@ -187,7 +187,7 @@ version Time
 end
 
 version Heap
-	extern C addr malloc usize end
+	extern C addr malloc usize as alloc
 	extern C addr realloc addr usize end
 	extern C void free addr end
 end
@@ -245,13 +245,13 @@ version IO version Exit
 		arr @ -> length
 
 		while i length < do
-			i arr __core_a@ printch
+			i arr __core_a@ print_ch
 			i 1 + -> i
 		end
 	end
 
 	inline __core_new_line begin
-		13 printch 10 printch
+		13 print_ch 10 print_ch
 	end
 
 	func __x86_64_exception begin

@@ -2,7 +2,7 @@ include "io.cal"
 
 inline man assert cell ? begin
 	if not then
-		"Assertion thrown\n" printstr
+		"Assertion thrown\n" print_str
 		1 exit
 	end
 end
