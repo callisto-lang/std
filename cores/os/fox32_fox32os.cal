@@ -1,0 +1,17 @@
+enable IO
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
+version IO
+	inline unsafe man print_ch cell ch begin asm
+		"sub r30, 4"
+		"mov r0, 1"
+		"mov.32 r1, [__global___us____us__fox32__us__stream_0]"
+		"mov r2, r30"
+		"call write"
+	end end
+end

@@ -1,0 +1,281 @@
+let u32 __fox32_stream
+
+inline unsafe __fox32_pop_r0 cell n begin asm
+	"sub r30, 4"
+	"mov.32 r0, [r30]"
+end end
+
+inline unsafe __fox32_pop_r1 cell n begin asm
+	"sub r30, 4"
+	"mov.32 r1, [r30]"
+end end
+
+inline unsafe __fox32_push_r0 -> cell n begin asm
+	"mov.32 [r30], r0"
+	"inc r30, 4"
+end end
+
+inline unsafe __fox32_push_r1 -> cell n begin asm
+	"mov.32 [r30], r1"
+	"inc r30, 4"
+end end
+
+inline unsafe __fox32_program_init begin asm
+	"mov r1, [rsp + 4]"
+	"mov [__global___us____us__fox32__us__stream_0], r1"
+end end
+
+inline unsafe __fox32_program_exit begin asm
+	"call end_current_task"
+end end
+
+inline unsafe man = cell a cell b -> cell a=b? begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"cmp r0, r1"
+		"ifz mov [r30], 0xFFFFFFFF"
+		"ifnz mov [r30], 0"
+		"inc r30, 4"
+	end	
+end
+
+inline unsafe man > cell a cell b -> cell a=b? begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"cmp r0, r1"
+		"ifgt mov [r30], 0xFFFFFFFF"
+		"iflteq mov [r30], 0"
+		"inc r30, 4"
+	end	
+end
+
+inline unsafe man >= cell a cell b -> cell a=b? begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"cmp r0, r1"
+		"ifgteq mov [r30], 0xFFFFFFFF"
+		"iflt mov [r30], 0"
+		"inc r30, 4"
+	end	
+end
+
+inline unsafe man < cell a cell b -> cell a=b? begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"cmp r0, r1"
+		"iflt mov [r30], 0xFFFFFFFF"
+		"ifgteq mov [r30], 0"
+		"inc r30, 4"
+	end	
+end
+
+inline unsafe man <= cell a cell b -> cell a=b? begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"cmp r0, r1"
+		"ifgteq mov [r30], 0xFFFFFFFF"
+		"iflt mov [r30], 0"
+		"inc r30, 4"
+	end	
+end
+
+inline man unsafe @ addr address -> cell v begin
+	__fox32_pop_r0
+	asm
+		"mov.32 r0, [r0]"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe ! cell value addr address begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"mov.32 [r1], r0"
+	end
+end
+
+inline man unsafe b@ addr address -> cell v begin
+	__fox32_pop_r0
+	asm
+		"mov.8 r0, [r0]"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe b! cell value addr address begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"mov.8 [r1], r0"
+	end
+end
+inline man unsafe w@ addr address -> cell v begin
+	__fox32_pop_r0
+	asm
+		"mov.16 r0, [r0]"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe w! cell value addr address begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"mov.16 [r1], r0"
+	end
+end
+
+inline man d@ addr address -> cell value begin @ end
+inline man d! cell value addr address begin ! end
+
+inline man dup cell a -> cell a cell a begin
+	__fox32_pop_r0
+	__fox32_push_r0
+	__fox32_push_r0
+end
+
+inline man unsafe drop cell v begin asm
+	"dec r30, 4"
+end end
+
+inline man swap cell a cell b -> cell b cell a begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	__fox32_push_r1
+	__fox32_push_r0
+end
+
+inline man unsafe + cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"add r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe s+ cell a cell b -> cell res begin + end
+
+inline man unsafe - cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"sub r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe s- cell a cell b -> cell res begin - end
+
+inline man unsafe * cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"mul r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe s* cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"imul r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe / cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"div r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe s/ cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"idiv r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe % cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"rem r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe s% cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"irem r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe and cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"and r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe or cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"or r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe xor cell a cell b -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"xor r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe not cell a -> cell res begin
+	__fox32_pop_r0
+	asm
+		"not r0"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe << cell value cell by -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"sla r0, r1"
+	end
+	__fox32_push_r0
+end
+
+inline man unsafe >> cell value cell by -> cell res begin
+	__fox32_pop_r1
+	__fox32_pop_r0
+	asm
+		"srl r0, r1"
+	end
+	__fox32_push_r0
+end

@@ -18,6 +18,10 @@ version UXN
 	include "uxn.cal"
 end
 
+version Fox32
+	include "cpu/fox32.cal"
+end
+
 ###### OS ######
 version RM86 version DOS
 	include "os/rm86_dos.cal"
@@ -44,6 +48,12 @@ version arm64
 
 	version OSX
 		include "os/arm64_osx.cal"
+	end
+end
+
+version Fox32
+	version Fox32OS
+		include "os/fox32_fox32os.cal"
 	end
 end
 

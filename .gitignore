@@ -3,3 +3,6 @@ out.com
 test*.cal
 out
 out.sym
+fox32os.def
+fox32rom.def
+out.fxf*
