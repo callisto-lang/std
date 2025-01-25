@@ -6,6 +6,8 @@ restrict Time
 restrict Heap
 restrict Exit
 
+let u32 __fox32_stream
+
 version IO
 	inline unsafe man print_ch cell ch begin asm
 		"sub r30, 4"

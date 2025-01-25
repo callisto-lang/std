@@ -214,3 +214,13 @@ func error vec_insert cell value cell index ptr Vector vec begin
 
 	value index vec a!
 end
+
+## ## vec_set_size
+## Parameters: cell newSize, ptr Vector vec
+##
+## Sets a new size for the vector and re-allocates
+func vec_set_size cell newSize ptr Vector vec begin
+	newSize -> vec.length
+	newSize -> vec.capacity
+	vec alloc_vec_capacity
+end

@@ -3,9 +3,18 @@
 ##
 ## Prints a null-terminated string to stdout from the given pointer
 func print_ntstr addr str begin
-	while str b@ do
-		str b@ print_ch
-		str 1 + -> str
+	version CallistoScript
+		while str @ do
+			str @ print_ch
+			str 1 + -> str
+		end
+	end
+
+	version not CallistoScript
+		while str b@ do
+			str b@ print_ch
+			str 1 + -> str
+		end
 	end
 end
 
@@ -16,9 +25,18 @@ end
 func ntstr_length addr str -> cell len begin
 	let cell ret
 
-	while str b@ do
-		ret 1 + -> ret
-		str 1 + -> str
+	version CallistoScript
+		while str @ do
+			ret 1 + -> ret
+			str 1 + -> str
+		end
+	end
+
+	version not CallistoScript
+		while str b@ do
+			ret 1 + -> ret
+			str 1 + -> str
+		end
 	end
 
 	ret
