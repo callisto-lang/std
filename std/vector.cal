@@ -99,8 +99,13 @@ end
 ## and the new elements address is stored in the vector
 func to_vec ptr Array arr ptr Vector vec begin
 	arr.length -> vec.length
-	arr.length -> vec.capacity
 	arr.memberSize -> vec.memberSize
+
+	if arr.length 0 = then
+		1 -> vec.capacity
+	else
+		arr.length -> vec.capacity
+	end
 
 	vec alloc_vec_capacity
 	vec.elements arr.elements arr.length arr.memberSize * copy_mem
@@ -126,13 +131,16 @@ end
 ## Parameters: addr address, ptr Vector vec
 ##
 ## Pushes the dereferenced value of `address` to `vec`
-func vec_push_from addr address ptr Vector vec begin
+func man vec_push_from addr address ptr Vector vec begin
+	let ptr Vector vec
+	-> vec
+
 	if vec.length 1 + vec.capacity > then
 		vec double_vec_capacity
 	end
 
 	vec.length 1 + -> vec.length
-	
+	vec.length 1 - vec a!from
 end
 
 ## ## vec_top
@@ -141,10 +149,25 @@ end
 ## Returns the last value in the vector
 func error vec_top ptr Vector vec -> cell value begin
 	if vec.length 0 = then
-		"vec_top: Vector empty" throw
+		c"vec_top: Vector empty" throw
 	end
 
 	vec.length 1 - vec a@
+end
+
+## ## vec_top_to
+## Parameters: addr address, ptr Vector vec
+##
+## Gets the last value in the vector and copies it to `address`
+func man error vec_top_to addr address ptr Vector vec begin
+	let ptr Vector vec
+	-> vec
+
+	if vec.length 0 = then
+		c"vec_top_to: Vector empty" throw
+	end
+
+	vec.length 1 - vec a@to
 end
 
 ## ## vec_pop
@@ -215,6 +238,34 @@ func error vec_insert cell value cell index ptr Vector vec begin
 	vec.length 1 + -> vec.length
 
 	value index vec a!
+end
+
+## ## vec_insert_from
+## Parameters: addr address, cell index, ptr Vector vec
+##
+## Inserts the given value at the given index
+func error vec_insert_from addr address cell index ptr Vector vec begin
+	if index vec.length > then
+		c"vec_insert: Index out of bounds" throw
+	end
+
+	if index vec.length = then
+		address vec vec_push_from
+		return
+	end
+
+	if vec.length 1 + vec.capacity > then
+		vec double_vec_capacity
+	end
+
+	index 1 + vec.memberSize * vec.elements + # dest
+	index vec a^ # src
+	vec.length index - vec.memberSize * # n
+	copy_mem
+
+	vec.length 1 + -> vec.length
+
+	address index vec a!from
 end
 
 ## ## vec_set_size
