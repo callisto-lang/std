@@ -1,0 +1,90 @@
+## # Warning
+## `std/stream` is currently unstable and is subject to change. Do not use this until
+## this warning is removed.
+
+## ## enum StreamSeek
+## An enum used for where a stream should seek from when `seek` is called. These
+## are the members:
+##
+## - `StreamSeek.Start`
+## - `StreamSeek.Current`
+## - `StreamSeek.End`
+enum StreamSeek
+	Start,
+	Current,
+	End
+end
+
+## ## struct Stream
+## Stream is a general purpose interface for streams. It can be used if you want to
+## re-use code for files stored on the disk or in memory, for example.
+##
+## #### Members
+##
+## - `addr data` - This can be used by the read/write functions to store data
+## - `addr read` - A function used for reading, parameters are `addr buffer cell count ptr Stream stream`
+## - `addr write` - A function used for writing, parameters are `addr buffer cell count ptr Stream stream`
+## - `addr seek` - A function used to seek in a stream, parameters are `cell offset StreamSeek whence ptr Stream stream`
+## - `addr tell` - A function that takes a `ptr Stream` parameter and returns the offset where the stream is
+struct Stream
+	addr data
+	addr read
+	addr write
+	addr seek
+	addr tell
+end
+
+## ## stream@
+## Parameters: addr buffer, cell count, ptr Stream stream
+##
+## Reads `count` bytes from `stream` and writes them to `buffer`
+func error stream@ addr buffer cell count ptr Stream stream begin
+	if stream.read 0 = then
+		c"This stream cannot be read from" throw
+	end
+
+	buffer count stream unsafe addr buffer cell count ptr Stream stream begin call end
+end
+
+## ## stream!
+## Parameters: addr buffer, cell count, ptr Stream stream
+##
+## Writes `count` bytes from `buffer` to `stream`
+func error stream! addr buffer cell count ptr Stream stream begin
+	if stream.write 0 = then
+		c"This stream cannot be written to" throw
+	end
+
+	buffer count stream unsafe addr buffer cell count ptr Stream stream begin call end
+end
+
+## ## stream_seek
+## Parameters: cell offset, StreamSeek whence, ptr Stream stream
+##
+## Seeks to `offset` from `whence` in `stream`
+##
+## If `whence` is `StreamSeek.Start`, it seeks to `offset` bytes from the start.
+## If `whence` is `StreamSeek.Current`, it seeks to where it currently is + `offset`
+## If `whence` is `StreamSeek.End`, it seeks to the end + `offset`. This means `offset`
+## should be zero.
+func error stream_seek cell offset StreamSeek whence ptr Stream stream begin
+	if stream.seek 0 = then
+		c"Cannot seek in this stream" throw
+	end
+
+	offset whence stream unsafe cell offset StreamSeek whence ptr Stream stream begin call end
+end
+
+## ## stream_tell
+## Parameters: ptr Stream stream
+##
+## Returns: cell offset
+##
+## Returns the offset that the stream is seeked at
+func error stream_tell ptr Stream stream -> cell offset begin
+	if stream.tell 0 = then
+		c"Cannot tell in this stream" throw
+	end
+
+	stream unsafe ptr Stream stream -> cell offset begin call end
+end

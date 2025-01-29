@@ -14,11 +14,13 @@ include "ops.cal"
 ## - `usize memberSize` - size (bytes) of 1 element
 ## - `addr  elements` - pointer to the vector's elements
 ## - `usize capacity` - capacity of the vector
+## - `addr freeFunc`
 ##
 ## This structure inherits from `Array`, so you can use functions made for `Array` on
 ## an instance of `Vector`
 struct Vector : Array
 	usize capacity
+	addr freeFunc
 end
 
 implement Vector init

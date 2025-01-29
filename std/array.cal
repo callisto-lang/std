@@ -1,3 +1,5 @@
+include "ops.cal"
+
 ## ## a<
 ## Parameters: Array* src, Array* var
 ##
@@ -131,12 +133,28 @@ func error man a! cell value usize offset ptr Array arr begin
 	end
 end
 
+## ## a@to
+## Parameters: addr address, cell offset, ptr Array array
+##
+## Write the value of array[offset] to `address`
+func error a@to addr address cell offset ptr Array arr begin
+	if offset arr.length >= then
+		c"a@to: Index out of bounds" throw
+	end
+
+	address arr.elements arr.memberSize offset * + arr.memberSize copy_mem
+end
+
 ## ## a!from
-## Parameters addr address, cell offset, ptr Array array
+## Parameters: addr address, cell offset, ptr Array array
 ##
 ## Writes the dereferenced value of `address` to array[offset]
-func a!from addr address cell offset ptr Array arr begin
+func error a!from addr address cell offset ptr Array arr begin
+	if offset arr.length >= then
+		c"a!from: Index out of bounds" throw
+	end
 
+	arr.elements arr.memberSize offset * + address arr.memberSize copy_mem
 end
 
 ## ## a=
