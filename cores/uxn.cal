@@ -25,7 +25,7 @@ const __uxn_ARG_SPACE 3
 const __uxn_ARG_END   4
 
 version IO
-	inline man unsafe printch cell ch begin asm
+	inline man unsafe print_ch cell ch begin asm
 		".Console/write DEO POP"
 	end end	
 end
@@ -182,13 +182,13 @@ version IO version Exit
 		arr @ -> length
 
 		while i length < do
-			i arr __core_a@ printch
+			i arr __core_a@ print_ch
 			i 1 + -> i
 		end
 	end
 
 	inline man unsafe __core_new_line begin
-		13 printch 10 printch
+		13 print_ch 10 print_ch
 	end
 
 	func __uxn_exception begin

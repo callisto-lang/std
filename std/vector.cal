@@ -14,7 +14,8 @@ include "ops.cal"
 ## - `usize memberSize` - size (bytes) of 1 element
 ## - `addr  elements` - pointer to the vector's elements
 ## - `usize capacity` - capacity of the vector
-## - `addr freeFunc`
+## - `addr freeFunc` - function pointer (parameters: addr element), called for each element
+##                     when the vector is freed
 ##
 ## This structure inherits from `Array`, so you can use functions made for `Array` on
 ## an instance of `Vector`
@@ -31,11 +32,21 @@ implement Vector init
 	0 -> vec.memberSize
 	0 -> vec.elements
 	0 -> vec.capacity
+	0 -> vec.freeFunc
 end
 
 implement Vector deinit
 	let ptr Vector vec
 	-> vec
+
+	if vec.freeFunc 0 = not then
+		let cell i
+
+		while i vec.length < do
+			i vec a^ unsafe addr elements begin vec.freeFunc call end
+			i ++ -> i
+		end
+	end
 
 	if vec.elements 0 = not then
 		vec.elements free
@@ -84,7 +95,18 @@ end
 ##
 ## Frees the vector's elements and sets all values to zero
 func free_vec ptr Vector vec begin
-	vec.elements free
+	if vec.freeFunc 0 = not then
+		let cell i
+
+		while i vec.length < do
+			i vec a^ unsafe addr elements begin vec.freeFunc call end
+			i ++ -> i
+		end
+	end
+
+	if vec.elements 0 = not then
+		vec.elements free
+	end
 
 	0 -> vec.length
 	0 -> vec.memberSize
