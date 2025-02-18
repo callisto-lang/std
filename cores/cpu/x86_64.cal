@@ -66,7 +66,9 @@ func man unsafe = cell a cell b -> cell res begin
 		"je .push_1"
 		"mov qword [r15], 0"
 		"add r15, 8"
-		"ret"
+	end
+	return
+	asm
 		".push_1:"
 		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
@@ -81,7 +83,9 @@ func man unsafe > cell a cell b -> cell res begin
 		"jg .push_1"
 		"mov qword [r15], 0"
 		"add r15, 8"
-		"ret"
+	end
+	return
+	asm
 		".push_1:"
 		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
@@ -96,7 +100,9 @@ func man unsafe >= cell a cell b -> cell res begin
 		"jge .push_1"
 		"mov qword [r15], 0"
 		"add r15, 8"
-		"ret"
+	end
+	return
+	asm
 		".push_1:"
 		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
@@ -111,7 +117,9 @@ func man unsafe < cell a cell b -> cell res begin
 		"jl .push_1"
 		"mov qword [r15], 0"
 		"add r15, 8"
-		"ret"
+	end
+	return
+	asm
 		".push_1:"
 		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
@@ -126,7 +134,9 @@ func man unsafe <= cell a cell b -> cell res begin
 		"jle .push_1"
 		"mov qword [r15], 0"
 		"add r15, 8"
-		"ret"
+	end
+	return
+	asm
 		".push_1:"
 		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
