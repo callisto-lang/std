@@ -51,6 +51,6 @@ func fill_mem addr dest cell n cell value begin
 			value dest b!
 		end
 		i ++ -> i
-		dest ++ -> i
+		dest ++ -> dest
 	end
 end
