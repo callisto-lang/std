@@ -64,13 +64,13 @@ func man unsafe = cell a cell b -> cell res begin
 	asm
 		"cmp rax, rbx"
 		"je .push_1"
-		"mov qword [r15], 0"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
 		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
@@ -81,13 +81,13 @@ func man unsafe > cell a cell b -> cell res begin
 	asm
 		"cmp rax, rbx"
 		"jg .push_1"
-		"mov qword [r15], 0"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
 		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
@@ -98,13 +98,13 @@ func man unsafe >= cell a cell b -> cell res begin
 	asm
 		"cmp rax, rbx"
 		"jge .push_1"
-		"mov qword [r15], 0"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
 		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
@@ -115,13 +115,13 @@ func man unsafe < cell a cell b -> cell res begin
 	asm
 		"cmp rax, rbx"
 		"jl .push_1"
-		"mov qword [r15], 0"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
 		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
@@ -132,13 +132,13 @@ func man unsafe <= cell a cell b -> cell res begin
 	asm
 		"cmp rax, rbx"
 		"jle .push_1"
-		"mov qword [r15], 0"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
 		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
