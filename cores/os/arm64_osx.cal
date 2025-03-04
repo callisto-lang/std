@@ -186,7 +186,7 @@ end
 
 version Heap
 	version LibC
-		extern C addr alloc usize as alloc
+		extern C addr malloc usize as alloc
 		extern C addr realloc addr usize end
 		extern C void free addr end
 	end
