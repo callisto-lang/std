@@ -63,13 +63,13 @@ func man unsafe = cell a cell b -> cell res begin
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"je .push_1"
+		"je __func__${=}.push_1"
 		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
-		".push_1:"
+		"__func__${=}.push_1:"
 		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
@@ -80,13 +80,13 @@ func man unsafe > cell a cell b -> cell res begin
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"jg .push_1"
+		"jg __func__${>}.push_1"
 		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
-		".push_1:"
+		"__func__${>}.push_1:"
 		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
@@ -97,13 +97,13 @@ func man unsafe >= cell a cell b -> cell res begin
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"jge .push_1"
+		"jge __func__${>=}.push_1"
 		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
-		".push_1:"
+		"__func__${>=}.push_1:"
 		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
@@ -114,13 +114,13 @@ func man unsafe < cell a cell b -> cell res begin
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"jl .push_1"
+		"jl __func__${<}.push_1"
 		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
-		".push_1:"
+		"__func__${<}.push_1:"
 		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
@@ -131,13 +131,13 @@ func man unsafe <= cell a cell b -> cell res begin
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"jle .push_1"
+		"jle __func__${<=}.push_1"
 		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
 	end
 	return
 	asm
-		".push_1:"
+		"__func__${<=}.push_1:"
 		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
