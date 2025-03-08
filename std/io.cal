@@ -105,3 +105,23 @@ end
 #		i 1 + -> i
 #	end
 #end
+
+version Heap
+	include "vector.cal"
+
+	## ## read_line
+	## Parameters: ptr Vector res
+	##
+	## Reads from stdin to `res`
+	func read_line ptr Vector res begin
+		u8.sizeOf res init_vec
+
+		let u8 ch
+		while ch '\n' = not ch '\r' = not or do
+			&ch 1 &stdin file@
+			ch res vec_push
+		end
+
+		res vec_pop # remove the new line character
+	end
+end

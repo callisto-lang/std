@@ -65,7 +65,7 @@ version File
 	1 &stdout !
 	2 &stderr !
 
-	func unsafe open_file addr path cell mode -> cell fd begin
+	func unsafe open_file addr path cell mode ptr File file begin
 		let array 4096 u8 pathBuf
 
 		path Array.elements + @
@@ -99,10 +99,10 @@ version File
 			"mov rax, 0x2000000 + 5" # open syscall
 			"syscall"
 		end
-		__x86_64_push_rax
+		__x86_64_push_rax -> file.fd
 	end
 
-	func unsafe man close_file addr file begin
+	func unsafe man close_file ptr File file begin
 		@ __x86_64_pop_rdi # FD
 		asm
 			"mov rax, 0x2000000 + 6" # Close
@@ -110,14 +110,10 @@ version File
 		end
 	end
 
-	func man file< cell fd addr file begin
-		!
-	end
-
-	func man unsafe file@ addr file addr buffer cell length begin
+	func man unsafe file@ addr buffer cell length ptr File file begin
+		@ __x86_64_pop_rdi # Fd
 		__x86_64_pop_rdx   # Length
 		__x86_64_pop_rsi   # Buffer
-		@ __x86_64_pop_rdi # Fd
 
 		asm
 			"mov rax, 0x2000000 + 3" # read
@@ -125,10 +121,10 @@ version File
 		end
 	end
 
-	func man unsafe file! addr file addr buffer cell length begin
+	func man unsafe file! addr buffer cell length ptr File file begin
+		@ __x86_64_pop_rdi # Fd
 		__x86_64_pop_rdx   # Length
 		__x86_64_pop_rsi   # Buffer
-		@ __x86_64_pop_rdi # Fd
 
 		asm
 			"mov rax, 0x2000000 + 4" # write
@@ -136,10 +132,10 @@ version File
 		end
 	end
 
-	func man unsafe file_seek addr file cell offset cell whence begin
+	func man unsafe file_seek cell offset cell whence ptr File file begin
+		@ __x86_64_pop_rdi # Fd
 		__x86_64_pop_rdx   # Whence
 		__x86_64_pop_rsi   # Offset
-		@ __x86_64_pop_rdi # Fd
 
 		asm
 			"mov rax, 0x2000000 + 199" # lseek
@@ -147,7 +143,7 @@ version File
 		end
 	end
 
-	func man unsafe file_peek addr file -> cell where begin
+	func man unsafe file_peek ptr File file -> cell where begin
 		@ __x86_64_pop_rdi
 		asm
 			"xor rsi, rsi"

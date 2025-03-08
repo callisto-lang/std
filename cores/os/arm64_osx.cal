@@ -68,7 +68,7 @@ version File
 	1 &stdout !
 	2 &stderr !
 
-	func unsafe open_file addr path cell mode -> cell fd begin
+	func unsafe open_file addr path cell mode ptr File file begin
 		let array 4096 u8 pathBuf
 
 		path Array.elements + @
@@ -97,10 +97,10 @@ version File
 			"mov x16, #5" # open syscall
 			"svc #80"
 		end
-		__arm64_push_x0
+		__arm64_push_x0 -> file.fd
 	end
 
-	func man unsafe close_file addr file begin
+	func man unsafe close_file ptr File file begin
 		@ __arm64_pop_x0 # FD
 		asm
 			"mov x16, #6" # Close
@@ -108,14 +108,10 @@ version File
 		end
 	end
 
-	func man file< cell fd addr file begin
-		!
-	end
-
-	func man unsafe file@ addr file addr buffer cell length begin
+	func man unsafe file@ addr buffer cell length ptr File file begin
+		@ __arm64_pop_x0 # Fd
 		__arm64_pop_x2   # Length
 		__arm64_pop_x1   # Buffer
-		@ __arm64_pop_x0 # Fd
 
 		asm
 			"mov x16, #3" # read
@@ -123,10 +119,10 @@ version File
 		end
 	end
 
-	func man unsafe file! addr file addr buffer cell length begin
+	func man unsafe file! addr buffer cell length ptr File file begin
+		@ __arm64_pop_x0 # Fd
 		__arm64_pop_x2   # Length
 		__arm64_pop_x1   # Buffer
-		@ __arm64_pop_x0 # Fd
 
 		asm
 			"mov x16, #4" # write
@@ -134,10 +130,10 @@ version File
 		end
 	end
 
-	func man unsafe file_seek addr file cell offset begin
+	func man unsafe file_seek cell offset cell whence ptr File file begin
+		@ __arm64_pop_x0 # Fd
 		__arm64_pop_x2   # Whence
 		__arm64_pop_x1   # Offset
-		@ __arm64_pop_x0 # Fd
 
 		asm
 			"mov x16, #199" # lseek
@@ -145,7 +141,7 @@ version File
 		end
 	end
 
-	func man unsafe file_peek addr file -> cell where begin
+	func man unsafe file_peek ptr File file -> cell where begin
 		@ __arm64_pop_x0
 		asm
 			"mov x1, #0"

@@ -84,6 +84,10 @@ end
 ##
 ## Initialises the vector. The type size is in bytes
 func init_vec usize typeSize ptr Vector vec begin
+	if vec.elements 0 = not then
+		vec.elements free
+	end
+
 	typeSize -> vec.memberSize
 	1 -> vec.capacity
 	0 -> vec.length
