@@ -43,24 +43,6 @@ func man fill_array cell init ptr Array dest begin
 	end
 end
 
-## ## fill_array
-## Parameters: cell init, Array* dest
-##
-## Fills `dest` contents with `init` element
-func man fill_array cell init ptr Array dest begin
-	let cell init
-	let ptr Array dest
-	-> dest
-	-> init
-	
-	let usize len
-	dest.length -> len
-	0 while dup len < do
-		init dest a!
-		1 +
-	end
-end
-
 ## ## a^
 ## Parameters: cell offset, Array* array
 ##
