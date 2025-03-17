@@ -193,3 +193,19 @@ func error a.. cell start cell length ptr Array arr ptr Array ret begin
 	arr.memberSize -> ret.memberSize
 	start arr a^ -> ret.elements
 end
+
+## ## fill_array
+## Parameters: cell init, Array* dest
+##
+## Fills `dest` contents with `init` element
+func fill_array cell init ptr Array dest begin
+	let usize len
+	dest.length -> len
+
+	let usize i
+	0 -> i
+	while i len < do
+		init i dest a!
+		i 1 + -> i
+	end
+end
