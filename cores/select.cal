@@ -10,8 +10,16 @@ version x86_64
 	include "cpu/x86_64.cal"
 end
 
+version arm64
+	include "cpu/arm64.cal"
+end
+
 version UXN
 	include "uxn.cal"
+end
+
+version Fox32
+	include "cpu/fox32.cal"
 end
 
 ###### OS ######
@@ -19,9 +27,35 @@ version RM86 version DOS
 	include "os/rm86_dos.cal"
 end end
 
-version x86_64 version Linux
-	include "os/x86_64_linux.cal"
-end end
+version x86_64
+	version Linux
+		include "os/x86_64_linux.cal"
+	end
+
+	version OSX
+		include "os/x86_64_osx.cal"
+	end
+
+	version FreeBSD
+		include "os/x86_64_freebsd.cal"
+	end
+end
+
+version arm64
+	version Linux
+		include "os/arm64_linux.cal"
+	end
+
+	version OSX
+		include "os/arm64_osx.cal"
+	end
+end
+
+version Fox32
+	version Fox32OS
+		include "os/fox32_fox32os.cal"
+	end
+end
 
 ###### CallistoScript ######
 version CallistoScript

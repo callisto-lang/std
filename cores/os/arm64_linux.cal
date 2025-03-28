@@ -1,0 +1,387 @@
+enable IO
+enable File
+enable Args
+enable Time
+enable Heap
+enable Exit
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
+let addr __linux_argv
+let cell __linux_argc
+
+inline unsafe __arm64_program_init begin asm
+	"add x9, sp, #8"
+	"ldr x10, =__global___us____us__linux__us__argv"
+	"str x9, [x10]"
+	"ldr x9, [sp]"
+	"ldr x10, =__global___us____us__linux__us__argc"
+	"str x9, [x10]"
+end end
+
+inline unsafe __arm64_program_exit begin asm
+	"mov x8, #93"
+	"mov x0, #0"
+	"svc #0"
+end end
+
+version IO
+	func unsafe man print_ch cell ch begin asm
+		"sub x19, x19, #8"
+		"mov x8, #64"
+		"mov x0, #1"
+		"mov x1, x19"
+		"mov x2, #1"
+		"svc #0"
+	end end
+end
+
+version File
+	const FILE_READ  1
+	const FILE_WRITE 2
+
+	const SEEK_SET   0
+	const SEEK_CUR   1
+	const SEEK_END   2
+
+	const __linux_O_RDONLY 0
+	const __linux_O_WRONLY 1
+	const __linux_O_RDWR   2
+	const __linux_O_CREAT  64
+	const __linux_AT_FDCWD -100
+
+	const __linux_default_mode 0o666
+
+	struct File
+		cell fd
+	end
+
+	let File stdin
+	let File stdout
+	let File stderr
+	0 &stdin !
+	1 &stdout !
+	2 &stderr !
+
+	func unsafe open_file addr path cell mode ptr File file begin
+		let array 4096 u8 pathBuf
+
+		path Array.elements + @
+		&pathBuf
+		path @
+		__arm64_memcpy
+
+		let cell flags
+
+		if FILE_READ FILE_WRITE or mode = then
+			__linux_O_RDWR __linux_O_CREAT or -> flags
+		elseif FILE_READ mode = then
+			__linux_O_RDONLY -> flags
+		elseif FILE_WRITE mode = then
+			__linux_O_WRONLY __linux_O_CREAT or -> flags
+		end
+
+		__linux_AT_FDCWD
+		&pathBuf
+		flags
+		__linux_default_mode
+
+		__arm64_pop_x3
+		__arm64_pop_x2
+		__arm64_pop_x1
+		__arm64_pop_x0
+		asm
+			"mov x8, #56" # openat syscall
+			"svc #0"
+		end
+		__arm64_push_x0 -> file.fd
+	end
+
+	func unsafe man close_file ptr File file begin
+		@ __arm64_pop_x0 # FD
+		asm
+			"mov x8, #57" # Close
+			"svc #0"
+		end
+	end
+
+	func unsafe man file@ addr buffer cell length ptr File file begin
+		@ __arm64_pop_x0 # Fd
+		__arm64_pop_x2   # Length
+		__arm64_pop_x1   # Buffer
+
+		asm
+			"mov x8, #63" # read
+			"svc #0"
+		end
+	end
+
+	func unsafe man file! addr buffer cell length ptr File file begin
+		@ __arm64_pop_x0 # Fd
+		__arm64_pop_x2   # Length
+		__arm64_pop_x1   # Buffer
+
+		asm
+			"mov x8, #64" # write
+			"svc #0"
+		end
+	end
+
+	func unsafe man file_seek cell offset cell whence ptr File file begin
+		@ __arm64_pop_x0 # Fd
+		__arm64_pop_x2   # Whence
+		__arm64_pop_x1   # Offset
+
+		asm
+			"mov x8, #62" # lseek
+			"svc #0"
+		end
+	end
+
+	func unsafe man file_peek ptr File file -> cell where begin
+		@ __arm64_pop_x0
+		asm
+			"mov x1, #0"
+			"mov x2, #1" # SEEK_CUR
+			"mov x8, #62" # lseek
+			"svc #0"
+		end
+		__arm64_push_x0
+	end
+end
+
+version Args
+	func man core_get_arg cell which -> addr str begin
+		8 * __linux_argv + @
+	end
+
+	inline man core_get_arg_length -> cell len begin __linux_argc end
+end
+
+version Time
+	struct __linux_timeval
+		cell sec
+		cell usec
+	end
+
+	func unsafe get_epoch_time -> cell time begin
+		let __linux_timeval tv
+		&tv
+		__arm64_pop_x0
+		asm
+			"mov x8, #169" # gettimeofday
+			"mov x1, #0"
+			"svc #0"
+		end
+		&tv @
+	end
+end
+
+version Heap
+	version LibC
+		extern C addr malloc usize as alloc
+		extern C addr realloc addr usize end
+		extern C void free addr end
+	end
+
+	version not LibC
+		const __linux_PROT_READ        1
+		const __linux_PROT_WRITE       2
+		const __linux_MAP_PRIVATE      2
+		const __linux_MAP_ANONYMOUS    32
+		const __linux_MREMAP_MAYMOVE   1
+		const __linux_MREMAP_FIXED     2
+		const __linux_MREMAP_DONTUNMAP 4
+
+		func man unsafe __linux_mmap
+			addr address cell len cell prot cell flags cell fd cell pgoff -> addr address
+		begin
+			__arm64_pop_x5 # pgoff
+			__arm64_pop_x4 # fd
+			__arm64_pop_x3 # flags
+			__arm64_pop_x2 # prot
+			__arm64_pop_x1 # len
+			__arm64_pop_x0 # addr
+
+			asm
+				"mov x8, #222" # mmap syscall
+				"svc #0"
+			end
+
+			__arm64_push_x0
+		end
+
+		func alloc cell sz -> addr res begin
+			0 sz 8 + __linux_PROT_READ __linux_PROT_WRITE or
+			__linux_MAP_PRIVATE __linux_MAP_ANONYMOUS or -1 0 __linux_mmap
+
+			dup sz swap ! # write size
+			8 +
+		end
+
+		func man unsafe __linux_mremap
+			addr address cell oldLen cell newLen cell flags addr newAddr -> addr address
+		begin
+			__arm64_pop_x4 # new_addr
+			__arm64_pop_x3 # flags
+			__arm64_pop_x2 # new_len
+			__arm64_pop_x1 # old_len
+			__arm64_pop_x0 # addr
+
+			asm
+				"mov x8, #216" # mremap syscall
+				"svc #0"
+			end
+
+			__arm64_push_x0
+		end
+
+		func man unsafe __linux_munmap addr address cell length -> cell res begin
+			__arm64_pop_x1 # length
+			__arm64_pop_x0 # addr
+
+			asm
+				"mov x8, #215" # munmap syscall
+				"svc #0"
+			end
+
+			__arm64_push_x0
+		end
+
+		func man free addr address begin
+			dup 8 - @ swap 8 - swap 8 + __linux_munmap drop
+		end
+
+		func __copy_mem addr dest addr src cell n begin
+			let cell i
+
+			while i n < do
+				version CallistoScript
+					src @ dest !
+				end
+				version not CallistoScript
+					src b@ dest b!
+				end
+				i 1 + -> i
+				dest 1 + -> dest
+				src 1 + -> src
+			end
+		end
+
+		func realloc addr address usize sz -> addr address begin
+			let addr oldAddr
+			address -> oldAddr
+
+			if address 0 = then
+				if sz 0 = then 0 else sz alloc end
+			elseif sz 0 = then
+				address free 0
+			else
+				sz 8 + -> sz
+				address 8 - -> address
+
+				let usize oldSz
+				address @ 8 + -> oldSz
+
+				let addr address2
+				sz alloc 8 - -> address2
+
+				let addr ret
+				address2 oldSz sz __linux_MREMAP_MAYMOVE 0 __linux_mremap -> ret
+
+				if ret 8000000000000000 and then
+					sz alloc -> ret
+
+					# copy old data
+					ret oldAddr sz 8 - __copy_mem
+
+					# free old data
+					oldAddr free
+
+					# write new size
+					sz ret 8 - !
+
+					ret return
+				end
+
+				# write new size
+				sz ret !
+
+				ret 8 +
+			end
+		end
+	end
+end
+
+version Exit
+	func man unsafe exit cell code begin
+		asm
+			"ldr x0, [x19, #-8]!"
+			"mov x8, #93"
+			"svc #0"
+		end
+	end
+end
+
+version IO version Exit
+	func __core_a@ cell offset addr arr -> cell v begin
+		arr Array.memberSize + @ offset * -> offset
+		arr Array.elements + @ offset +
+
+		version CallistoScript
+			if arr Array.memberSize + @ 1 = then
+				@
+			else
+				return # TODO!!!
+			end
+		end
+
+		version not CallistoScript
+			if arr Array.memberSize + @ 1 = then
+				b@
+			elseif arr Array.memberSize + @ 2 = then
+				version 16Bit
+					w@
+				end
+				version not 16Bit
+					# TODO!!!
+				end
+			elseif arr Array.memberSize + @ 4 = then
+				version 32Bit
+					d@
+				end
+				version not 32Bit
+					# TODO!!!
+				end
+			else
+				@
+			end
+		end
+	end
+
+	func __core_printstr addr arr begin
+		let usize length
+		let usize i
+
+		arr @ -> length
+
+		while i length < do
+			i arr __core_a@ print_ch
+			i 1 + -> i
+		end
+	end
+
+	inline __core_new_line begin
+		13 print_ch 10 print_ch
+	end
+
+	func __arm64_exception begin
+		c"Unhandled exception: " __core_printstr
+		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		1 exit
+	end
+end end

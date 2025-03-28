@@ -1,0 +1,50 @@
+requires File
+
+version Heap
+	include "vector.cal"
+
+	## ## read_to_vec
+	##
+	## Parmeters: ptr Array path, ptr Vector vec
+	##
+	## Reads the whole contents of the file `path` and writes them to `vec`
+	##
+	## This function requres `Heap`
+	func error read_to_vec ptr Array path ptr Vector vec begin
+		let File file
+		path FILE_READ &file open_file
+
+		# TODO: add signed comparison operators so i don't have to do this
+		if file.fd -2 = then
+			"Failed to open file\n" throw
+		end
+
+		let cell fileSize
+		0 SEEK_END &file file_seek
+		&file file_peek -> fileSize
+		0 SEEK_SET &file file_seek
+
+		u8.sizeOf vec init_vec
+		fileSize vec vec_set_size
+
+		vec.elements fileSize &file file@
+		&file close_file
+	end
+end
+
+# TODO: add a destructor to File
+## ## write_file
+##
+## Parameters: ptr Array path, ptr Array contents
+##
+## Writes the contents of `contents` to the file `path`
+func error write_file ptr Array path ptr Array contents begin
+	let File file
+	path FILE_WRITE &file open_file
+
+	if file.fd -2 = then
+		"Failed to open file\n" throw
+	end
+
+	contents.elements contents.length contents.memberSize * &file file!
+end

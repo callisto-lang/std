@@ -8,17 +8,13 @@ requires Args
 ## Parameters: cell which, Array* ret
 ##
 ## Gets the `which`th command line argument, and saves it in `ret`
-func get_arg begin
-	let addr arr
-	-> arr
-	let cell which
-	-> which
+func error get_arg cell which ptr Array arr begin
 	let addr argStr
 	which core_get_arg -> argStr
 
-	argStr ntstr_length arr Array.length + !
-	1 arr Array.memberSize + !
-	argStr arr Array.elements + !
+	argStr ntstr_length -> arr.length
+	1 -> arr.memberSize
+	argStr -> arr.elements
 end
 
 ## ## get_args_length
@@ -26,4 +22,4 @@ end
 ## Parameters: none
 ##
 ## Returns the number of command line arguments
-inline get_args_length begin core_get_arg_length end
+inline get_args_length -> cell num begin core_get_arg_length end

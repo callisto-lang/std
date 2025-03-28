@@ -1,0 +1,58 @@
+enable IO
+enable Args
+enable Exit
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
+
+let addr __freebsd_argv
+let cell __freebsd_argc
+
+inline unsafe __x86_64_program_init begin asm
+	"lea rax, [rdi + 8]"
+	"mov [__global___us____us__freebsd__us__argv], rax"
+	"mov rax, [rdi]"
+	"mov [__global___us____us__freebsd__us__argc], rax"
+end end
+
+inline unsafe __x86_64_program_exit begin
+	__x86_64_pop_rdi
+
+	asm
+		"mov rax, 1" # exit
+		"syscall"
+	end	
+end
+
+version IO
+	func man unsafe print_ch cell ch begin asm
+		"sub r15, 8"
+		"mov rdi, 1"
+		"mov rsi, r15"
+		"mov rdx, 1"
+		"mov rax, 4" # write
+		"syscall"
+	end end
+end
+
+version Exit
+	func man unsafe exit cell code begin
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 1" # exit
+			"syscall"
+		end
+	end
+end
+
+version Args
+	func man core_get_arg cell which -> addr str begin
+		8 * __freebsd_argv + @
+	end
+
+	inline core_get_arg_length -> cell len begin __freebsd_argc end
+end

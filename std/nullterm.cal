@@ -1,14 +1,20 @@
-## ## printntstr
+## ## print_ntstr
 ## Parameters: addr str
 ##
 ## Prints a null-terminated string to stdout from the given pointer
-func printntstr begin
-	let addr str
-	-> str
+func print_ntstr addr str begin
+	version CallistoScript
+		while str @ do
+			str @ print_ch
+			str 1 + -> str
+		end
+	end
 
-	while str b@ do
-		str b@ printch
-		str 1 + -> str
+	version not CallistoScript
+		while str b@ do
+			str b@ print_ch
+			str 1 + -> str
+		end
 	end
 end
 
@@ -16,15 +22,21 @@ end
 ## Parameters: addr str
 ##
 ## Returns the length of a null-terminated string
-func ntstr_length begin
-	let addr str
-	-> str
+func ntstr_length addr str -> cell len begin
 	let cell ret
-	0 -> ret
 
-	while str b@ do
-		ret 1 + -> ret
-		str 1 + -> str
+	version CallistoScript
+		while str @ do
+			ret 1 + -> ret
+			str 1 + -> str
+		end
+	end
+
+	version not CallistoScript
+		while str b@ do
+			ret 1 + -> ret
+			str 1 + -> str
+		end
 	end
 
 	ret

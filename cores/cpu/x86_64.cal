@@ -1,139 +1,149 @@
-inline __x86_64_pop_rdi begin asm
+inline man unsafe __x86_64_pop_rdi cell v begin asm
 	"sub r15, 8"
 	"mov rdi, [r15]"
 end end
 
-inline __x86_64_pop_rsi begin asm
+inline man unsafe __x86_64_pop_rsi cell v begin asm
 	"sub r15, 8"
 	"mov rsi, [r15]"
 end end
 
-inline __x86_64_pop_rax begin asm
+inline man unsafe __x86_64_pop_rax cell v begin asm
 	"sub r15, 8"
 	"mov rax, [r15]"
 end end
 
-inline __x86_64_pop_rbx begin asm
+inline man unsafe __x86_64_pop_rbx cell v begin asm
 	"sub r15, 8"
 	"mov rbx, [r15]"
 end end
 
-inline __x86_64_pop_rcx begin asm
+inline man unsafe __x86_64_pop_rcx cell v begin asm
 	"sub r15, 8"
 	"mov rcx, [r15]"
 end end
 
-inline __x86_64_pop_rdx begin asm
+inline man unsafe __x86_64_pop_rdx cell v begin asm
 	"sub r15, 8"
 	"mov rdx, [r15]"
 end end
 
-inline __x86_64_pop_r10 begin asm
+inline man unsafe __x86_64_pop_r10 cell v begin asm
 	"sub r15, 8"
 	"mov r10, [r15]"
 end end
 
-inline __x86_64_pop_r9 begin asm
+inline man unsafe __x86_64_pop_r9 cell v begin asm
 	"sub r15, 8"
 	"mov r9, [r15]"
 end end
 
-inline __x86_64_pop_r8 begin asm
+inline man unsafe __x86_64_pop_r8 cell v begin asm
 	"sub r15, 8"
 	"mov r8, [r15]"
 end end
 
-inline __x86_64_push_rax begin asm
+inline man unsafe __x86_64_push_rax -> cell v begin asm
 	"mov [r15], rax"
 	"add r15, 8"
 end end
 
-inline __x86_64_push_rbx begin asm
+inline man unsafe __x86_64_push_rbx -> cell v begin asm
 	"mov [r15], rbx"
 	"add r15, 8"
 end end
 
-inline __x86_64_push_rdx begin asm
+inline man unsafe __x86_64_push_rdx -> cell v begin asm
 	"mov [r15], rdx"
 	"add r15, 8"
 end end
 
-func = begin
+func man unsafe = cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"je .push_1"
-		"mov qword [r15], 0"
+		"je __func__${=}.push_1"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
-		"ret"
-		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+	end
+	return
+	asm
+		"__func__${=}.push_1:"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
 
-func > begin
+func man unsafe > cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"jg .push_1"
-		"mov qword [r15], 0"
+		"jg __func__${>}.push_1"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
-		"ret"
-		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+	end
+	return
+	asm
+		"__func__${>}.push_1:"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
 
-func >= begin
+func man unsafe >= cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"jge .push_1"
-		"mov qword [r15], 0"
+		"jge __func__${>=}.push_1"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
-		"ret"
-		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+	end
+	return
+	asm
+		"__func__${>=}.push_1:"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
 
-func < begin
+func man unsafe < cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"jl .push_1"
-		"mov qword [r15], 0"
+		"jl __func__${<}.push_1"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
-		"ret"
-		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+	end
+	return
+	asm
+		"__func__${<}.push_1:"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
 
-func <= begin
+func man unsafe <= cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
 		"cmp rax, rbx"
-		"jle .push_1"
-		"mov qword [r15], 0"
+		"jle __func__${<=}.push_1"
+		"mov $(QWORD) [r15], 0"
 		"add r15, 8"
-		"ret"
-		".push_1:"
-		"mov qword [r15], 0xFFFFFFFFFFFFFFFF"
+	end
+	return
+	asm
+		"__func__${<=}.push_1:"
+		"mov $(QWORD) [r15], 0xFFFFFFFFFFFFFFFF"
 		"add r15, 8"
 	end
 end
 
-func @ begin
+inline man unsafe @ addr address -> cell v begin
 	__x86_64_pop_rbx
 	asm
 		"mov rax, [rbx]"
@@ -141,7 +151,7 @@ func @ begin
 	__x86_64_push_rax
 end
 
-func ! begin
+inline man unsafe ! cell value addr address begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -149,7 +159,7 @@ func ! begin
 	end
 end
 
-func b@ begin
+inline man unsafe b@ addr address -> cell v begin
 	__x86_64_pop_rbx
 	asm
 		"xor rax, rax"
@@ -158,7 +168,7 @@ func b@ begin
 	__x86_64_push_rax
 end
 
-func b! begin
+inline man unsafe b! cell value addr address begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -166,7 +176,7 @@ func b! begin
 	end
 end
 
-func w@ begin
+inline man unsafe w@ addr address -> cell v begin
 	__x86_64_pop_rbx
 	asm
 		"xor rax, rax"
@@ -175,7 +185,7 @@ func w@ begin
 	__x86_64_push_rax
 end
 
-func w! begin
+inline man unsafe w! cell value addr address begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -183,7 +193,7 @@ func w! begin
 	end
 end
 
-func d@ begin
+inline man unsafe d@ addr address -> cell v begin
 	__x86_64_pop_rbx
 	asm
 		"xor rax, rax"
@@ -192,7 +202,7 @@ func d@ begin
 	__x86_64_push_rax
 end
 
-func d! begin
+inline man unsafe d! cell value addr address begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -200,24 +210,24 @@ func d! begin
 	end
 end
 
-func dup begin
+inline man unsafe dup cell a -> cell a cell a begin
 	__x86_64_pop_rax
 	__x86_64_push_rax
 	__x86_64_push_rax
 end
 
-func drop begin asm
+inline man unsafe drop cell a begin asm
 	"sub r15, 8"
 end end
 
-func swap begin
+inline man unsafe swap cell a cell b -> cell b cell a begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	__x86_64_push_rbx
 	__x86_64_push_rax
 end
 
-func + begin
+inline man unsafe + cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -226,9 +236,9 @@ func + begin
 	__x86_64_push_rax
 end
 
-func s+ begin + end
+inline man unsafe s+ cell a cell b -> cell res begin + end
 
-func - begin
+inline man unsafe - cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -237,9 +247,9 @@ func - begin
 	__x86_64_push_rax
 end
 
-func s- begin - end
+inline man unsafe s- cell a cell b -> cell res begin - end
 
-func * begin
+inline man unsafe * cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -248,7 +258,7 @@ func * begin
 	__x86_64_push_rax
 end
 
-func s* begin
+inline man unsafe s* cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -257,7 +267,7 @@ func s* begin
 	__x86_64_push_rax
 end
 
-func / begin
+inline man unsafe / cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -267,7 +277,7 @@ func / begin
 	__x86_64_push_rax
 end
 
-func s/ begin
+inline man unsafe s/ cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -277,7 +287,7 @@ func s/ begin
 	__x86_64_push_rax
 end
 
-func % begin
+inline man unsafe % cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -287,7 +297,7 @@ func % begin
 	__x86_64_push_rdx
 end
 
-func s% begin
+inline man unsafe s% cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -297,7 +307,7 @@ func s% begin
 	__x86_64_push_rdx
 end
 
-func and begin
+inline man unsafe and cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -306,7 +316,7 @@ func and begin
 	__x86_64_push_rax
 end
 
-func or begin
+inline man unsafe or cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -315,7 +325,7 @@ func or begin
 	__x86_64_push_rax
 end
 
-func xor begin
+inline man unsafe xor cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
@@ -324,7 +334,7 @@ func xor begin
 	__x86_64_push_rax
 end
 
-func not begin
+inline man unsafe not cell v -> cell !v begin
 	__x86_64_pop_rax
 	asm
 		"not rax"
@@ -332,7 +342,7 @@ func not begin
 	__x86_64_push_rax
 end
 
-func << begin
+inline man unsafe << cell value cell by -> cell res begin
 	__x86_64_pop_rcx
 	__x86_64_pop_rax
 	asm
@@ -341,7 +351,7 @@ func << begin
 	__x86_64_push_rax
 end
 
-func >> begin
+inline man unsafe >> cell value cell by -> cell res begin
 	__x86_64_pop_rcx
 	__x86_64_pop_rax
 	asm

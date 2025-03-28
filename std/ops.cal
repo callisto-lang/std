@@ -4,7 +4,7 @@ include "array.cal"
 ## Parameters: cell num
 ##
 ## Returns num + 1
-inline ++ begin
+inline man ++ cell num -> cell num++ begin
 	1 +
 end
 
@@ -12,29 +12,45 @@ end
 ## Parameters: cell num
 ##
 ## Returns num - 1
-inline -- begin
+inline man -- cell num -> cell num-- begin
 	1 -
 end
 
-## ## memcopy
+## ## copy_mem
 ## Parameters: addr dest, addr src, cell n
 ##
 ## Copies n bytes from src to dest
-func memcopy begin
-	let addr dest
-	let addr src
-	let cell n
-	-> n
-	-> src
-	-> dest
-
+func copy_mem addr dest addr src cell n begin
 	let cell i
-	0 -> i
 
 	while i n < do
-		src b@ dest b!
-		i 1 + -> i
-		dest 1 + -> dest
-		src 1 + -> src
+		version CallistoScript
+			src @ dest !
+		end
+		version not CallistoScript
+			src b@ dest b!
+		end
+		i ++ -> i
+		dest ++ -> dest
+		src ++ -> src
+	end
+end
+
+## ## fill_mem
+## Parameters: addr dest, cell n, cell value
+##
+## Sets n bytes of dest to value
+func fill_mem addr dest cell n cell value begin
+	let cell i
+
+	while i n < do
+		version CallistoScript
+			value dest !
+		end
+		version not CallistoScript
+			value dest b!
+		end
+		i ++ -> i
+		dest ++ -> dest
 	end
 end

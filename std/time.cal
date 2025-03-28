@@ -1,5 +1,36 @@
 inline seconds begin end
-inline minutes begin 60 * end
-inline hours begin 3600 * end
-inline days begin 86400 * end
-inline years begin 31557600 * end
+inline man minutes cell time -> cell seconds begin 60 * end
+inline man hours cell time -> cell seconds begin 3600 * end
+inline man days cell time -> cell seconds begin 86400 * end
+inline man years cell time -> cell seconds begin 31557600 * end
+
+struct DateTime
+	cell year
+	cell month
+	cell day
+	cell hour
+	cell minute
+	cell second
+end
+
+func new_date_time
+	cell year cell month cell day cell hour cell minute cell second ptr DateTime res
+begin
+	year   -> res.year
+	month  -> res.month
+	day    -> res.day
+	hour   -> res.hour
+	minute -> res.minute
+	second -> res.second
+end
+
+const SECONDS_IN_DAY 86400
+
+func unix_to_date_time cell time ptr DateTime res begin
+	let cell timeOfDay
+	time SECONDS_IN_DAY % -> timeOfDay
+
+	timeOfDay 3600 / -> res.hour
+	timeOfDay 3600 % 60 / -> res.minute
+	timeOfDay 3600 % 60 % -> res.second
+end

@@ -1,28 +1,37 @@
+include "ops.cal"
+
 ## ## a<
 ## Parameters: Array* src, Array* var
 ##
-## Takes an array literal from the stack and writes it to the given variable
-func a< begin
-	let addr src
-	let addr var
-	-> var
-	-> src
-
-	src @ var !
-	src Array.memberSize + @ var Array.memberSize + !
-	src Array.elements + @ var Array.elements + !
+## Takes an array from the stack and writes it to the given variable
+func a< ptr Array src ptr Array var begin
+	src.length -> var.length
+	src.memberSize -> var.memberSize
+	src.elements -> var.elements
 end
 
 ## ## create_array
 ## Parameters: usize length, usize memberSize, addr elements, Array* dest
 ##
 ## Writes the Array fields to `dest`
-func create_array begin
-	let addr var
-	-> var
-	var Array.elements + !
-	var Array.memberSize + !
-	var !
+func man create_array usize length usize memberSize addr elements ptr Array dest begin
+	let ptr Array dest
+	-> dest
+	-> dest.elements
+	-> dest.memberSize
+	-> dest.length
+end
+
+## ## a^
+## Parameters: cell offset, Array* array
+##
+## Returns &array[offset]
+func error a^ cell offset ptr Array arr -> addr address begin
+	if offset arr.length >= then
+		c"a^: Index out of bounds" throw
+	end
+
+	arr.elements offset arr.memberSize * +
 end
 
 ## ## a@
@@ -30,18 +39,17 @@ end
 ##
 ## Returns array[offset]
 ##
-## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func a@ begin
-	let addr  arr
-	let usize offset
-	-> arr
-	-> offset
+## Supports all integer sizes
+func error a@ cell offset ptr Array arr -> cell value begin
+	if offset arr.length >= then
+		c"a@: Index out of bounds" throw
+	end
 
-	arr Array.memberSize + @ offset * -> offset
-	arr Array.elements + @ offset +
+	arr.memberSize offset * -> offset
+	arr.elements offset +
 
 	version CallistoScript
-		if arr Array.memberSize + @ 1 = then
+		if arr.memberSize 1 = then
 			@
 		else
 			return # TODO!!!
@@ -49,21 +57,21 @@ func a@ begin
 	end
 
 	version not CallistoScript
-		if arr Array.memberSize + @ 1 = then
+		if arr.memberSize 1 = then
 			b@
-		elseif arr Array.memberSize + @ 2 = then
+		elseif arr.memberSize 2 = then
 			version 16Bit
 				w@
 			end
 			version not 16Bit
-				# TODO!!!
+				c"a@: Can't read 16-bit values from array" throw
 			end
-		elseif arr Array.memberSize + @ 4 = then
+		elseif arr.memberSize 4 = then
 			version 32Bit
 				d@
 			end
 			version not 32Bit
-				# TODO!!!
+				c"a@: Can't read 32-bit values from array" throw
 			end
 		else
 			@
@@ -77,40 +85,47 @@ end
 ## Writes value to array[offset]
 ##
 ## Currently supports 8-bit and cell size elements (more sizes will be added in the future)
-func a! begin
-	let addr  arr
-	let usize offset
+func error man a! cell value usize offset ptr Array arr begin
+	let ptr Array arr
+	let usize     offset
 
 	-> arr
 	-> offset
 
-	arr Array.memberSize + @ offset * -> offset
-	arr Array.elements + @ offset +
+	if offset arr.length >= then
+		c"a!: Index out of bounds" throw
+	end
+
+	arr.memberSize offset * -> offset
+	arr.elements offset +
 
 	version CallistoScript
-		if arr Array.memberSize + @ 1 = then
+		if arr.memberSize 1 = then
 			!
 		else
-			return # TODO!!!
+			drop drop
+			c"a!: Can't write values that are bigger than cells to an array" throw
 		end
 	end
 
 	version not CallistoScript
-		if arr Array.memberSize + @ 1 = then
+		if arr.memberSize 1 = then
 			b!
-		elseif arr Array.memberSize + @ 2 = then
+		elseif arr.memberSize 2 = then
 			version 16Bit
-				w@
+				w!
 			end
 			version not 16Bit
-				# TODO!!!
+				drop drop
+				c"a!: Can't write 16 bit values to array" throw
 			end
-		elseif arr Array.memberSize + @ 4 = then
+		elseif arr.memberSize 4 = then
 			version 32Bit
-				d@
+				d!
 			end
 			version not 32Bit
-				# TODO!!!
+				drop drop
+				c"a!: Can't write 32 bit values to array" throw
 			end
 		else
 			!
@@ -118,26 +133,43 @@ func a! begin
 	end
 end
 
+## ## a@to
+## Parameters: addr address, cell offset, ptr Array array
+##
+## Write the value of array[offset] to `address`
+func error a@to addr address cell offset ptr Array arr begin
+	if offset arr.length >= then
+		c"a@to: Index out of bounds" throw
+	end
+
+	address arr.elements arr.memberSize offset * + arr.memberSize copy_mem
+end
+
+## ## a!from
+## Parameters: addr address, cell offset, ptr Array array
+##
+## Writes the dereferenced value of `address` to array[offset]
+func error a!from addr address cell offset ptr Array arr begin
+	if offset arr.length >= then
+		c"a!from: Index out of bounds" throw
+	end
+
+	arr.elements arr.memberSize offset * + address arr.memberSize copy_mem
+end
+
 ## ## a=
 ## Parameters: Array* arr1, Array* arr2
 ##
 ## Returns true if the arrays are equal, false if not (will soon be changed to max cell value
 ## if true)
-func a= begin
-	let addr arr1
-	let addr arr2
-
-	-> arr2
-	-> arr1
-
-	if arr1 @ arr2 @ = not then
-		0 return
+func a= ptr Array arr1 ptr Array arr2 -> cell equal begin
+	if arr1.length arr2.length = not then
+		false return
 	end
 
 	let cell i
-	0 -> i
 
-	while i arr1 @ < do
+	while i arr1.length < do
 		if i arr1 a@ i arr2 a@ = not then
 			false return
 		end
@@ -146,4 +178,34 @@ func a= begin
 	end
 
 	true
+end
+
+## ## a..
+## Parameters: cell start, cell length, ptr Array array, ptr Array ret
+##
+## Sets `ret` to a slice of `array`, starting at `start` and is `length` in size
+func error a.. cell start cell length ptr Array arr ptr Array ret begin
+	if start length + arr.length >= then
+		"a..: Out of bounds array slice" throw
+	end
+
+	length -> ret.length
+	arr.memberSize -> ret.memberSize
+	start arr a^ -> ret.elements
+end
+
+## ## fill_array
+## Parameters: cell init, Array* dest
+##
+## Fills `dest` contents with `init` element
+func fill_array cell init ptr Array dest begin
+	let usize len
+	dest.length -> len
+
+	let usize i
+	0 -> i
+	while i len < do
+		init i dest a!
+		i 1 + -> i
+	end
 end

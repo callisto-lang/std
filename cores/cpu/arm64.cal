@@ -1,0 +1,319 @@
+inline man unsafe  __arm64_pop_x0 cell v begin asm
+	"ldr x0, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_pop_x1 cell v begin asm
+	"ldr x1, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_pop_x2 cell v begin asm
+	"ldr x2, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_pop_x3 cell v begin asm
+	"ldr x3, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_pop_x4 cell v begin asm
+	"ldr x4, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_pop_x5 cell v begin asm
+	"ldr x5, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_pop_x9 cell v begin asm
+	"ldr x9, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_pop_x10 cell v begin asm
+	"ldr x10, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_pop_x11 cell v begin asm
+	"ldr x11, [x19, #-8]!"
+end end
+
+inline man unsafe __arm64_push_x0 -> cell v begin asm
+	"str x0, [x19], #8"
+end end
+
+inline man unsafe __arm64_push_x9 -> cell v begin asm
+	"str x9, [x19], #8"
+end end
+
+inline man unsafe __arm64_push_x10 -> cell v begin asm
+	"str x10, [x19], #8"
+end end
+
+# src, dest, len
+inline man unsafe __arm64_memcpy addr src addr dest cell len begin
+	__arm64_pop_x11
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"1:"
+		"ldrb w12, [x9], #1"
+		"strb w12, [x10], #1"
+		"subs x11, x11, #1"
+		"bne 1b"
+	end
+end
+
+
+func man unsafe = cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, eq"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe > cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, gt"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe >= cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, ge"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe < cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, lt"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe <= cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"cmp x9, x10"
+		"csetm x9, le"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe @ addr address -> cell value begin
+	__arm64_pop_x9
+	asm
+		"ldr x9, [x9]"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe ! cell value addr address  begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"str x9, [x10]"
+	end
+end
+
+func man unsafe b@ addr address -> cell value begin
+	__arm64_pop_x9
+	asm
+		"ldrb w9, [x9]"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe b! cell value addr address begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"strb w9, [x10]"
+	end
+end
+
+func man unsafe w@ addr address -> cell value begin
+	__arm64_pop_x9
+	asm
+		"ldrh w9, [x9]"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe w! cell value addr address begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"strh w9, [x10]"
+	end
+end
+
+func man unsafe d@ addr address -> cell value begin
+	__arm64_pop_x9
+	asm
+		"ldr w9, [x9]"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe d! cell value addr address begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"str w9, [x10]"
+	end
+end
+
+func man unsafe dup cell v -> cell v cell v begin
+	asm
+		"ldr x9, [x19, #-8]"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe drop cell v begin asm
+	"sub x19, x19, #8"
+end end
+
+func man unsafe swap cell a cell b -> cell b cell a begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	__arm64_push_x10
+	__arm64_push_x9
+end
+
+func man unsafe + cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"add x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe s+ cell a cell b -> cell res begin + end
+
+func man unsafe - cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"sub x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe s- cell a cell b -> cell res begin - end
+
+func man unsafe * cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"mul x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe s* cell a cell b -> cell res begin * end
+
+func man unsafe / cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"udiv x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe s/ cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"sdiv x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe % cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"udiv x11, x9, x10"
+		"msub x9, x11, x10, x9"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe s% cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"sdiv x11, x9, x10"
+		"mul x11, x11, x10"
+		"sub x9, x9, x11"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe and cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"and x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe or cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"orr x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe xor cell a cell b -> cell res begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"eor x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe not cell v -> cell !v begin
+	__arm64_pop_x9
+	asm
+		"mvn x9, x9"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe << cell value cell by begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"lsl x9, x9, x10"
+	end
+	__arm64_push_x9
+end
+
+func man unsafe >> cell value cell by begin
+	__arm64_pop_x10
+	__arm64_pop_x9
+	asm
+		"lsr x9, x9, x10"
+	end
+	__arm64_push_x9
+end

@@ -1,0 +1,17 @@
+include "array.cal"
+
+## ## parse_int
+## Parameters: Array* string
+##
+## Returns integer value represented by string
+func parse_int ptr Array arr -> cell res begin
+	let cell pos
+
+	0 -> pos
+
+	0
+	while pos arr.length < do
+		10 * pos arr a@ '0' - +
+		pos 1 + -> pos
+	end
+end

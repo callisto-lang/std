@@ -1,0 +1,258 @@
+enable IO
+enable File
+enable Args
+enable Time
+version LibC
+	enable Heap
+end
+enable Exit
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
+
+let addr __osx_argv
+let cell __osx_argc
+
+inline unsafe __x86_64_program_init begin asm
+	"mov [__global___us____us__osx__us__argc], edi"
+	"mov [__global___us____us__osx__us__argv], rsi"
+end end
+
+inline unsafe __x86_64_program_exit begin asm
+	"mov rax, 0x2000001"
+	"mov rdi, 0"
+	"syscall"
+end end
+
+version IO
+	func unsafe man print_ch cell ch begin asm
+		"sub r15, 8"
+		"mov rax, 0x2000004"
+		"mov rdi, 1"
+		"mov rsi, r15"
+		"mov rdx, 1"
+		"syscall"
+	end end
+end
+
+version File
+	const FILE_READ  1
+	const FILE_WRITE 2
+
+	const SEEK_SET   0
+	const SEEK_CUR   1
+	const SEEK_END   2
+
+	const __osx_O_RDONLY 0
+	const __osx_O_WRONLY 1
+	const __osx_O_RDWR   2
+	const __osx_O_CREAT  0x200
+
+	const __osx_default_mode 0o666
+
+	struct File
+		cell fd
+	end
+
+	let File stdin
+	let File stdout
+	let File stderr
+	0 &stdin !
+	1 &stdout !
+	2 &stderr !
+
+	func unsafe open_file addr path cell mode ptr File file begin
+		let array 4096 u8 pathBuf
+
+		path Array.elements + @
+		&pathBuf
+		path @
+
+		__x86_64_pop_rcx
+		__x86_64_pop_rdi
+		__x86_64_pop_rsi
+		asm "rep movsb" end
+		0 &pathBuf path @ + b!
+
+		let cell flags
+
+		if FILE_READ FILE_WRITE or mode = then
+			__osx_O_RDWR __osx_O_CREAT or -> flags
+		elseif FILE_READ mode = then
+			__osx_O_RDONLY -> flags
+		elseif FILE_WRITE mode = then
+			__osx_O_WRONLY __osx_O_CREAT or -> flags
+		end
+
+		&pathBuf
+		flags
+		__osx_default_mode
+
+		__x86_64_pop_rdx
+		__x86_64_pop_rsi
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 0x2000000 + 5" # open syscall
+			"syscall"
+		end
+		__x86_64_push_rax -> file.fd
+	end
+
+	func unsafe man close_file ptr File file begin
+		@ __x86_64_pop_rdi # FD
+		asm
+			"mov rax, 0x2000000 + 6" # Close
+			"syscall"
+		end
+	end
+
+	func man unsafe file@ addr buffer cell length ptr File file begin
+		@ __x86_64_pop_rdi # Fd
+		__x86_64_pop_rdx   # Length
+		__x86_64_pop_rsi   # Buffer
+
+		asm
+			"mov rax, 0x2000000 + 3" # read
+			"syscall"
+		end
+	end
+
+	func man unsafe file! addr buffer cell length ptr File file begin
+		@ __x86_64_pop_rdi # Fd
+		__x86_64_pop_rdx   # Length
+		__x86_64_pop_rsi   # Buffer
+
+		asm
+			"mov rax, 0x2000000 + 4" # write
+			"syscall"
+		end
+	end
+
+	func man unsafe file_seek cell offset cell whence ptr File file begin
+		@ __x86_64_pop_rdi # Fd
+		__x86_64_pop_rdx   # Whence
+		__x86_64_pop_rsi   # Offset
+
+		asm
+			"mov rax, 0x2000000 + 199" # lseek
+			"syscall"
+		end
+	end
+
+	func man unsafe file_peek ptr File file -> cell where begin
+		@ __x86_64_pop_rdi
+		asm
+			"xor rsi, rsi"
+			"mov rdx, 1" # SEEK_CUR
+			"mov rax, 0x2000000 + 199" # lseek
+			"syscall"
+		end
+		__x86_64_push_rax
+	end
+end
+
+version Args
+	func man core_get_arg cell which -> addr arg begin
+		8 * __osx_argv + @
+	end
+
+	inline core_get_arg_length -> cell len begin __osx_argc end
+end
+
+version Time
+	struct __osx_timeval
+		cell sec
+		cell usec
+	end
+
+	func unsafe get_epoch_time -> cell time begin
+		let __osx_timeval tv
+		&tv
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 0x2000000 + 116" # gettimeofday
+			"xor rsi, rsi"
+			"syscall"
+		end
+		&tv @
+	end
+end
+
+version Heap
+	extern C addr malloc usize as alloc
+	extern C addr realloc addr usize end
+	extern C void free addr end
+end
+
+version Exit
+	func unsafe man exit cell code begin
+		__x86_64_pop_rdi
+		asm
+			"mov rax, 0x2000001"
+			"syscall"
+		end
+	end
+end
+
+version IO version Exit
+	func __core_a@ cell offset addr arr -> cell value begin
+		arr Array.memberSize + @ offset * -> offset
+		arr Array.elements + @ offset +
+
+		version CallistoScript
+			if arr Array.memberSize + @ 1 = then
+				@
+			else
+				return # TODO!!!
+			end
+		end
+
+		version not CallistoScript
+			if arr Array.memberSize + @ 1 = then
+				b@
+			elseif arr Array.memberSize + @ 2 = then
+				version 16Bit
+					w@
+				end
+				version not 16Bit
+					# TODO!!!
+				end
+			elseif arr Array.memberSize + @ 4 = then
+				version 32Bit
+					d@
+				end
+				version not 32Bit
+					# TODO!!!
+				end
+			else
+				@
+			end
+		end
+	end
+
+	func __core_printstr addr arr begin
+		let usize length
+		let usize i
+
+		arr @ -> length
+
+		while i length < do
+			i arr __core_a@ print_ch
+			i 1 + -> i
+		end
+	end
+
+	inline __core_new_line begin
+		13 print_ch 10 print_ch
+	end
+
+	func __x86_64_exception begin
+		c"Unhandled exception: " __core_printstr
+		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		1 exit
+	end
+end end

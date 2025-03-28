@@ -1,16 +1,40 @@
+enable IO
+enable Args
+enable Exit
+restrict IO
+restrict File
+restrict Args
+restrict Time
+restrict Heap
+restrict Exit
+
 let cell arglen
 let addr argv
 
-inline __rm86_program_init begin asm
+let addr __rm86_argv
+let cell __rm86_arglen
+
+inline unsafe __rm86_program_init begin asm
 	"xor ah, ah"
 	"mov al, [0x80]"
-	"mov [__global___rm86_arglen], ax"
+	"mov [__global___us____us__rm86__us__arglen], ax"
 	"mov ax, 0x81"
-	"mov [__global___rm86_argv], ax"
+	"mov [__global___us____us__rm86__us__argv], ax"
 end end
 
-inline __rm86_program_exit begin
+inline unsafe __rm86_program_exit begin
 	"ret"
+end
+
+version Exit
+	func man unsafe exit cell code begin
+		__rm86_pop_ax
+
+		asm
+			"mov ah, 0x4C"
+			"int 0x21"
+		end
+	end
 end
 
 version Args
@@ -34,7 +58,7 @@ version Args
 
 	__rm86_nullterm_args
 
-	func core_get_arg begin
+	func man core_get_arg cell which -> addr str begin
 		let cell which
 		let cell counter
 		let addr args
@@ -46,7 +70,7 @@ version Args
 
 		while true do
 			if args b@ 0 = then
-				0 args b!
+				0 args b! # what?
 				counter 1 - -> counter
 
 				if counter 0 = then args 1 + return end
@@ -56,7 +80,7 @@ version Args
 		end
 	end
 
-	func core_get_arg_length begin
+	func core_get_arg_length -> cell len begin
 		let cell i
 		let cell counter
 
@@ -71,3 +95,62 @@ version Args
 		counter 1 +
 	end
 end
+
+version IO version Exit
+	func __core_a@ cell offset addr arr -> cell value begin
+		arr Array.memberSize + @ offset * -> offset
+		arr Array.elements + @ offset +
+
+		version CallistoScript
+			if arr Array.memberSize + @ 1 = then
+				@
+			else
+				return # TODO!!!
+			end
+		end
+
+		version not CallistoScript
+			if arr Array.memberSize + @ 1 = then
+				b@
+			elseif arr Array.memberSize + @ 2 = then
+				version 16Bit
+					w@
+				end
+				version not 16Bit
+					# TODO!!!
+				end
+			elseif arr Array.memberSize + @ 4 = then
+				version 32Bit
+					d@
+				end
+				version not 32Bit
+					# TODO!!!
+				end
+			else
+				@
+			end
+		end
+	end
+
+	func __core_printstr addr arr begin
+		let usize length
+		let usize i
+
+		arr @ -> length
+
+		while i length < do
+			i arr __core_a@ print_ch
+			i 1 + -> i
+		end
+	end
+
+	inline __core_new_line begin
+		13 print_ch 10 print_ch
+	end
+
+	func __rm86_exception begin
+		c"Unhandled exception: " __core_printstr
+		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		1 exit
+	end
+end end

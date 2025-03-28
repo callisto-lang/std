@@ -2,67 +2,62 @@ requires IO
 
 include "array.cal"
 
-func printdec_loop begin
+func man print_dec_loop cell num begin
 	if dup then
-		dup 10 / printdec_loop
-		10 % 48 + printch
+		dup 10 / print_dec_loop
+		10 % 48 + print_ch
 	else
 		drop
 	end
 end
 
-## ## printdec
+## ## print_dec
 ## Parameters: cell value
 ##
 ## Prints the given value as decimal to stdout
-func printdec begin
+func man print_dec cell value begin
 	if dup then
-		printdec_loop
+		print_dec_loop
 	else
-		drop 48 printch
+		drop 48 print_ch
 	end
 end
 
-func printhex_loop begin
+func man print_hex_loop cell num begin
 	if dup then
-		dup 16 / printhex_loop
+		dup 16 / print_hex_loop
 		16 %
 		if dup 9 <= then
-			48 + printch
+			48 + print_ch
 		else
-			55 + printch
+			55 + print_ch
 		end
 	else
 		drop
 	end
 end
 
-## ## printhex
+## ## print_hex
 ## Parameters: cell value
 ##
 ## Prints the given value as hexadecimal to stdout
-func printhex begin
+func man print_hex cell num begin
 	if dup then
-		printhex_loop
+		print_hex_loop
 	else
-		drop 48 printch
+		drop 48 print_ch
 	end
 end
 
-## ## printstr
+## ## print_str
 ## Parameters: Array* str
 ##
 ## Prints the given string to stdout
-func printstr begin
-	let addr  arr
-	let usize length
+func print_str ptr Array arr begin
 	let usize i
 
-	-> arr
-	arr @ -> length
-
-	while i length < do
-		i arr a@ printch
+	while i arr.length < do
+		i arr a@ print_ch
 		i 1 + -> i
 	end
 end
@@ -72,43 +67,61 @@ end
 ##
 ## Prints a new line to stdout
 func new_line begin
-	'\r' '\n' printch printch
+	'\r' print_ch '\n' print_ch
 end
 
-## ## printf
-## Parameters: ..., Array* fmt
-##
-## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
-## how they are written
-##
-## Formats:
-##
-## - `%s` - String (`Array*`)
-## - `%d` - Decimal (`cell`)
-## - `%X` - Hexadecimal (`cell`)
-func printf begin
-	let addr fmt
-	-> fmt
+# Removed until I add a way to get this to work in safe callisto
+# ## ## printf
+# ## Parameters: ..., Array* fmt
+# ##
+# ## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
+# ## how they are written
+# ##
+# ## Formats:
+# ##
+# ## - `%s` - String (`Array*`)
+# ## - `%d` - Decimal (`cell`)
+# ## - `%X` - Hexadecimal (`cell`)
+#func printf addr fmt begin
+#	let cell i
+#	let cell ch
 
-	let cell i
-	let cell ch
+#	while i fmt @ < do
+#		if i fmt a@ '%' = then
+#			i 1 + -> i
+#			i fmt a@ -> ch
 
-	while i fmt @ < do
-		if i fmt a@ '%' = then
-			i 1 + -> i
-			i fmt @ a@ -> ch
+#			if ch 's' = then
+#				print_str
+#			elseif ch 'd' = then
+#				print_dec
+#			elseif ch 'X' = then
+#				print_hex
+#			end
+#		else
+#			i fmt a@ print_ch
+#		end
+#
+#		i 1 + -> i
+#	end
+#end
 
-			if ch 's' = then
-				printstr
-			elseif ch 'd' = then
-				printdec
-			elseif ch 'X' = then
-				printhex
-			end
-		else
-			i fmt a@ printch
+version Heap
+	include "vector.cal"
+
+	## ## read_line
+	## Parameters: ptr Vector res
+	##
+	## Reads from stdin to `res`
+	func read_line ptr Vector res begin
+		u8.sizeOf res init_vec
+
+		let u8 ch
+		while ch '\n' = not ch '\r' = not or do
+			&ch 1 &stdin file@
+			ch res vec_push
 		end
 
-		i 1 + -> i
+		res vec_pop # remove the new line character
 	end
 end
