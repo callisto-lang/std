@@ -1,6 +1,6 @@
 include "array.cal"
 
-## ## (Inline) in_range
+## ## in_range
 ## Parameters: cell value, u8 first, u8 last
 ##
 ## Checks if a value is in a range
