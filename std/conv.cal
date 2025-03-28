@@ -1,17 +1,42 @@
 include "array.cal"
+include "ops.cal"
 
-## ## parse_int
+## ## parse_dec
 ## Parameters: Array* string
 ##
-## Returns integer value represented by string
-func parse_int ptr Array arr -> cell res begin
-	let cell pos
+## Converts decimal integer representation in string into an integer
+func error parse_dec ptr Array arr -> cell res begin
+	let cell pos 0 -> pos
+	0 while pos arr.length < do
+		pos arr a@
+		if dup is_dec_digit then
+			'0' - swap 10 * +
+		else unsafe cell _ -> begin
+			drop drop c"parse_dec: Invalid digit" throw
+		end end
 
-	0 -> pos
+		pos 1 + -> pos
+	end
+end
 
-	0
-	while pos arr.length < do
-		10 * pos arr a@ '0' - +
+## ## parse_hex
+## Parameters: Array* string
+##
+## Converts hexadecimal integer representation in string into an integer
+func error parse_hex ptr Array arr -> cell res begin
+	let cell pos 0 -> pos
+	0 while pos arr.length < do
+		pos arr a@
+		if dup is_dec_digit then
+			'0' - swap 16 * +
+		elseif dup 'a' 'f' in_range then
+			'a' - 10 + swap 16 * +
+		elseif dup 'A' 'F' in_range then
+			'A' - 10 + swap 16 * +
+		else unsafe cell _ -> begin
+			drop drop c"parse_hex: Invalid digit" throw
+		end end
+
 		pos 1 + -> pos
 	end
 end

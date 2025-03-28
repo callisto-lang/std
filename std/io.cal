@@ -62,6 +62,19 @@ func print_str ptr Array arr begin
 	end
 end
 
+## ## print_bool
+## Parameters: bool value
+##
+## Prints the given boolean as "true" or "false" to stdout
+inline man print_bool bool value begin
+	if dup drop then
+		c"true"
+	else
+		c"false"
+	end
+	print_str
+end
+
 ## ## new_line
 ## Parameters:
 ##
