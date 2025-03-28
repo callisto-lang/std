@@ -5,14 +5,14 @@ include "ops.cal"
 ## Parameters: Array* string
 ##
 ## Converts decimal integer representation in string into an integer
-func parse_dec ptr Array arr -> cell res begin
+func error parse_dec ptr Array arr -> cell res begin
 	let cell pos 0 -> pos
 	0 while pos arr.length < do
 		pos arr a@
 		if dup is_dec_digit then
 			'0' - swap 10 * +
 		else
-			drop break
+			drop c"parse_dec: Invalid digit" throw
 		end
 
 		pos 1 + -> pos
@@ -23,7 +23,7 @@ end
 ## Parameters: Array* string
 ##
 ## Converts hexadecimal integer representation in string into an integer
-func parse_hex ptr Array arr -> cell res begin
+func error parse_hex ptr Array arr -> cell res begin
 	let cell pos 0 -> pos
 	0 while pos arr.length < do
 		pos arr a@
@@ -34,7 +34,7 @@ func parse_hex ptr Array arr -> cell res begin
 		elseif dup 'A' 'F' in_range then
 			'A' - 10 + swap 16 * +
 		else
-			drop break
+			drop c"parse_hex: Invalid digit" throw
 		end
 
 		pos 1 + -> pos
