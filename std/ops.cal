@@ -1,10 +1,10 @@
 include "array.cal"
 
 ## ## in_range
-## Parameters: cell value, u8 first, u8 last
+## Parameters: cell value, cell first, cell last
 ##
 ## Checks if a value is in a range
-func in_range cell value u8 first u8 last -> bool result begin
+func in_range cell value cell first cell last -> bool result begin
 	value first >= value last <= and
 end
 
