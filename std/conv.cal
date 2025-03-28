@@ -11,9 +11,9 @@ func error parse_dec ptr Array arr -> cell res begin
 		pos arr a@
 		if dup is_dec_digit then
 			'0' - swap 10 * +
-		else
-			drop c"parse_dec: Invalid digit" throw
-		end
+		else unsafe cell _ -> begin
+			drop drop c"parse_dec: Invalid digit" throw
+		end end
 
 		pos 1 + -> pos
 	end
@@ -33,9 +33,9 @@ func error parse_hex ptr Array arr -> cell res begin
 			'a' - 10 + swap 16 * +
 		elseif dup 'A' 'F' in_range then
 			'A' - 10 + swap 16 * +
-		else
-			drop c"parse_hex: Invalid digit" throw
-		end
+		else unsafe cell _ -> begin
+			drop drop c"parse_hex: Invalid digit" throw
+		end end
 
 		pos 1 + -> pos
 	end
