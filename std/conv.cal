@@ -40,3 +40,21 @@ func error parse_hex ptr Array arr -> cell res begin
 		pos 1 + -> pos
 	end
 end
+
+## ## parse_bin
+## Parameters: Array* string
+##
+## Converts binary integer representation in string into an integer
+func error parse_bin ptr Array arr -> cell res begin
+	let cell pos 0 -> pos
+	0 while pos arr.length < do
+		pos arr a@
+		if dup is_bin_digit then
+			'0' - swap 2 * +
+		else unsafe cell _ -> begin
+			drop drop c"parse_bin: Invalid digit" throw
+		end end
+
+		pos 1 + -> pos
+	end
+end

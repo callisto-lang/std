@@ -8,6 +8,14 @@ func in_range cell value cell first cell last -> bool result begin
 	value first >= value last <= and
 end
 
+## ## (Inline) is_bin_digit
+## Parameters: u8 ch
+##
+## Checks if a character is a binary digit
+inline man is_bin_digit u8 ch -> bool result begin
+	dup '0' = swap '1' = or
+end
+
 ## ## (Inline) is_dec_digit
 ## Parameters: u8 ch
 ##
