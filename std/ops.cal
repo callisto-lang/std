@@ -1,5 +1,31 @@
 include "array.cal"
 
+## ## (Inline) in_range
+## Parameters: cell value, u8 first, u8 last
+##
+## Checks if a value is in a range
+func in_range cell value u8 first u8 last -> bool result begin
+	value first >= value last <= and
+end
+
+## ## (Inline) is_dec_digit
+## Parameters: u8 ch
+##
+## Checks if a character is a decimal digit
+inline man is_dec_digit u8 ch -> bool result begin
+	'0' '9' in_range
+end
+
+## ## (Inline) is_hex_digit
+## Parameters: u8 ch
+##
+## Checks if a character is a hexadecimal digit
+inline man is_hex_digit u8 ch -> bool result begin
+	dup '0' '9' in_range swap
+	dup 'a' 'f' in_range swap
+	'A' 'F' in_range or or
+end
+
 ## ## (Inline) ++
 ## Parameters: cell num
 ##
