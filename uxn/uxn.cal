@@ -1,0 +1,3 @@
+requires UXN
+
+inline unsafe uxn_brk begin asm "BRK" end end

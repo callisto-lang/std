@@ -1,0 +1,121 @@
+requires UXN
+
+alias UxnPixel u8
+alias UxnSprite u8
+alias UxnAuto u8
+
+inline unsafe man uxn_set_screen_vector addr vector begin asm
+	".Screen/vector DEO2"
+end end
+
+inline unsafe man uxn_set_screen_size cell width cell height begin asm
+	".Screen/height DEO2 .Screen/width DEO2"
+end end
+
+inline unsafe uxn_get_screen_size -> cell width cell height begin asm
+	".Screen/width DEI2 .Screen/height DEI2"
+end end
+
+inline unsafe uxn_get_pixel -> UxnPixel res begin asm
+	".Screen/pixel DEI #00 SWP"
+end end
+
+inline unsafe uxn_set_pixel UxnPixel pixel begin asm
+	"NIP .Screen/pixel DEO"
+end end
+
+inline man uxn_pixel_set_colour cell colour UxnPixel pixel -> UxnPixel res begin
+	0b11111100 and or
+end
+
+inline man uxn_pixel_set_flip_x bool flip? UxnPixel pixel -> UxnPixel res begin
+	0b11101111 and swap if then true else false end 0b00010000 and or
+end
+
+inline man uxn_pixel_set_flip_y bool flip? UxnPixel pixel -> UxnPixel res begin
+	0b11011111 and swap if then true else false end 0b00100000 and or
+end
+
+inline man uxn_pixel_set_layer cell layer UxnPixel pixel -> UxnPixel res begin
+	0b10111111 and swap 6 << or
+end
+
+inline man uxn_pixel_set_fill bool fill? UxnPixel pixel -> UxnPixel res begin
+	0b01111111 and swap if then true else false end 0b10000000 and or
+end
+
+inline unsafe uxn_get_sprite -> UxnSprite sprite begin asm
+	".Screen/sprite DEI #00 SWP"
+end end
+
+inline unsafe uxn_set_sprite UxnSprite sprite begin asm
+	"NIP .Screen/sprite DEO"
+end end
+
+inline man uxn_sprite_set_flip_x bool flip? UxnSprite sprite -> UxnSprite sprite begin
+	uxn_pixel_set_flip_x
+end
+
+inline man uxn_sprite_set_flip_y bool flip? UxnSprite sprite -> UxnSprite sprite begin
+	uxn_pixel_set_flip_y
+end
+
+inline man uxn_sprite_set_2bpp bool 2bpp? UxnSprite sprite -> UxnSprite sprite begin
+	uxn_pixel_set_fill
+end
+
+inline man uxn_sprite_set_layer cell layer UxnSprite sprite -> UxnSprite sprite begin
+	uxn_pixel_set_layer
+end
+
+inline man uxn_sprite_set_colours cell colours UxnSprite sprite -> UxnSprite sprite begin
+	0xF0 and or
+end
+
+inline unsafe uxn_get_auto -> UxnAuto auto begin
+	".Screen/auto DEI #00 SWP"
+end
+
+inline unsafe man uxn_set_auto UxnAuto auto begin
+	"NIP .Screen/auto DEO"
+end
+
+inline man uxn_auto_set_length cell length UxnAuto auto -> UxnAuto auto begin
+	0x0F and swap 4 << or
+end
+
+inline man uxn_auto_set_x bool x? UxnAuto auto -> UxnAuto auto begin
+	0b11111110 and swap if then true else false end 0b00000001 and or
+end
+
+inline man uxn_auto_set_y bool y? UxnAuto auto -> UxnAuto auto begin
+	0b11111101 and swap if then true else false end 0b00000010 and or
+end
+
+inline man uxn_auto_set_addr bool address? UxnAuto auto -> UxnAuto auto begin
+	0b11111011 and swap if then true else false end 0b00000100 and or
+end
+
+inline unsafe man uxn_screen_set_x cell x begin asm
+	".Screen/x DEO2"
+end end
+
+inline unsafe man uxn_screen_set_y cell y begin asm
+	".Screen/y DEO2"
+end end
+
+inline unsafe man uxn_screen_get_x -> cell x begin asm
+	".Screen/x DEI2"
+end end
+
+inline unsafe man uxn_screen_get_y -> cell y begin asm
+	".Screen/y DEI2"
+end end
+
+inline unsafe man uxn_screen_set_addr addr address begin asm
+	".Screen/addr DEO2"
+end end
+
+inline unsafe man uxn_screen_get_addr -> addr address begin asm
+	".Screen/addr DEI2"
+end end
