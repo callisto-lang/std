@@ -15,7 +15,7 @@ end end
 
 inline man unsafe __rm86_pop_dx cell v begin asm
 	"sub si, 2"
-	"mov cx, [si]"
+	"mov dx, [si]"
 end end
 
 inline man unsafe __rm86_pop_cx cell v begin asm

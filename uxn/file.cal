@@ -1,0 +1,78 @@
+requires UXN
+
+include "std/ops.cal"
+include "std/conv.cal"
+include "std/array.cal"
+
+const UXN_PATH_MAX 128
+
+# TODO: add unsafe to use attribute
+inline man __uxn_file_offset cell file -> cell device begin
+	if 0 = then
+		unsafe begin asm "#00" end end
+	else
+		unsafe begin asm "#10" end end
+	end
+end
+
+func error uxn_file_success cell file -> cell success begin
+	if file 0 = file 1 = or not then
+		c"Invalid file ID" throw
+	end
+
+	unsafe -> cell success begin
+		file __uxn_file_offset asm ".File1/success ADD DEI2" end
+	end
+end
+
+func error uxn_open_file ptr Array name cell file begin
+	if file 0 = file 1 = or not then
+		c"Invalid file ID" throw
+	end
+
+	let array 128 u8 path
+	&path 128 0 fill_mem
+	&path name.elements name.length copy_mem
+
+	unsafe begin
+		&path file __uxn_file_offset asm ".File1/name ADD DEO2" end
+	end
+end
+
+func error uxn_read_file addr where cell length cell file begin
+	if file 0 = file 1 = or not then
+		c"Invalid file ID" throw
+	end
+
+	unsafe begin
+		# length
+		length file __uxn_file_offset asm ".File1/length ADD DEO2" end
+		# read
+		where file __uxn_file_offset asm ".File1/read ADD DEO2" end
+	end
+
+	if file uxn_file_success length = not then
+		c"Read failed or EOF reached" throw
+	end
+end
+
+func error uxn_file_size cell file -> cell size begin
+	if file 0 = file 1 = or not then
+		c"Invalid file ID" throw
+	end
+
+	let Array stat
+	4 u8.sizeOf anon array 4 u8 &stat create_array
+
+	unsafe begin
+		# length
+		4 file __uxn_file_offset asm ".File1/length ADD DEO2" end
+		# stat
+		&stat.elements file __uxn_file_offset asm ".File1/stat ADD DEO2" end
+	end
+	file print_dec new_line
+
+	&stat print_str new_line
+
+	&stat parse_hex
+end
