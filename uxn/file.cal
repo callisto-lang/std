@@ -39,6 +39,47 @@ func error uxn_open_file ptr Array name cell file begin
 	end
 end
 
+func error uxn_set_append cell append? cell file begin
+	if file 0 = file 1 = or not then
+		c"Invalid file ID" throw
+	end
+
+	unsafe begin
+		append? asm "NIP" end file __uxn_file_offset asm ".File1/append ADD DEO" end
+	end
+end
+
+func error uxn_write_file addr where cell length cell file begin
+	if file 0 = file 1 = or not then
+		c"Invalid file ID" throw
+	end
+
+	unsafe begin
+		# length
+		length file __uxn_file_offset asm ".File1/length ADD DEO2" end
+		# read
+		where file __uxn_file_offset asm ".File1/write ADD DEO2" end
+	end
+
+	if file uxn_file_success length = not then
+		c"Write failed" throw
+	end	
+end
+
+func error uxn_write_file_array ptr Array arr cell file begin
+	arr.elements arr.length file uxn_write_file
+end
+
+func error uxn_file_delete cell file begin
+	if file 0 = file 1 = or not then
+		c"Invalid file ID" throw
+	end
+
+	unsafe begin
+		asm "LIT 69" end file __uxn_file_offset asm ".File1/delete ADD DEO" end
+	end
+end
+
 func error uxn_read_file addr where cell length cell file begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw
@@ -68,11 +109,15 @@ func error uxn_file_size cell file -> cell size begin
 		# length
 		4 file __uxn_file_offset asm ".File1/length ADD DEO2" end
 		# stat
-		&stat.elements file __uxn_file_offset asm ".File1/stat ADD DEO2" end
+		stat.elements file __uxn_file_offset asm ".File1/stat ADD DEO2" end
 	end
-	file print_dec new_line
 
-	&stat print_str new_line
+	if &stat "????" a= then
+		c"File too big to get size" throw
+	end
+	if &stat "!!!!" a= then
+		c"File does not exist" throw
+	end
 
 	&stat parse_hex
 end

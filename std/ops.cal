@@ -12,7 +12,7 @@ end
 ## Parameters: u8 ch
 ##
 ## Checks if a character is a binary digit
-inline man is_bin_digit u8 ch -> bool result begin
+inline man is_bin_digit cell ch -> bool result begin
 	dup '0' = swap '1' = or
 end
 
@@ -20,7 +20,7 @@ end
 ## Parameters: u8 ch
 ##
 ## Checks if a character is a decimal digit
-inline man is_dec_digit u8 ch -> bool result begin
+inline man is_dec_digit cell ch -> bool result begin
 	'0' '9' in_range
 end
 
@@ -28,7 +28,7 @@ end
 ## Parameters: u8 ch
 ##
 ## Checks if a character is a hexadecimal digit
-inline man is_hex_digit u8 ch -> bool result begin
+inline man is_hex_digit cell ch -> bool result begin
 	dup '0' '9' in_range swap
 	dup 'a' 'f' in_range swap
 	'A' 'F' in_range or or
