@@ -1,0 +1,47 @@
+requires UXN
+
+## ## enum UxnButton : u8
+## Used for the UXN controller, it has these values:
+##
+## - A      = 0x01
+## - B      = 0x02
+## - Select = 0x04
+## - Start  = 0x08
+## - Up     = 0x10
+## - Down   = 0x20
+## - Left   = 0x40
+## - Right  = 0x80
+enum UxnButton : u8
+	A      = 0x01
+	B      = 0x02
+	Select = 0x04
+	Start  = 0x08
+	Up     = 0x10
+	Down   = 0x20
+	Left   = 0x40
+	Right  = 0x80
+end
+
+## ## uxn_set_controller_vector
+## Parameters: addr vec
+##
+## Sets the controller vector to `vec`
+inline man unsafe uxn_set_controller_vector addr vec begin asm
+	".Controller/vector DEO2"
+end end
+
+## ## uxn_get_button
+## Returns: cell button
+##
+## Gets the value from the `Controller/button` port
+inline man unsafe uxn_get_button -> cell button begin asm
+	".Controller/button DEI #00 SWP"
+end end
+
+## ## uxn_get_key
+## Returns: cell key
+##
+## Gets the value from the `Controller/key` port
+inline man unsafe uxn_get_key -> cell key begin asm
+	".Controller/key DEI #00 SWP"
+end end
