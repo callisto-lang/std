@@ -15,6 +15,12 @@ inline man __uxn_file_offset cell file -> cell device begin
 	end
 end
 
+## ## uxn_file_success
+## Parameters: cell file
+##
+## Returns `cell success`
+##
+## Returns the success value for that file
 func error uxn_file_success cell file -> cell success begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw
@@ -25,6 +31,10 @@ func error uxn_file_success cell file -> cell success begin
 	end
 end
 
+## ## uxn_open_file
+## Parameters: ptr Array name, cell file
+##
+## Opens a file
 func error uxn_open_file ptr Array name cell file begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw
@@ -39,6 +49,11 @@ func error uxn_open_file ptr Array name cell file begin
 	end
 end
 
+## ## uxn_set_append
+## Parameters: cell append?, cell file
+##
+## If `append?` is 1, then writes to `file` will append. If it is 0, then the whole
+## file will be overwritten
 func error uxn_set_append cell append? cell file begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw
@@ -49,6 +64,10 @@ func error uxn_set_append cell append? cell file begin
 	end
 end
 
+## ## uxn_write_file
+## Parameters: addr where, cell length, cell file
+##
+## Writes `length` bytes from `where` to `file`
 func error uxn_write_file addr where cell length cell file begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw
@@ -66,10 +85,18 @@ func error uxn_write_file addr where cell length cell file begin
 	end	
 end
 
+## ## uxn_write_file_array
+## Parameters: ptr Array arr, cell file
+##
+## Writes the contents of `arr` to `file`
 func error uxn_write_file_array ptr Array arr cell file begin
 	arr.elements arr.length file uxn_write_file
 end
 
+## ## uxn_file_delete
+## Parameters: cell file
+##
+## Deletes `file`
 func error uxn_file_delete cell file begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw
@@ -80,6 +107,10 @@ func error uxn_file_delete cell file begin
 	end
 end
 
+## ## uxn_read_file
+## Parameters: addr where, cell length, cell file
+##
+## Reads `length` bytes from `file` and writes them to `where`
 func error uxn_read_file addr where cell length cell file begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw
@@ -97,6 +128,12 @@ func error uxn_read_file addr where cell length cell file begin
 	end
 end
 
+## ## uxn_file_size
+## Parameters: cell file
+##
+## Returns `cell size`
+##
+## Returns the size of the file
 func error uxn_file_size cell file -> cell size begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw

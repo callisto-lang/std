@@ -1,3 +1,5 @@
 requires UXN
 
+## ## uxn_brk
+## Rusn the `BRK` uxn instruction to return from a vector
 inline unsafe uxn_brk begin asm "BRK" end end

@@ -1,61 +1,121 @@
 requires UXN
 
+## ## uxn_expansion
+## Parameters: addr op
+##
+## Writes `op` to the `System/expansion` port.
 inline unsafe man uxn_expansion addr op begin asm
 	".System/expansion DEO2"
 end end
 
+## ## uxn_get_wst
+## Returns: cell wst
+##
+## Gets the working stack pointer from the `System/wst` port
 inline unsafe man uxn_get_wst -> cell wst begin asm
 	".System/wst DEI #00 SWP"
 end end
 
+## ## uxn_set_wst
+## Parameters: cell wst
+##
+## Sets the working stack pointer
 inline unsafe man uxn_set_wst cell wst begin asm
 	"NIP .System/wst DEO"
 end end
 
+## ## uxn_get_rst
+## Returns: cell rst
+##
+## Gets the return stack pointer from the `System/rst` port
 inline unsafe man uxn_get_rst -> cell rst begin asm
 	".System/rst DEI #00 SWP"
 end end
 
+## ## uxn_set_rst
+## Parameters: cell rst
+##
+## Sets the return stack pointer
 inline unsafe man uxn_set_rst cell rst begin asm
 	"NIP .System/rst DEO"
 end end
 
+## ## uxn_set_metadata
+## Parameters: addr metadata
+##
+## Writes `metadata` to the `System/metadata` port
 inline unsafe man uxn_set_metadata addr metadata begin asm
 	".System/metadata DEO2"
 end end
 
+## ## uxn_get_metadata
+## Parameters: addr metadata
+##
+## Reads the value from the `System/metadata` port
 inline unsafe man uxn_get_metadata -> addr metadata begin asm
 	".System/metadata DEI2"
 end end
 
+## ## uxn_set_red
+## Parameters: cell red
+##
+## Writes `red` to the `System/r` port
 inline unsafe man uxn_set_red cell red begin asm
 	".System/r DEO2"
 end end
 
+## ## uxn_get_red
+## Returns: cell red
+##
+## Reads the value from the `System/r` port.
 inline unsafe man uxn_get_red -> cell red begin asm
 	".System/r DEI2"
 end end
 
+## ## uxn_set_green
+## Parameters: cell green
+##
+## Writes `green` to the `System/g` port
 inline unsafe man uxn_set_green cell green begin asm
 	".System/g DEO2"
 end end
 
+## ## uxn_get_green
+## Returns: cell green
+##
+## Reads the value from the `System/g` port
 inline unsafe man uxn_get_green -> cell green begin asm
 	".System/g DEI2"
 end end
 
+## ## uxn_set_blue
+## Parameters: cell blue
+##
+## Writes `blue` to the `System/b` port
 inline unsafe man uxn_set_blue cell blue begin asm
 	".System/b DEO2"
 end end
 
+## ## uxn_get_blue
+## Returns: cell blue
+##
+## Reads the value from the `System/b` port
 inline unsafe man uxn_get_blue -> cell blue begin asm
 	".System/b DEI2"
 end end
 
+## ## uxn_debug
+## Parameters: cell value
+##
+## Writes `value` to the `System/debug` port
 inline unsafe man uxn_debug cell value begin asm
 	"NIP .System/debug DEO"
 end end
 
+## ## uxn_state
+## Parameters: cell value
+##
+## Writes `value` to the `System/state` port
 inline unsafe man uxn_state cell value begin asm
 	"NIP .System/state DEO"
 end end

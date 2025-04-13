@@ -1,121 +1,273 @@
+# TODO: rewrite the functions where i reversed the parameter order
+
 requires UXN
 
+## ## alias UxnPixel = u8
+## Used for the `Screen/pixel` port
 alias UxnPixel u8
+## ## alias UxnSprite = u8
+## Used for the `Screen/sprite` port
 alias UxnSprite u8
+## ## alias UxnAuto = u8
+## Used for the `Screen/auto` port
 alias UxnAuto u8
 
+## ## uxn_set_screen_vector
+## Parameters: addr vector
+##
+## Sets the screen vector to the function `vector`
 inline unsafe man uxn_set_screen_vector addr vector begin asm
 	".Screen/vector DEO2"
 end end
 
+## ## uxn_set_screen_size
+## Parameters: cell width, cell height
+##
+## Sets the screen size to `width`x`height`
 inline unsafe man uxn_set_screen_size cell width cell height begin asm
 	".Screen/height DEO2 .Screen/width DEO2"
 end end
 
+## ## uxn_get_screen_size
+## Returns: cell width, cell height
+##
+## Returns the size of the screen in pixels
 inline unsafe uxn_get_screen_size -> cell width cell height begin asm
 	".Screen/width DEI2 .Screen/height DEI2"
 end end
 
+## ## uxn_get_pixel
+## Returns: UxnPixel res
+##
+## Returns the value stored in the `Screen/pixel` port
 inline unsafe uxn_get_pixel -> UxnPixel res begin asm
 	".Screen/pixel DEI #00 SWP"
 end end
 
+## ## uxn_set_pixel
+## Parameters: UxnPixel pixel
+##
+## Writes the value to the `Screen/pixel` port
 inline unsafe uxn_set_pixel UxnPixel pixel begin asm
 	"NIP .Screen/pixel DEO"
 end end
 
-inline man uxn_pixel_set_colour cell colour UxnPixel pixel -> UxnPixel res begin
-	0b11111100 and or
+## ## uxn_pixel_set_colour
+## Parameters: UxnPixel pixel, cell colour
+##
+## Returns UxnPixel res
+##
+## Sets the colour in `pixel` and returns the result. `colour` must be below 256
+inline man uxn_pixel_set_colour UxnPixel pixel cell colour -> UxnPixel res begin
+	swap 0b11111100 and or
 end
 
-inline man uxn_pixel_set_flip_x bool flip? UxnPixel pixel -> UxnPixel res begin
-	0b11101111 and swap if then true else false end 0b00010000 and or
+## ## uxn_pixel_set_flip_x
+## Parameters: UxnPixel pixel, bool flip?
+##
+## Returns: UxnPixel res
+##
+## Sets the flip X value in `pixel` to `flip?`
+inline man uxn_pixel_set_flip_x UxnPixel pixel bool flip? -> UxnPixel res begin
+	swap 0b11101111 and swap if then true else false end 0b00010000 and or
 end
 
-inline man uxn_pixel_set_flip_y bool flip? UxnPixel pixel -> UxnPixel res begin
-	0b11011111 and swap if then true else false end 0b00100000 and or
+## ## uxn_pixel_set_flip_y
+## Parameters: UxnPixel pixel, bool flip?
+##
+## Returns: UxnPixel res
+##
+## Sets the flip Y value in `pixel` to `flip?`
+inline man uxn_pixel_set_flip_y UxnPixel pixel bool flip? -> UxnPixel res begin
+	swap 0b11011111 and swap if then true else false end 0b00100000 and or
 end
 
-inline man uxn_pixel_set_layer cell layer UxnPixel pixel -> UxnPixel res begin
-	0b10111111 and swap 6 << or
+## ## uxn_pixel_set_layer
+## Parameters: UxnPixel pixel, cell layer
+##
+## Returns: UxnPixel res
+##
+## Sets the layer value in `pixel` to `layer`. `layer` must be 0 or 1.
+inline man uxn_pixel_set_layer UxnPixel pixel cell layer  -> UxnPixel res begin
+	swap 0b10111111 and swap 6 << or
 end
 
-inline man uxn_pixel_set_fill bool fill? UxnPixel pixel -> UxnPixel res begin
-	0b01111111 and swap if then true else false end 0b10000000 and or
+## ## uxn_pixel_set_fill
+## Parameters: UxnPixel pixel, bool fill?
+##
+## Returns UxnPixel res
+##
+## Sets the fill value in `pixel` to `fill?`
+inline man uxn_pixel_set_fill UxnPixel pixel bool fill? -> UxnPixel res begin
+	swap 0b01111111 and swap if then true else false end 0b10000000 and or
 end
 
+## ## uxn_get_sprite
+## Returns: UxnSprite sprite
+##
+## Returns the value in the `Screen/sprite` port
 inline unsafe uxn_get_sprite -> UxnSprite sprite begin asm
 	".Screen/sprite DEI #00 SWP"
 end end
 
+## ## uxn_set_sprite
+## Parameters: UxnSprite sprite
+##
+## Writes `sprite` to the `Screen/sprite` port
 inline unsafe uxn_set_sprite UxnSprite sprite begin asm
 	"NIP .Screen/sprite DEO"
 end end
 
-inline man uxn_sprite_set_flip_x bool flip? UxnSprite sprite -> UxnSprite sprite begin
+## ## uxn_sprite_set_flip_x
+## Parameters: UxnSprite sprite, bool flip?
+##
+## Returns: UxnSprite sprite
+##
+## Sets the flip X value in `sprite` to `flip?`
+inline man uxn_sprite_set_flip_x UxnSprite sprite bool flip? -> UxnSprite sprite begin
 	uxn_pixel_set_flip_x
 end
 
-inline man uxn_sprite_set_flip_y bool flip? UxnSprite sprite -> UxnSprite sprite begin
+## ## uxn_sprite_set_flip_y
+## Parameters: UxnSprite sprite, bool flip?
+##
+## Returns UxnSprite sprite
+##
+## Sets the flip Y value in `sprite` to `flip?`
+inline man uxn_sprite_set_flip_y UxnSprite sprite bool flip? -> UxnSprite sprite begin
 	uxn_pixel_set_flip_y
 end
 
-inline man uxn_sprite_set_2bpp bool 2bpp? UxnSprite sprite -> UxnSprite sprite begin
+## ## uxn_sprite_set_2bpp
+## Parameters: UxnSprite sprite, bool 2bpp?
+##
+## Returns UxnSprite sprite
+##
+## Sets the 2bpp value in `sprite` to `2bpp?`
+inline man uxn_sprite_set_2bpp UxnSprite sprite bool 2bpp? -> UxnSprite sprite begin
 	uxn_pixel_set_fill
 end
 
-inline man uxn_sprite_set_layer cell layer UxnSprite sprite -> UxnSprite sprite begin
+## ## uxn_sprite_set_layer
+## Parameters: UxnSprite sprite, cell layer
+##
+## Returns UxnSprite sprite
+##
+## Sets the layer value in `sprite` to `layer`. `layer` must be 0 or 1.
+inline man uxn_sprite_set_layer UxnSprite sprite cell layer -> UxnSprite sprite begin
 	uxn_pixel_set_layer
 end
 
-inline man uxn_sprite_set_colours cell colours UxnSprite sprite -> UxnSprite sprite begin
-	0xF0 and or
+## ## uxn_sprite_set_colours
+## Parameters: UxnSprite sprite, cell colours
+##
+## Returns UxnSprite sprite
+##
+## Sets the sprite colour value in `sprite` to `colours`. `colours` must be under 16.
+inline man uxn_sprite_set_colours UxnSprite sprite cell colours -> UxnSprite sprite begin
+	swap 0xF0 and or
 end
 
+## ## uxn_get_auto
+## Returns: UxnAuto auto
+##
+## Reads the value stored in the `Screen/auto` port.
 inline unsafe uxn_get_auto -> UxnAuto auto begin
 	".Screen/auto DEI #00 SWP"
 end
 
+## ## uxn_set_auto
+## Parameters: UxnAuto auto
+##
+## Writes `auto` to the `Screen/auto` port.
 inline unsafe man uxn_set_auto UxnAuto auto begin
 	"NIP .Screen/auto DEO"
 end
 
-inline man uxn_auto_set_length cell length UxnAuto auto -> UxnAuto auto begin
-	0x0F and swap 4 << or
+## ## uxn_auto_set_length
+## Parameters: UxnAuto auto, cell length
+##
+## Returns: UxnAuto auto
+##
+## Sets the `length` value in `auto`. `length` must be less than 16.
+inline man uxn_auto_set_length UxnAuto auto cell length -> UxnAuto auto begin
+	swap 0x0F and swap 4 << or
 end
 
-inline man uxn_auto_set_x bool x? UxnAuto auto -> UxnAuto auto begin
-	0b11111110 and swap if then true else false end 0b00000001 and or
+## ## uxn_auto_set_x
+## Parameters: UxnAuto auto, bool x?
+##
+## Returns: UxnAuto auto
+##
+## Sets the X value in `auto` to `x?`.
+inline man uxn_auto_set_x UxnAuto auto bool x? -> UxnAuto auto begin
+	swap 0b11111110 and swap if then true else false end 0b00000001 and or
 end
 
-inline man uxn_auto_set_y bool y? UxnAuto auto -> UxnAuto auto begin
-	0b11111101 and swap if then true else false end 0b00000010 and or
+## ## uxn_auto_set_y
+## Parameters: UxnAuto auto, bool y?
+##
+## Returns: UxnAuto auto
+##
+## Sets the Y value in `auto` to `y?`
+inline man uxn_auto_set_y UxnAuto auto bool y? -> UxnAuto auto begin
+	swap 0b11111101 and swap if then true else false end 0b00000010 and or
 end
 
-inline man uxn_auto_set_addr bool address? UxnAuto auto -> UxnAuto auto begin
-	0b11111011 and swap if then true else false end 0b00000100 and or
+## ## uxn_auto_set_addr
+## Parameters: UxnAuto auto, bool address?
+##
+## Returns UxnAuto auto
+##
+## Sets the address value in `auto` to `address?`
+inline man uxn_auto_set_addr UxnAuto auto bool address? -> UxnAuto auto begin
+	swap 0b11111011 and swap if then true else false end 0b00000100 and or
 end
 
+## ## uxn_screen_set_x
+## Parameters: cell x
+##
+## Writes `x` to the `Screen/x` port.
 inline unsafe man uxn_screen_set_x cell x begin asm
 	".Screen/x DEO2"
 end end
 
+## ## uxn_screen_set_y
+## Parameters: cell y
+##
+## Writes `y` to the `Screen/y` port.
 inline unsafe man uxn_screen_set_y cell y begin asm
 	".Screen/y DEO2"
 end end
 
+## ## uxn_screen_get_x
+## Returns: cell x
+##
+## Reads a value from the `Screen/x` port.
 inline unsafe man uxn_screen_get_x -> cell x begin asm
 	".Screen/x DEI2"
 end end
 
+## ## uxn_screen_get_y
+## Returns: cell y
+##
+## Reads a value from the `Screen/y` port.
 inline unsafe man uxn_screen_get_y -> cell y begin asm
 	".Screen/y DEI2"
 end end
 
+## ## uxn_screen_get_addr
+## Parameters: addr address
+##
+## Writes `address` to the `Screen/addr` port.
 inline unsafe man uxn_screen_set_addr addr address begin asm
 	".Screen/addr DEO2"
 end end
 
+## ## uxn_screen_get_addr
+## Returns: addr address
+##
+## Reads the value from the `Screen/addr` port.
 inline unsafe man uxn_screen_get_addr -> addr address begin asm
 	".Screen/addr DEI2"
 end end

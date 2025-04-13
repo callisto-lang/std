@@ -1,0 +1,49 @@
+requires UXN
+
+## ## uxn_set_mouse_vector
+## Parameters: addr vec
+##
+## Sets the mouse vector to the function `vec`
+inline unsafe man uxn_set_mouse_vector addr vec begin asm
+	".Mouse/vector DEO2"
+end end
+
+## ## uxn_get_mouse_x
+## Returns `cell x`
+##
+## Returns the X position of the mouse in pixels
+inline unsafe man uxn_get_mouse_x -> cell x begin asm
+	".Mouse/x DEI2"
+end end
+
+## ## uxn_get_mouse_y
+## Returns `cell y`
+##
+## Returns the Y position of the mouse in pixels
+inline unsafe man uxn_get_mouse_y -> cell y begin asm
+	".Mouse/y DEI2"
+end end
+
+## ## uxn_get_state
+## Returns `cell state`
+##
+## Returns the mouse state
+inline unsafe man uxn_get_state -> cell state begin asm
+	".Mouse/state DEI #00 SWP"
+end end
+
+## ## uxn_get_scroll_x
+## Returns `cell scrollX`
+##
+## Returns the scroll X value of the mouse
+inline unsafe man uxn_get_scroll_x -> cell scrollX begin asm
+	".Mouse/scrollx DEI2"
+end end
+
+## ## uxn_get_scroll_y
+## Returns `cell scrollY`
+##
+## Returns the scroll Y value of the mouse
+inline unsafe man uxn_get_scroll_y -> cell scrollY begin asm
+	".Mouse/scrolly DEI2"
+end end
