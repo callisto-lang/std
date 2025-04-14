@@ -1,0 +1,63 @@
+requires UXN
+
+## ## enum UxnWeekDay : u8
+## The week day values for the `DateTime/dotw` port
+##
+## - Sunday    = 0
+## - Monday    = 1
+## - Tuesday   = 2
+## - Wednesday = 3
+## - Thursday  = 4
+## - Friday    = 5
+## - Saturday  = 6
+enum UxnWeekDay : u8
+	Sunday    = 0
+	Monday    = 1
+	Tuesday   = 2
+	Wednesday = 3
+	Thursday  = 4
+	Friday    = 5
+	Saturday  = 6
+end
+
+## ## struct Vector
+## Contains all the date time values in the `DateTime` device
+##
+## #### Members
+##
+## - `u16        year` - current year
+## - `u8         month` - current month
+## - `u8         day` - day of the month
+## - `u8         hour` - current hour
+## - `u8         minute` - current minute
+## - `u8         second` - current second
+## - `UxnWeekDay dotw` - day of the week
+## - `u16        doty` - day of the year
+## - `u8         isdst` - 1 if the current timezone is in daylight savings, 0 if not
+struct UxnDateTime
+	u16        year
+	u8         month
+	u8         day
+	u8         hour
+	u8         minute
+	u8         second
+	UxnWeekDay dotw
+	u16        doty
+	u8         isdst
+end
+
+## ## uxn_get_date_time
+## Parameters: ptr UxnDateTime res
+##
+## Writes the date/time info to `res` using the `DateTime` device
+func uxn_get_date_time ptr UxnDateTime res begin
+	unsafe -> cell val begin asm ".DateTime/year DEI2" end end -> res.year
+	unsafe -> cell val begin asm ".DateTime/month DEI #00 SWP" end end -> res.month
+	unsafe -> cell val begin asm ".DateTime/day DEI #00 SWP" end end -> res.day
+	unsafe -> cell val begin asm ".DateTime/hour DEI #00 SWP" end end -> res.hour
+	unsafe -> cell val begin asm ".DateTime/minute DEI #00 SWP" end end -> res.minute
+	unsafe -> cell val begin asm ".DateTime/second DEI #00 SWP" end end -> res.second
+	unsafe -> cell val begin asm ".DateTime/dotw DEI #00 SWP" end end -> res.dotw
+	unsafe -> cell val begin asm ".DateTime/doty DEI2" end end -> res.doty
+	unsafe -> cell val begin asm ".DateTime/isdst DEI #00 SWP" end end -> res.isdst
+end
