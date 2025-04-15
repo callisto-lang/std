@@ -20,7 +20,7 @@ enum UxnWeekDay : u8
 	Saturday  = 6
 end
 
-## ## struct Vector
+## ## struct DateTime
 ## Contains all the date time values in the `DateTime` device
 ##
 ## #### Members
