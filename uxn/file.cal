@@ -163,7 +163,7 @@ end
 ## Parameters: ptr Array res, cell file
 ##
 ## Writes the result of stat to `res`
-func error uxn_file_size ptr Array res cell file begin
+func error uxn_stat ptr Array res cell file begin
 	if file 0 = file 1 = or not then
 		c"Invalid file ID" throw
 	end
