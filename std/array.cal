@@ -209,3 +209,39 @@ func fill_array cell init ptr Array dest begin
 		i 1 + -> i
 	end
 end
+
+## ## array_find
+## Parameters: cell value, ptr Array arr
+##
+## Returns: cell index
+##
+## Finds `value` in `array` and returns the index
+func error array_find cell value ptr Array arr -> cell index begin
+	let cell i
+	while i arr.length < do
+		if i arr a@ value = then
+			i return
+		end
+		i 1 + -> i
+	end
+
+	c"array_find: Could not find value in array" throw
+end
+
+## ## array_contains
+## Parameters: cell value, ptr Array arr
+##
+## Returns: bool contains?
+##
+## Returns true if `value` is in `arr`
+func array_contains cell value ptr Array arr -> bool contains? begin
+	let cell i
+	while i arr.length < do
+		if i arr a@ value = then
+			true return
+		end
+		i 1 + -> i
+	end
+
+	false
+end
