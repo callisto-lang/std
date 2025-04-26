@@ -158,3 +158,20 @@ func error uxn_file_size cell file -> cell size begin
 
 	&stat parse_hex
 end
+
+## ## uxn_stat
+## Parameters: ptr Array res, cell file
+##
+## Writes the result of stat to `res`
+func error uxn_file_size ptr Array res cell file begin
+	if file 0 = file 1 = or not then
+		c"Invalid file ID" throw
+	end
+
+	unsafe begin
+		# length
+		res.length file __uxn_file_offset asm ".File1/length ADD DEO2" end
+		# stat
+		res.elements file __uxn_file_offset asm ".File1/stat ADD DEO2" end
+	end
+end
