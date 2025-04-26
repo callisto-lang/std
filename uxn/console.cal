@@ -1,0 +1,41 @@
+requires UXN
+
+## ## uxn_set_console_vector
+## Parameters: addr vec
+##
+## Sets the console vector to `vec`
+inline man unsafe uxn_set_console_vector addr vec begin asm
+	".Console/vector DEO2"
+end end
+
+## ## uxn_console_read
+## Returns: cell value
+##
+## Reads a value from the `Console/read` port
+inline man unsafe uxn_console_read -> cell value begin asm
+	".Console/read DEI #00 SWP"
+end end
+
+## ## uxn_console_write
+## Parameters: cell value
+##
+## Writes `value` to the `Console/write` port
+inline man unsafe uxn_console_write cell value begin asm
+	"NIP .Console/write DEO"
+end end
+
+## ## uxn_console_type
+## Returns: cell value
+##
+## Reads a value from the `Console/type` port
+inline man unsafe uxn_console_type -> cell value begin asm
+	".Console/type DEI #00 SWP"
+end end
+
+## ## uxn_console_error
+## Returns: cell value
+##
+## Reads a value from the `Console/error` port
+inline man unsafe uxn_console_error -> cell value begin asm
+	".Console/error DEI #00 SWP"
+end end
