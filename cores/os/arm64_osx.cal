@@ -68,13 +68,20 @@ version File
 	1 &stdout !
 	2 &stderr !
 
-	func unsafe open_file addr path cell mode ptr File file begin
+	func unsafe open_file ptr Array path cell mode ptr File file begin
 		let array 4096 u8 pathBuf
 
-		path Array.elements + @
-		&pathBuf
-		path @
-		__arm64_memcpy
+		let cell i
+		let addr dest
+		# clear pathBytes
+		&pathBuf -> dest
+		while i 4096 < do
+			0 dest b!
+			i 1 + -> i
+			dest 1 + -> dest
+		end
+
+		path.elements &pathBuf path.length __arm64_memcpy
 
 		let cell flags
 
