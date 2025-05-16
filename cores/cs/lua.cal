@@ -243,7 +243,8 @@ version IO
 	func man unsafe print_ch cell ch begin
 		__lua_pop_a
 		asm
-			"io.write(string.char(regA));"
+			"io.write(string.char(regA))"
+			"io.flush()"
 		end
 	end
 end
