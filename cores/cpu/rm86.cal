@@ -1,3 +1,6 @@
+enable CellSize16
+enable PointerSize16
+
 inline man unsafe __rm86_pop_ax cell v begin asm
 	"sub si, 2"
 	"mov ax, [si]"
