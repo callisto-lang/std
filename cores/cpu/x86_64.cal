@@ -1,3 +1,6 @@
+enable CellSize64
+enable PointerSize64
+
 inline man unsafe __x86_64_pop_rdi cell v begin asm
 	"sub r15, 8"
 	"mov rdi, [r15]"

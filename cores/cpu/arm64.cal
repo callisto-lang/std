@@ -1,3 +1,6 @@
+enable CellSize64
+enable PointerSize64
+
 inline man unsafe  __arm64_pop_x0 cell v begin asm
 	"ldr x0, [x19, #-8]!"
 end end
