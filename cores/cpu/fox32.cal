@@ -1,3 +1,6 @@
+enable CellSize32
+enable PointerSize32
+
 inline unsafe __fox32_pop_r0 cell n begin asm
 	"sub r30, 4"
 	"mov.32 r0, [r30]"
