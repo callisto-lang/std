@@ -1,0 +1,19 @@
+## ## highest_bit
+## Returns the highest bit on the current system.
+##
+## For example, on a 16 bit system, it would return 32768
+func man highest_bit -> cell value begin
+	version CallistoScript
+		9223372036854775808 return
+	end
+	version 64Bit
+		9223372036854775808 return
+	end
+	version 32Bit
+		2147483648 return
+	end
+	version 16Bit
+		36768 return
+	end
+	128 return
+end
