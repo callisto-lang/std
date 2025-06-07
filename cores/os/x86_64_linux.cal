@@ -15,22 +15,22 @@ let addr __linux_argv
 let cell __linux_argc
 
 version LibC
-	inline unsafe __x86_64_program_init begin asm
-		"mov [__global___us____us__linux__us__argc], edi"
-		"mov [__global___us____us__linux__us__argv], rsi"
+	func unsafe __x86_64_program_init begin asm
+		"mov [&{global __linux_argc}], edi"
+		"mov [&{global __linux_argv}], rsi"
 	end end
 end
 
 version not LibC
-	inline unsafe __x86_64_program_init begin asm
+	func unsafe __x86_64_program_init begin asm
 		"lea rax, [rsp + 16]"
-		"mov [__global___us____us__linux__us__argv], rax"
+		"mov [&{global __linux_argv}], rax"
 		"mov rax, [rsp + 8]"
-		"mov [__global___us____us__linux__us__argc], rax"
+		"mov [&{global __linux_argc}], rax"
 	end end
 end
 
-inline unsafe __x86_64_program_exit begin asm
+func unsafe __x86_64_program_exit begin asm
 	"mov rax, 60"
 	"mov rdi, 0"
 	"syscall"
