@@ -14,16 +14,16 @@ restrict Exit
 let addr __linux_argv
 let cell __linux_argc
 
-inline unsafe __arm64_program_init begin asm
+func unsafe __arm64_program_init begin asm
 	"add x9, sp, #8"
-	"ldr x10, =__global___us____us__linux__us__argv"
+	"ldr x10, =&{global __linux_argv}"
 	"str x9, [x10]"
 	"ldr x9, [sp]"
-	"ldr x10, =__global___us____us__linux__us__argc"
+	"ldr x10, =&{global __linux_argc}"
 	"str x9, [x10]"
 end end
 
-inline unsafe __arm64_program_exit begin asm
+func unsafe __arm64_program_exit begin asm
 	"mov x8, #93"
 	"mov x0, #0"
 	"svc #0"

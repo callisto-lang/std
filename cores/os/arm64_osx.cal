@@ -16,16 +16,16 @@ restrict Exit
 let addr __osx_argv
 let cell __osx_argc
 
-inline unsafe __arm64_program_init begin asm
-	"adrp x9, __global___us____us__osx__us__argc@PAGE"
-	"add x9, x9, __global___us____us__osx__us__argc@PAGEOFF"
+func unsafe __arm64_program_init begin asm
+	"adrp x9, &{global __osx_argc}@PAGE"
+	"add x9, x9, &{global __osx_argc}@PAGEOFF"
 	"str x0, [x9]"
-	"adrp x9, __global___us____us__osx__us__argv@PAGE"
-	"add x9, x9, __global___us____us__osx__us__argv@PAGEOFF"
+	"adrp x9, &{global __osx_argv}@PAGE"
+	"add x9, x9, &{global __osx_argv}@PAGEOFF"
 	"str x1, [x9]"
 end end
 
-inline unsafe __arm64_program_exit begin asm
+func unsafe __arm64_program_exit begin asm
 	"mov x16, 1"
 	"mov x0, 0"
 	"svc #80"
