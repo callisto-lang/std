@@ -11,9 +11,11 @@ func error parse_dec ptr Array arr -> cell res begin
 		pos arr a@
 		if dup is_dec_digit then
 			'0' - swap 10 * +
-		else unsafe cell _ -> begin
-			drop drop c"parse_dec: Invalid digit" throw
-		end end
+		else
+			unsafe cell _ -> begin
+				drop drop c"parse_dec: Invalid digit" throw
+			end
+		end
 
 		pos 1 + -> pos
 	end
