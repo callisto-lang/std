@@ -368,11 +368,11 @@ version Heap
 				let addr ret
 				address2 oldSz sz __linux_MREMAP_MAYMOVE 0 __linux_mremap -> ret
 
-				if ret 8000000000000000 and then
+				if ret 0x8000000000000000 and then
 					sz alloc -> ret
 
 					# copy old data
-					ret oldAddr sz 8 - __copy_mem
+					address oldAddr sz 8 - __copy_mem
 
 					# free old data
 					oldAddr free
