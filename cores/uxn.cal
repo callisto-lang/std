@@ -1,3 +1,5 @@
+enable CellSize16
+enable PointerSize16
 enable IO
 enable Exit
 enable Args
