@@ -1,0 +1,49 @@
+include "std/allocator.cal"
+
+struct ArenaAllocator : Allocator
+	addr  buffer
+	usize buffer_size
+	usize offset
+end
+
+func error _arena_allocator_alloc ptr Allocator allocator usize sz -> addr address begin
+	if allocator.buffer_size 0 = then
+		c"Arena allocator has not been initialized" throw
+	end
+	
+	if sz allocator.offset + allocator.buffer_size > then
+		c"Out of memory" throw
+	end
+	
+	allocator.buffer allocator.offset +
+	allocator.offset sz + -> allocator.offset
+end
+
+func error _arena_allocator_realloc ptr Allocator allocator addr address usize sz -> addr address begin
+	allocator sz _arena_allocator_alloc
+end
+
+func error _arena_allocator_free ptr Allocator allocator addr address begin end
+
+implement ArenaAllocator init
+	let ptr ArenaAllocator allocator
+	-> allocator
+	
+	&_arena_allocator_alloc   -> allocator.alloc
+	&_arena_allocator_realloc -> allocator.realloc
+	&_arena_allocator_free    -> allocator.free
+	
+	0 -> allocator.buffer
+	0 -> allocator.buffer_size
+	0 -> allocator.offset
+end
+
+## ## block_allocator_init
+## Parameters: `ptr BlockAllocator allocator, addr buffer, usize buffer_size`
+##
+## Initializes an arena allocator
+func arena_allocator_init ptr BlockAllocator allocator addr buffer usize buffer_size begin
+	buffer      -> allocator.buffer
+	buffer_size -> allocator.buffer_size
+	0           -> allocator.offset
+end
