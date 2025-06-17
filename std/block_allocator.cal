@@ -4,10 +4,13 @@ include "std/ops.cal"
 ## ## struct BlockAllocator
 ## Members:
 ## 
-## `usize block_size`
-## `usize block_count`
-## `addr  allocated_blocks`
-## `addr  buffer`
+## - `addr alloc` (function pointer: `usize sz -> addr address`)
+## - `addr realloc` (function pointer: `addr address, usize sz -> addr address`)
+## - `addr free` (function pointer: `addr address`)
+## - `usize block_size`       - The size of each block
+## - `usize block_count`      - The amount of blocks the buffer has
+## - `addr  allocated_blocks` - The bit array of allocated blocks
+## - `addr  buffer`           - The buffer to allocate from
 struct BlockAllocator : Allocator
 	usize block_size
 	usize block_count

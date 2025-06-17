@@ -1,5 +1,14 @@
 include "std/allocator.cal"
 
+## ## struct BlockAllocator
+## Members:
+## 
+## - `addr alloc` (function pointer: `usize sz -> addr address`)
+## - `addr realloc` (function pointer: `addr address, usize sz -> addr address`)
+## - `addr free` (function pointer: `addr address`)
+## - `addr  buffer`      - pointer to the buffer to allocate memory from
+## - `usize buffer_size` - size of the buffer
+## - `usize offset`      - offset of the next block to be allocated
 struct ArenaAllocator : Allocator
 	addr  buffer
 	usize buffer_size
