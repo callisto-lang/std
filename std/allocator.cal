@@ -1,5 +1,6 @@
 ## ## struct Allocator
 ## Members:
+## 
 ## - `addr alloc` (function pointer: `usize sz -> addr address`)
 ## - `addr realloc` (function pointer: `addr address, usize sz -> addr address`)
 ## - `addr free` (function pointer: `addr address`)
