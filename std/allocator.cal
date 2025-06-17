@@ -1,0 +1,76 @@
+## ## struct Allocator
+## Members:
+## - `addr alloc` (function pointer: `usize sz -> addr address`)
+## - `addr realloc` (function pointer: `addr address, usize sz -> addr address`)
+## - `addr free` (function pointer: `addr address`)
+struct Allocator
+	addr alloc
+	addr realloc
+	addr free
+end
+
+## ## a_alloc
+## Parameters: `ptr Allocator allocator, usize sz`
+##
+## Returns: `addr address`
+##
+## Calls the alloc function on the given allocator, and throws if this method is
+## not implemented
+func error a_alloc ptr Allocator allocator usize sz -> addr address begin
+	if allocator.alloc 0 = then
+		c"Allocator has not implemented alloc function" throw
+	end
+
+	unsafe -> addr address begin
+		sz allocator.alloc call
+	end
+end
+
+## ## a_realloc
+## Parameters: `ptr Allocator allocator, addr address, usize sz`
+#
+## Returns: `addr address`
+##
+## Calls the realloc function on the given allocator, and throws if this method is
+## not implemented
+func error a_realloc ptr Allocator allocator addr address usize sz -> addr address begin
+	if allocator.realloc 0 = then
+		c"Allocator has not implemented realloc function" throw
+	end
+
+	unsafe -> addr address begin
+		address sz allocator.realloc call
+	end
+end
+
+## ## a_free
+## Parameters: `ptr Allocator allocator, addr address`
+##
+## Calls the free function on the given allocator, and throws if this method is not
+## implemented
+func error a_free ptr Allocator allocator addr address begin
+	if allocator.free 0 = then
+		c"Allocator has not implemented free function" throw
+	end
+
+	unsafe begin
+		address allocator.free call
+	end
+end
+
+version Heap
+	## ## struct HeapAllocator
+	## Inherits from `Allocator`, is used for allocating on the heap
+	##
+	## Only exists if the `Heap` version is enabled
+	struct HeapAllocator : Allocator end
+
+	implement HeapAllocator init
+		let ptr HeapAllocator allocator
+		-> allocator
+		
+		&alloc   -> allocator.alloc
+		&realloc -> allocator.realloc
+		&free    -> allocator.free
+	end
+end
