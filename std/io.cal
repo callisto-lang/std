@@ -84,40 +84,40 @@ func new_line begin
 end
 
 # Removed until I add a way to get this to work in safe callisto
-# ## ## printf
-# ## Parameters: ..., Array* fmt
-# ##
-# ## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
-# ## how they are written
-# ##
-# ## Formats:
-# ##
-# ## - `%s` - String (`Array*`)
-# ## - `%d` - Decimal (`cell`)
-# ## - `%X` - Hexadecimal (`cell`)
-#func printf addr fmt begin
-#	let cell i
-#	let cell ch
-
-#	while i fmt @ < do
-#		if i fmt a@ '%' = then
-#			i 1 + -> i
-#			i fmt a@ -> ch
-
-#			if ch 's' = then
-#				print_str
-#			elseif ch 'd' = then
-#				print_dec
-#			elseif ch 'X' = then
-#				print_hex
-#			end
-#		else
-#			i fmt a@ print_ch
-#		end
-#
-#		i 1 + -> i
-#	end
-#end
+## ## printf
+## Parameters: ..., Array* fmt
+##
+## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
+## how they are written
+##
+## Formats:
+##
+## - `%s` - String (`Array*`)
+## - `%d` - Decimal (`cell`)
+## - `%X` - Hexadecimal (`cell`)
+# func printf addr fmt begin
+# 	let cell i
+# 	let cell ch
+# 
+# 	while i fmt @ < do
+# 		if i fmt a@ '%' = then
+# 			i 1 + -> i
+# 			i fmt a@ -> ch
+# 
+# 			if ch 's' = then
+# 				print_str
+# 			elseif ch 'd' = then
+# 				print_dec
+# 			elseif ch 'X' = then
+# 				print_hex
+# 			end
+# 		else
+# 			i fmt a@ print_ch
+# 		end
+# 
+# 		i 1 + -> i
+# 	end
+# end
 
 version Heap
 	include "vector.cal"
