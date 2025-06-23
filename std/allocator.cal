@@ -1,5 +1,5 @@
-include "std/ops.cal"
-include "std/io.cal"
+include "ops.cal"
+include "io.cal"
 
 ## ## struct Allocator
 ## Members:
@@ -80,39 +80,38 @@ version Heap
 end
 
 ## ## struct BlockAllocator
+## Inherits from `Allocator`, is used for allocating in a buffer
+##
 ## Members:
-## 
-## - `addr alloc` (function pointer: `usize sz -> addr address`)
-## - `addr realloc` (function pointer: `addr address, usize sz -> addr address`)
-## - `addr free` (function pointer: `addr address`)
-## - `usize block_size`       - The size of each block
-## - `usize block_count`      - The amount of blocks the buffer has
-## - `addr  allocated_blocks` - The bit array of allocated blocks
-## - `addr  buffer`           - The buffer to allocate from
+##
+## - `usize blockSize`       - The size of each block
+## - `usize blockCount`      - The amount of blocks the buffer has
+## - `addr  allocatedBlocks` - The bit array of allocated blocks
+## - `addr  buffer`          - The buffer to allocate from
 struct BlockAllocator : Allocator
-	usize block_size
-	usize block_count
-	addr  allocated_blocks
+	usize blockSize
+	usize blockCount
+	addr  allocatedBlocks
 	addr  buffer
 end
 
 func error _block_allocator_alloc ptr BlockAllocator allocator usize sz -> addr address begin
 	if sz 0 = then 0 return end
 
-	if allocator.block_count 0 = then
+	if allocator.blockCount 0 = then
 		c"Block allocator has not been initialized" throw
 	end
 	
-	if sz allocator.block_size > then
+	if sz allocator.blockSize > then
 		c"Requested memory can't fit in a single block" throw
 	end
 	
 	let cell i 0 -> i
-	while i allocator.block_count < do
-		allocator.allocated_blocks i 3 >> + b@
+	while i allocator.blockCount < do
+		allocator.allocatedBlocks i 3 >> + b@
 		if dup i 7 and >> 1 and 0 = then
-			1 i 7 and << or allocator.allocated_blocks i 3 >> + b!
-			allocator.buffer i allocator.block_size * + return
+			1 i 7 and << or allocator.allocatedBlocks i 3 >> + b!
+			allocator.buffer i allocator.blockSize * + return
 			0
 		end
 		drop
@@ -125,35 +124,35 @@ end
 func error _block_allocator_free ptr BlockAllocator allocator addr address begin
 	if address 0 = then return end
 	
-	if allocator.block_count 0 = then
+	if allocator.blockCount 0 = then
 		c"Block allocator has not been initialized" throw
 	end
 	address allocator.buffer -
-	if dup allocator.block_size % 0 = not then
+	if dup allocator.blockSize % 0 = not then
 		c"Attempted to free memory that wasn't allocated with this block allocator" throw
 	end
 	
-	allocator.block_size /
-	if dup dup 0 < swap allocator.block_count >= or then
+	allocator.blockSize /
+	if dup dup 0 < swap allocator.blockCount >= or then
 		c"Attempted to free memory that wasn't allocated with this block allocator" throw
 	end
 	
-	let cell block_index -> block_index
-	allocator.allocated_blocks block_index 3 >> + b@
-	if dup block_index 7 and >> 1 and 0 = then
+	let cell blockIndex -> blockIndex
+	allocator.allocatedBlocks blockIndex 3 >> + b@
+	if dup blockIndex 7 and >> 1 and 0 = then
 		c"Attempted to free memory that wasn't allocated with this block allocator" throw
 	end
 	
-	1 block_index 8 % << not and
-	allocator.allocated_blocks block_index allocator.block_size * + b!
+	1 blockIndex 8 % << not and
+	allocator.allocatedBlocks blockIndex allocator.blockSize * + b!
 end
 
 func error _block_allocator_realloc ptr BlockAllocator allocator addr address usize sz -> addr address begin
-	if allocator.block_count 0 = then
+	if allocator.blockCount 0 = then
 		c"Block allocator has not been initialized" throw
 	end
 	
-	if sz allocator.block_size > then
+	if sz allocator.blockSize > then
 		c"Requested memory can't fit in a single block" throw
 	end
 	
@@ -171,54 +170,55 @@ implement BlockAllocator init
 	&_block_allocator_realloc -> allocator.realloc
 	&_block_allocator_free    -> allocator.free
 	
-	0 -> allocator.block_size
-	0 -> allocator.block_count
-	0 -> allocator.allocated_blocks
+	0 -> allocator.blockSize
+	0 -> allocator.blockCount
+	0 -> allocator.allocatedBlocks
 	0 -> allocator.buffer
 end
 
 ## ## block_allocator_init
-## Parameters: `ptr BlockAllocator allocator, usize block_size, usize block_count, addr allocated_blocks, addr buffer`
+## Parameters: `ptr BlockAllocator allocator, usize blockSize, usize blockCount, addr allocatedBlocks, addr buffer`
 ##
 ## Initializes a block allocator
-## allocated_blocks points to ceil(block_count / 8) bytes of memory to keep track of blocks that have been allocated
-## buffer points to block_size * block_count bytes of memory
-func block_allocator_init ptr BlockAllocator allocator usize block_size usize block_count addr allocated_blocks addr buffer begin
-	block_size       -> allocator.block_size
-	block_count      -> allocator.block_count
-	allocated_blocks -> allocator.allocated_blocks
-	buffer           -> allocator.buffer
+## allocatedBlocks points to ceil(blockCount / 8) bytes of memory to keep track of blocks that have been allocated
+## buffer points to blockSize * blockCount bytes of memory
+func block_allocator_init
+	ptr BlockAllocator allocator usize blockSize usize blockCount addr allocatedBlocks
+	addr buffer
+begin
+	blockSize       -> allocator.blockSize
+	blockCount      -> allocator.blockCount
+	allocatedBlocks -> allocator.allocatedBlocks
+	buffer          -> allocator.buffer
 	
-	allocated_blocks block_count 7 + 3 >> 0 fill_mem
+	allocatedBlocks blockCount 7 + 3 >> 0 fill_mem
 end
 
 ## ## struct ArenaAllocator
+## Inherits from `Allocator`, is used as an arena allocator
+##
 ## Members:
-## 
-## - `addr alloc` (function pointer: `usize sz -> addr address`)
-## - `addr realloc` (function pointer: `addr address, usize sz -> addr address`)
-## - `addr free` (function pointer: `addr address`)
+##
 ## - `addr  buffer`      - pointer to the buffer to allocate memory from
-## - `usize buffer_size` - size of the buffer
+## - `usize bufferSize` - size of the buffer
 ## - `usize offset`      - offset of the next block to be allocated
 struct ArenaAllocator : Allocator
 	addr  buffer
-	usize buffer_size
+	usize bufferSize
 	usize offset
 end
 
 func error _arena_allocator_alloc ptr ArenaAllocator allocator usize sz -> addr address begin
-	if allocator.buffer_size 0 = then
+	if allocator.bufferSize 0 = then
 		c"Arena allocator has not been initialized" throw
 	end
 	
-	if sz allocator.offset + allocator.buffer_size > then
+	if sz allocator.offset + allocator.bufferSize > then
 		c"Out of memory" throw
 	end
 	
 	allocator.buffer allocator.offset +
 	allocator.offset sz + -> allocator.offset
-	return
 end
 
 implement ArenaAllocator init
@@ -230,16 +230,16 @@ implement ArenaAllocator init
 	0                       -> allocator.free
 	
 	0 -> allocator.buffer
-	0 -> allocator.buffer_size
+	0 -> allocator.bufferSize
 	0 -> allocator.offset
 end
 
 ## ## arena_allocator_init
-## Parameters: `ptr BlockAllocator allocator, addr buffer, usize buffer_size`
+## Parameters: `ptr BlockAllocator allocator, addr buffer, usize bufferSize`
 ##
 ## Initializes an arena allocator
-func arena_allocator_init ptr ArenaAllocator allocator addr buffer usize buffer_size begin
-	buffer      -> allocator.buffer
-	buffer_size -> allocator.buffer_size
-	0           -> allocator.offset
+func arena_allocator_init ptr ArenaAllocator allocator addr buffer usize bufferSize begin
+	buffer     -> allocator.buffer
+	bufferSize -> allocator.bufferSize
+	0          -> allocator.offset
 end
