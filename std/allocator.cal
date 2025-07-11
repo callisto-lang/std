@@ -106,7 +106,7 @@ func error _block_allocator_alloc ptr BlockAllocator allocator usize sz -> addr 
 		c"Requested memory can't fit in a single block" throw
 	end
 	
-	let cell i 0 -> i
+	let cell i
 	while i allocator.blockCount < do
 		allocator.allocatedBlocks i 3 >> + b@
 		if dup i 7 and >> 1 and 0 = then
