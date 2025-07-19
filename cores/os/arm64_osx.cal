@@ -31,6 +31,13 @@ func unsafe __arm64_program_exit begin asm
 	"svc #80"
 end end
 
+func unsafe get_exception -> ptr Exception exception begin asm
+	"adrp x9, __exception@PAGE"
+	"add x9, x9, __exception@PAGEOFF"
+	"ldr x9, [x9]"
+	"str x9, [x19], #8"
+end end
+
 version IO
 	func man unsafe print_ch cell ch begin asm
 		"sub x19, x19, #8"
@@ -263,7 +270,7 @@ version IO version Exit
 
 	func __arm64_exception begin
 		c"Unhandled exception: " __core_printstr
-		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		get_exception Exception.msg + __core_printstr __core_new_line
 		1 exit
 	end
 end end
