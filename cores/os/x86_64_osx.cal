@@ -28,6 +28,12 @@ inline unsafe __x86_64_program_exit begin asm
 	"syscall"
 end end
 
+func unsafe get_exception -> ptr Exception exception begin asm
+	"mov rax, __exception"
+	"mov [r15], rax"
+	"add r15, 8"
+end end
+
 version IO
 	func unsafe man print_ch cell ch begin asm
 		"sub r15, 8"
@@ -260,7 +266,7 @@ version IO version Exit
 
 	func __x86_64_exception begin
 		c"Unhandled exception: " __core_printstr
-		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		get_exception Exception.msg + __core_printstr __core_new_line
 		1 exit
 	end
 end end
