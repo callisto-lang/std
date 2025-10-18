@@ -1,4 +1,10 @@
-include "array.cal"
+version Module
+	import core
+	import std.array
+end
+version not Module
+	include "array.cal"
+end
 
 ## ## in_range
 ## Parameters: cell value, cell first, cell last

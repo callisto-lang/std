@@ -1,4 +1,10 @@
-include "ops.cal"
+version Module
+	import core
+	import std.ops
+end
+version not Module
+	include "ops.cal"
+end
 
 ## ## a<
 ## Parameters: Array* src, Array* var

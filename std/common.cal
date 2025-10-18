@@ -1,4 +1,9 @@
 ## This file just contains an include for common libraries, which are:
 ##
 ## - ops.cal
-include "ops.cal"
+version Module
+	import public std.ops
+end
+version not Module
+	include "ops.cal"
+end

@@ -1,3 +1,7 @@
+version Module
+	import core
+end
+
 inline seconds begin end
 inline man minutes cell time -> cell seconds begin 60 * end
 inline man hours cell time -> cell seconds begin 3600 * end

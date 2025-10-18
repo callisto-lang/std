@@ -1,5 +1,12 @@
-include "nullterm.cal"
-include "io.cal"
+version Module
+	import core
+	import std.nullterm
+	import std.io
+end
+version not Module
+	include "nullterm.cal"
+	include "io.cal"
+end
 
 requires Args
 

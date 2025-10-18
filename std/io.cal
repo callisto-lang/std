@@ -1,6 +1,12 @@
 requires IO
 
-include "array.cal"
+version Module
+	import core
+	import std.array
+end
+version not Module
+	include "array.cal"
+end
 
 func man print_dec_loop cell num begin
 	if dup then
@@ -95,32 +101,37 @@ end
 # ## - `%s` - String (`Array*`)
 # ## - `%d` - Decimal (`cell`)
 # ## - `%X` - Hexadecimal (`cell`)
-#func printf addr fmt begin
-#	let cell i
-#	let cell ch
-
-#	while i fmt @ < do
-#		if i fmt a@ '%' = then
-#			i 1 + -> i
-#			i fmt a@ -> ch
-
-#			if ch 's' = then
-#				print_str
-#			elseif ch 'd' = then
-#				print_dec
-#			elseif ch 'X' = then
-#				print_hex
-#			end
-#		else
-#			i fmt a@ print_ch
-#		end
-#
-#		i 1 + -> i
-#	end
-#end
+# func printf addr fmt begin
+# 	let cell i
+# 	let cell ch
+# 
+# 	while i fmt @ < do
+# 		if i fmt a@ '%' = then
+# 			i 1 + -> i
+# 			i fmt a@ -> ch
+# 
+# 			if ch 's' = then
+# 				print_str
+# 			elseif ch 'd' = then
+# 				print_dec
+# 			elseif ch 'X' = then
+# 				print_hex
+# 			end
+# 		else
+# 			i fmt a@ print_ch
+# 		end
+# 
+# 		i 1 + -> i
+# 	end
+# end
 
 version Heap
-	include "vector.cal"
+	version Module
+		import std.vector
+	end
+	version not Module
+		include "vector.cal"
+	end
 
 	## ## read_line
 	## Parameters: ptr Vector res

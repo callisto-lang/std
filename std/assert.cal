@@ -1,4 +1,10 @@
-include "io.cal"
+version Module
+	import core
+	import std.io
+end
+version not Module
+	include "io.cal"
+end
 
 inline man assert cell ? begin
 	if not then

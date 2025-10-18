@@ -1,7 +1,16 @@
 requires File
 
+version Module
+	import core
+end
+
 version Heap
-	include "vector.cal"
+	version Module
+		import std.vector
+	end
+	version not Module
+		include "vector.cal"
+	end
 
 	## ## read_to_vec
 	##

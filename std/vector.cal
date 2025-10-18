@@ -1,8 +1,16 @@
 requires Heap
 
-include "array.cal"
-include "io.cal"
-include "ops.cal"
+version Module
+	import core
+	import std.array
+	import std.io
+	import std.ops
+end
+version not Module
+	include "array.cal"
+	include "io.cal"
+	include "ops.cal"
+end
 
 ## ## struct Vector
 ## Vector is a dynamic array allocated on the heap. It is automatically freed when it
