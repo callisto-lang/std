@@ -14,17 +14,25 @@ let addr argv
 let addr __rm86_argv
 let cell __rm86_arglen
 
-inline unsafe __rm86_program_init begin asm
+func unsafe __rm86_program_init begin asm
 	"xor ah, ah"
 	"mov al, [0x80]"
-	"mov [__global___us____us__rm86__us__arglen], ax"
+	"mov [&{global __rm86_arglen}], ax"
 	"mov ax, 0x81"
-	"mov [__global___us____us__rm86__us__argv], ax"
+	"mov [&{global __rm86_argv}], ax"
 end end
 
-inline unsafe __rm86_program_exit begin
-	"ret"
-end
+func unsafe __rm86_program_exit begin asm
+	"mov ah, 0x4C"
+	"mov al, 0x00"
+	"int 0x21"
+end end
+
+func unsafe get_exception -> ptr Exception exception begin asm
+	"mov ax, __exception"
+	"mov [si], ax"
+	"add si, 2"
+end end
 
 version Exit
 	func man unsafe exit cell code begin
@@ -150,7 +158,7 @@ version IO version Exit
 
 	func __rm86_exception begin
 		c"Unhandled exception: " __core_printstr
-		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		get_exception Exception.msg + __core_printstr __core_new_line
 		1 exit
 	end
 end end
