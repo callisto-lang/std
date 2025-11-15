@@ -1,5 +1,12 @@
-include "ops.cal"
-include "io.cal"
+version Module
+	import core
+	import std.ops
+	import std.io
+end
+version not Module
+	include "ops.cal"
+	include "io.cal"
+end
 
 ## ## struct Allocator
 ## Members:
