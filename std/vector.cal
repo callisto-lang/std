@@ -1,305 +1,313 @@
-requires Heap
+version Heap
+	version Module
+		import core
+		import std.array
+		import std.io
+		import std.ops
+	end
+	version not Module
+		include "array.cal"
+		include "io.cal"
+		include "ops.cal"
+	end
 
-include "array.cal"
-include "io.cal"
-include "ops.cal"
+	## ## struct Vector
+	## Vector is a dynamic array allocated on the heap. It is automatically freed when it
+	## goes out of scope
+	##
+	## #### Members
+	##
+	## - `usize length` - length of the vector
+	## - `usize memberSize` - size (bytes) of 1 element
+	## - `addr  elements` - pointer to the vector's elements
+	## - `usize capacity` - capacity of the vector
+	## - `addr freeFunc` - function pointer (parameters: addr element), called for each element
+	##                     when the vector is freed
+	##
+	## This structure inherits from `Array`, so you can use functions made for `Array` on
+	## an instance of `Vector`
+	struct Vector : Array
+		usize capacity
+		addr freeFunc
+	end
 
-## ## struct Vector
-## Vector is a dynamic array allocated on the heap. It is automatically freed when it
-## goes out of scope
-##
-## #### Members
-##
-## - `usize length` - length of the vector
-## - `usize memberSize` - size (bytes) of 1 element
-## - `addr  elements` - pointer to the vector's elements
-## - `usize capacity` - capacity of the vector
-## - `addr freeFunc` - function pointer (parameters: addr element), called for each element
-##                     when the vector is freed
-##
-## This structure inherits from `Array`, so you can use functions made for `Array` on
-## an instance of `Vector`
-struct Vector : Array
-	usize capacity
-	addr freeFunc
-end
+	implement Vector init
+		let ptr Vector vec
+		-> vec
 
-implement Vector init
-	let ptr Vector vec
-	-> vec
+		0 -> vec.length
+		0 -> vec.memberSize
+		0 -> vec.elements
+		0 -> vec.capacity
+		0 -> vec.freeFunc
+	end
 
-	0 -> vec.length
-	0 -> vec.memberSize
-	0 -> vec.elements
-	0 -> vec.capacity
-	0 -> vec.freeFunc
-end
+	implement Vector deinit
+		let ptr Vector vec
+		-> vec
 
-implement Vector deinit
-	let ptr Vector vec
-	-> vec
+		if vec.freeFunc 0 = not then
+			let cell i
 
-	if vec.freeFunc 0 = not then
-		let cell i
+			while i vec.length < do
+				i vec a^ unsafe addr elements begin vec.freeFunc call end
+				i ++ -> i
+			end
+		end
 
-		while i vec.length < do
-			i vec a^ unsafe addr elements begin vec.freeFunc call end
-			i ++ -> i
+		if vec.elements 0 = not then
+			vec.elements free
 		end
 	end
 
-	if vec.elements 0 = not then
-		vec.elements free
-	end
-end
-
-## ## alloc_vec_capacity
-## Parameters: ptr Vector vec
-##
-## Used internally to allocate the elements with the capacity
-func alloc_vec_capacity ptr Vector vec begin
-	vec.elements vec.capacity vec.memberSize * realloc -> vec.elements
-end
-
-## ## double_vec_capacity
-## Parameters: ptr Vector vec
-##
-## Used internally to double vector capacity and re-allocate
-func double_vec_capacity ptr Vector vec begin
-	vec.capacity 2 * -> vec.capacity
-	vec alloc_vec_capacity
-end
-
-## ## halve_vec_capacity
-## Parameters: ptr Vector vec
-##
-## Used internally to halve the vector capacity and re-allocate
-func halve_vec_capacity ptr Vector vec begin
-	vec.capacity 2 / -> vec.capacity
-	vec alloc_vec_capacity
-end
-
-## ## init_vec
-## Parameters: usize typeSize, ptr Vector vec
-##
-## Initialises the vector. The type size is in bytes
-func init_vec usize typeSize ptr Vector vec begin
-	if vec.elements 0 = not then
-		vec.elements free
+	## ## alloc_vec_capacity
+	## Parameters: ptr Vector vec
+	##
+	## Used internally to allocate the elements with the capacity
+	func alloc_vec_capacity ptr Vector vec begin
+		vec.elements vec.capacity vec.memberSize * realloc -> vec.elements
 	end
 
-	typeSize -> vec.memberSize
-	1 -> vec.capacity
-	0 -> vec.length
-	vec alloc_vec_capacity
-end
+	## ## double_vec_capacity
+	## Parameters: ptr Vector vec
+	##
+	## Used internally to double vector capacity and re-allocate
+	func double_vec_capacity ptr Vector vec begin
+		vec.capacity 2 * -> vec.capacity
+		vec alloc_vec_capacity
+	end
 
-## ## free_vec
-## Parameters: ptr Vector vec
-##
-## Frees the vector's elements and sets all values to zero
-func free_vec ptr Vector vec begin
-	if vec.freeFunc 0 = not then
-		let cell i
+	## ## halve_vec_capacity
+	## Parameters: ptr Vector vec
+	##
+	## Used internally to halve the vector capacity and re-allocate
+	func halve_vec_capacity ptr Vector vec begin
+		vec.capacity 2 / -> vec.capacity
+		vec alloc_vec_capacity
+	end
 
-		while i vec.length < do
-			i vec a^ unsafe addr elements begin vec.freeFunc call end
-			i ++ -> i
+	## ## init_vec
+	## Parameters: usize typeSize, ptr Vector vec
+	##
+	## Initialises the vector. The type size is in bytes
+	func init_vec usize typeSize ptr Vector vec begin
+		if vec.elements 0 = not then
+			vec.elements free
 		end
-	end
 
-	if vec.elements 0 = not then
-		vec.elements free
-	end
-
-	0 -> vec.length
-	0 -> vec.memberSize
-	0 -> vec.elements
-	0 -> vec.capacity
-end
-
-## ## to_vec
-## Parameters: ptr Array arr, ptr Vector vec
-##
-## Copies the array's metadata to the vector. The array elements are copied to the heap
-## and the new elements address is stored in the vector
-func to_vec ptr Array arr ptr Vector vec begin
-	arr.length -> vec.length
-	arr.memberSize -> vec.memberSize
-
-	if arr.length 0 = then
+		typeSize -> vec.memberSize
 		1 -> vec.capacity
-	else
-		arr.length -> vec.capacity
+		0 -> vec.length
+		vec alloc_vec_capacity
 	end
 
-	vec alloc_vec_capacity
-	vec.elements arr.elements arr.length arr.memberSize * copy_mem
-end
+	## ## free_vec
+	## Parameters: ptr Vector vec
+	##
+	## Frees the vector's elements and sets all values to zero
+	func free_vec ptr Vector vec begin
+		if vec.freeFunc 0 = not then
+			let cell i
 
-## ## vec_push
-## Parameters: cell value, ptr Vector vec
-##
-## Pushes the given value to the top of the vector
-func man vec_push cell value ptr Vector vec begin
-	let ptr Vector vec
-	-> vec
+			while i vec.length < do
+				i vec a^ unsafe addr elements begin vec.freeFunc call end
+				i ++ -> i
+			end
+		end
 
-	if vec.length 1 + vec.capacity > then
-		vec double_vec_capacity
+		if vec.elements 0 = not then
+			vec.elements free
+		end
+
+		0 -> vec.length
+		0 -> vec.memberSize
+		0 -> vec.elements
+		0 -> vec.capacity
 	end
 
-	vec.length 1 + -> vec.length
-	vec.length 1 - vec a!
-end
+	## ## to_vec
+	## Parameters: ptr Array arr, ptr Vector vec
+	##
+	## Copies the array's metadata to the vector. The array elements are copied to the heap
+	## and the new elements address is stored in the vector
+	func to_vec ptr Array arr ptr Vector vec begin
+		arr.length -> vec.length
+		arr.memberSize -> vec.memberSize
 
-## ## vec_push_from
-## Parameters: addr address, ptr Vector vec
-##
-## Pushes the dereferenced value of `address` to `vec`
-func man vec_push_from addr address ptr Vector vec begin
-	let ptr Vector vec
-	-> vec
+		if arr.length 0 = then
+			1 -> vec.capacity
+		else
+			arr.length -> vec.capacity
+		end
 
-	if vec.length 1 + vec.capacity > then
-		vec double_vec_capacity
+		vec alloc_vec_capacity
+		vec.elements arr.elements arr.length arr.memberSize * copy_mem
 	end
 
-	vec.length 1 + -> vec.length
-	vec.length 1 - vec a!from
-end
+	## ## vec_push
+	## Parameters: cell value, ptr Vector vec
+	##
+	## Pushes the given value to the top of the vector
+	func man vec_push cell value ptr Vector vec begin
+		let ptr Vector vec
+		-> vec
 
-## ## vec_top
-## Parameters: ptr Vector vec -> cell value
-##
-## Returns the last value in the vector
-func error vec_top ptr Vector vec -> cell value begin
-	if vec.length 0 = then
-		c"vec_top: Vector empty" throw
+		if vec.length 1 + vec.capacity > then
+			vec double_vec_capacity
+		end
+
+		vec.length 1 + -> vec.length
+		vec.length 1 - vec a!
 	end
 
-	vec.length 1 - vec a@
-end
+	## ## vec_push_from
+	## Parameters: addr address, ptr Vector vec
+	##
+	## Pushes the dereferenced value of `address` to `vec`
+	func man vec_push_from addr address ptr Vector vec begin
+		let ptr Vector vec
+		-> vec
 
-## ## vec_top_to
-## Parameters: addr address, ptr Vector vec
-##
-## Gets the last value in the vector and copies it to `address`
-func man error vec_top_to addr address ptr Vector vec begin
-	let ptr Vector vec
-	-> vec
+		if vec.length 1 + vec.capacity > then
+			vec double_vec_capacity
+		end
 
-	if vec.length 0 = then
-		c"vec_top_to: Vector empty" throw
+		vec.length 1 + -> vec.length
+		vec.length 1 - vec a!from
 	end
 
-	vec.length 1 - vec a@to
-end
+	## ## vec_top
+	## Parameters: ptr Vector vec -> cell value
+	##
+	## Returns the last value in the vector
+	func error vec_top ptr Vector vec -> cell value begin
+		if vec.length 0 = then
+			c"vec_top: Vector empty" throw
+		end
 
-## ## vec_pop
-## Parameters: ptr Vector vec
-##
-## Removes the last element in the vector
-func error vec_pop ptr Vector vec begin
-	if vec.length 0 = then
-		"vec_pop: Vector empty" throw
+		vec.length 1 - vec a@
 	end
 
-	vec.length 1 - -> vec.length
+	## ## vec_top_to
+	## Parameters: addr address, ptr Vector vec
+	##
+	## Gets the last value in the vector and copies it to `address`
+	func man error vec_top_to addr address ptr Vector vec begin
+		let ptr Vector vec
+		-> vec
 
-	if vec.length vec.capacity 2 / < then
-		vec halve_vec_capacity
-	end 
-end
+		if vec.length 0 = then
+			c"vec_top_to: Vector empty" throw
+		end
 
-## ## vec_remove
-## Parameters: cell index, ptr Vector vec
-##
-## Removes the given index from the vector
-func error vec_remove cell index ptr Vector vec begin
-	if index vec.length >= then
-		c"vec_remove: Index out of bounds" throw
+		vec.length 1 - vec a@to
 	end
 
-	if index vec.length 1 - = then
-		vec vec_pop
-		return
+	## ## vec_pop
+	## Parameters: ptr Vector vec
+	##
+	## Removes the last element in the vector
+	func error vec_pop ptr Vector vec begin
+		if vec.length 0 = then
+			"vec_pop: Vector empty" throw
+		end
+
+		vec.length 1 - -> vec.length
+
+		if vec.length vec.capacity 2 / < then
+			vec halve_vec_capacity
+		end 
 	end
 
-	index vec a^ # dest
-	index 1 + vec a^ # src
-	vec.length index - vec.memberSize * # n
-	copy_mem
+	## ## vec_remove
+	## Parameters: cell index, ptr Vector vec
+	##
+	## Removes the given index from the vector
+	func error vec_remove cell index ptr Vector vec begin
+		if index vec.length >= then
+			c"vec_remove: Index out of bounds" throw
+		end
 
-	vec.length 1 - -> vec.length
+		if index vec.length 1 - = then
+			vec vec_pop
+			return
+		end
 
-	if vec.length vec.capacity 2 / < then
-		vec halve_vec_capacity
-	end 
-end
+		index vec a^ # dest
+		index 1 + vec a^ # src
+		vec.length index - vec.memberSize * # n
+		copy_mem
 
-## ## vec_insert
-## Parameters: cell value, cell index, ptr Vector vec
-##
-## Inserts the given value at the given index
-func error vec_insert cell value cell index ptr Vector vec begin
-	if index vec.length > then
-		c"vec_insert: Index out of bounds" throw
+		vec.length 1 - -> vec.length
+
+		if vec.length vec.capacity 2 / < then
+			vec halve_vec_capacity
+		end 
 	end
 
-	if index vec.length = then
-		value vec vec_push
-		return
+	## ## vec_insert
+	## Parameters: cell value, cell index, ptr Vector vec
+	##
+	## Inserts the given value at the given index
+	func error vec_insert cell value cell index ptr Vector vec begin
+		if index vec.length > then
+			c"vec_insert: Index out of bounds" throw
+		end
+
+		if index vec.length = then
+			value vec vec_push
+			return
+		end
+
+		if vec.length 1 + vec.capacity > then
+			vec double_vec_capacity
+		end
+
+		index 1 + vec.memberSize * vec.elements + # dest
+		index vec a^ # src
+		vec.length index - vec.memberSize * # n
+		copy_mem
+
+		vec.length 1 + -> vec.length
+
+		value index vec a!
 	end
 
-	if vec.length 1 + vec.capacity > then
-		vec double_vec_capacity
+	## ## vec_insert_from
+	## Parameters: addr address, cell index, ptr Vector vec
+	##
+	## Inserts the given value at the given index
+	func error vec_insert_from addr address cell index ptr Vector vec begin
+		if index vec.length > then
+			c"vec_insert: Index out of bounds" throw
+		end
+
+		if index vec.length = then
+			address vec vec_push_from
+			return
+		end
+
+		if vec.length 1 + vec.capacity > then
+			vec double_vec_capacity
+		end
+
+		index 1 + vec.memberSize * vec.elements + # dest
+		index vec a^ # src
+		vec.length index - vec.memberSize * # n
+		copy_mem
+
+		vec.length 1 + -> vec.length
+
+		address index vec a!from
 	end
 
-	index 1 + vec.memberSize * vec.elements + # dest
-	index vec a^ # src
-	vec.length index - vec.memberSize * # n
-	copy_mem
-
-	vec.length 1 + -> vec.length
-
-	value index vec a!
-end
-
-## ## vec_insert_from
-## Parameters: addr address, cell index, ptr Vector vec
-##
-## Inserts the given value at the given index
-func error vec_insert_from addr address cell index ptr Vector vec begin
-	if index vec.length > then
-		c"vec_insert: Index out of bounds" throw
+	## ## vec_set_size
+	## Parameters: cell newSize, ptr Vector vec
+	##
+	## Sets a new size for the vector and re-allocates
+	func vec_set_size cell newSize ptr Vector vec begin
+		newSize -> vec.length
+		newSize -> vec.capacity
+		vec alloc_vec_capacity
 	end
-
-	if index vec.length = then
-		address vec vec_push_from
-		return
-	end
-
-	if vec.length 1 + vec.capacity > then
-		vec double_vec_capacity
-	end
-
-	index 1 + vec.memberSize * vec.elements + # dest
-	index vec a^ # src
-	vec.length index - vec.memberSize * # n
-	copy_mem
-
-	vec.length 1 + -> vec.length
-
-	address index vec a!from
-end
-
-## ## vec_set_size
-## Parameters: cell newSize, ptr Vector vec
-##
-## Sets a new size for the vector and re-allocates
-func vec_set_size cell newSize ptr Vector vec begin
-	newSize -> vec.length
-	newSize -> vec.capacity
-	vec alloc_vec_capacity
 end

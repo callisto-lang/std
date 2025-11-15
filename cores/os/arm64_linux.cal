@@ -14,19 +14,25 @@ restrict Exit
 let addr __linux_argv
 let cell __linux_argc
 
-inline unsafe __arm64_program_init begin asm
+func unsafe __arm64_program_init begin asm
 	"add x9, sp, #8"
-	"ldr x10, =__global___us____us__linux__us__argv"
+	"ldr x10, =&{global __linux_argv}"
 	"str x9, [x10]"
 	"ldr x9, [sp]"
-	"ldr x10, =__global___us____us__linux__us__argc"
+	"ldr x10, =&{global __linux_argc}"
 	"str x9, [x10]"
 end end
 
-inline unsafe __arm64_program_exit begin asm
+func unsafe __arm64_program_exit begin asm
 	"mov x8, #93"
 	"mov x0, #0"
 	"svc #0"
+end end
+
+func unsafe get_exception -> ptr Exception exception begin asm
+	"ldr x9, =__exception"
+	"ldr x9, [x9]"
+	"str x9, [x19], #8"
 end end
 
 version IO
@@ -385,7 +391,7 @@ version IO version Exit
 
 	func __arm64_exception begin
 		c"Unhandled exception: " __core_printstr
-		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		get_exception Exception.msg + __core_printstr __core_new_line
 		1 exit
 	end
 end end

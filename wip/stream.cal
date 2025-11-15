@@ -1,3 +1,7 @@
+version Module
+	import core
+end
+
 ## # Warning
 ## `std/stream` is currently unstable and is subject to change. Do not use this until
 ## this warning is removed.

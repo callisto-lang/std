@@ -1,6 +1,12 @@
 requires IO
 
-include "array.cal"
+version Module
+	import core
+	import std.array
+end
+version not Module
+	include "array.cal"
+end
 
 func man print_dec_loop cell num begin
 	if dup then
@@ -84,17 +90,17 @@ func new_line begin
 end
 
 # Removed until I add a way to get this to work in safe callisto
-## ## printf
-## Parameters: ..., Array* fmt
-##
-## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
-## how they are written
-##
-## Formats:
-##
-## - `%s` - String (`Array*`)
-## - `%d` - Decimal (`cell`)
-## - `%X` - Hexadecimal (`cell`)
+# ## ## printf
+# ## Parameters: ..., Array* fmt
+# ##
+# ## Prints a formatted string (`fmt`) to stdout, format values are in reverse order of
+# ## how they are written
+# ##
+# ## Formats:
+# ##
+# ## - `%s` - String (`Array*`)
+# ## - `%d` - Decimal (`cell`)
+# ## - `%X` - Hexadecimal (`cell`)
 # func printf addr fmt begin
 # 	let cell i
 # 	let cell ch
@@ -120,7 +126,12 @@ end
 # end
 
 version Heap
-	include "vector.cal"
+	version Module
+		import std.vector
+	end
+	version not Module
+		include "vector.cal"
+	end
 
 	## ## read_line
 	## Parameters: ptr Vector res

@@ -1,0 +1,2 @@
+project "core" "cores/select.cal"
+project "std" "std"

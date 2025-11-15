@@ -1,3 +1,7 @@
+version Module
+	import core
+end
+
 ## ## global std_rand_next
 ## Cell variable containing the random number generator's state
 let cell std_rand_next

@@ -14,8 +14,6 @@ restrict Exit
 
 version Args
 
-
-
 end
 
 const __uxn_NO_QUEUE  0
@@ -35,6 +33,10 @@ version Exit
 		"NIP #80 ORA .System/state DEO BRK"
 	end end
 end
+
+inline unsafe get_exception -> ptr Exception exception begin asm
+	";exception"
+end end
 
 func man unsafe = cell a cell b -> cell ? begin asm
 	"EQU2"
@@ -193,7 +195,7 @@ version IO version Exit
 
 	func __uxn_exception begin
 		c"Unhandled exception: " __core_printstr
-		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		get_exception Exception.msg + __core_printstr __core_new_line
 		1 exit
 	end
 end end
@@ -230,7 +232,7 @@ version Args
 		end
 	end
 
-	inline __uxn_program_init begin
+	func __uxn_program_init begin
 		unsafe begin
 			asm ";program_end" end -> __uxn_heap
 		end
@@ -285,11 +287,11 @@ version Args
 end
 
 version not Args
-	inline unsafe __uxn_program_init begin asm
+	func unsafe __uxn_program_init begin asm
 		"!calmain"
 	end end
 end
 
-inline unsafe __uxn_program_exit begin asm
+func unsafe __uxn_program_exit begin asm
 	"#80 .System/state DEO BRK"
 end end

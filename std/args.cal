@@ -1,25 +1,32 @@
-include "nullterm.cal"
-include "io.cal"
-
-requires Args
-
-## ## get_arg
-##
-## Parameters: cell which, Array* ret
-##
-## Gets the `which`th command line argument, and saves it in `ret`
-func error get_arg cell which ptr Array arr begin
-	let addr argStr
-	which core_get_arg -> argStr
-
-	argStr ntstr_length -> arr.length
-	1 -> arr.memberSize
-	argStr -> arr.elements
+version Module
+	import core
+	import std.nullterm
+	import std.io
+end
+version not Module
+	include "nullterm.cal"
+	include "io.cal"
 end
 
-## ## get_args_length
-##
-## Parameters: none
-##
-## Returns the number of command line arguments
-inline get_args_length -> cell num begin core_get_arg_length end
+version Args
+	## ## get_arg
+	##
+	## Parameters: cell which, Array* ret
+	##
+	## Gets the `which`th command line argument, and saves it in `ret`
+	func error get_arg cell which ptr Array arr begin
+		let addr argStr
+		which core_get_arg -> argStr
+
+		argStr ntstr_length -> arr.length
+		1 -> arr.memberSize
+		argStr -> arr.elements
+	end
+
+	## ## get_args_length
+	##
+	## Parameters: none
+	##
+	## Returns the number of command line arguments
+	inline get_args_length -> cell num begin core_get_arg_length end
+end

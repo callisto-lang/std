@@ -1,3 +1,7 @@
+version Module
+	import core
+end
+
 ## ## print_ntstr
 ## Parameters: addr str
 ##
