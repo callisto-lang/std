@@ -30,11 +30,11 @@ end
 
 const SECONDS_IN_DAY 86400
 
-func unix_to_date_time cell time ptr DateTime res begin
-	let cell timeOfDay
-	time SECONDS_IN_DAY % -> timeOfDay
-
-	timeOfDay 3600 / -> res.hour
-	timeOfDay 3600 % 60 / -> res.minute
-	timeOfDay 3600 % 60 % -> res.second
-end
+#func unix_to_date_time cell time ptr DateTime res begin
+#	let cell timeOfDay
+#	time SECONDS_IN_DAY % -> timeOfDay
+#
+#	timeOfDay 3600 / -> res.hour
+#	timeOfDay 3600 % 60 / -> res.minute
+#	timeOfDay 3600 % 60 % -> res.second
+#end

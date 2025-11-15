@@ -319,7 +319,7 @@ version IO version Exit
 
 	func __lua_exception begin
 		c"Unhandled exception: " __core_printstr
-		&_cal_exception Exception.msg + __core_printstr __core_new_line
+		__LUA_EXCEPTION Exception.msg + __core_printstr __core_new_line
 		1 exit
 	end
 end end
