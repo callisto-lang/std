@@ -256,7 +256,7 @@ inline unsafe man uxn_screen_get_y -> cell y begin asm
 	".Screen/y DEI2"
 end end
 
-## ## uxn_screen_get_addr
+## ## uxn_screen_set_addr
 ## Parameters: addr address
 ##
 ## Writes `address` to the `Screen/addr` port.

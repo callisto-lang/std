@@ -39,6 +39,10 @@ version x86_64
 	version FreeBSD
 		include "os/x86_64_freebsd.cal"
 	end
+
+	version TacOS
+		include "os/x86_64_tacos.cal"
+	end
 end
 
 version arm64

@@ -301,7 +301,7 @@ inline man unsafe s% cell a cell b -> cell res begin
 	__x86_64_pop_rbx
 	__x86_64_pop_rax
 	asm
-		"xor rdx, rdx"
+		"cqo"
 		"idiv rbx"
 	end
 	__x86_64_push_rdx
